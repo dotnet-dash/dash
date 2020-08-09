@@ -33,7 +33,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*Tests.csproj'
-    arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
+    arguments: '/p:CollectCoverage=true /p:Threshold=98 /p:ThresholdType=branch /p:ThresholdStat=total /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
     publishTestResults: true
 
 - task: PublishCodeCoverageResults@1
@@ -69,8 +69,8 @@ steps:
     #coverageType: blocks # Optional; Valid values: blocks, lines, branches, custom
     #customCoverageType: # Required if coverageType = custom
     #treat0of0as100: false # Optional
-    coverageThreshold: '90' # Optional
-    forceCoverageImprovement: true # Optional
+    #coverageThreshold: '90' # Optional
+    #forceCoverageImprovement: true # Optional
     #coverageUpperThreshold: '80' # Optional
     #ignoreDecreaseAboveUpperThreshold: true # Optional
     #useUncoveredElements: false # Optional
