@@ -33,9 +33,6 @@
     <Content Include="Samples\EmptyModel.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Samples\Smoketest1.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Samples\HelloWorld.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
