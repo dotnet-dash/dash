@@ -40,3 +40,9 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'dotnet-dash_dash'
     projectName: 'dash'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
