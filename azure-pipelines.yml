@@ -21,6 +21,14 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: SonarCloudPrepare@1
+  inputs:
+    organization: 'dotnet-dash'
+    SonarCloud: 'SonarCloud connection'
+    scannerMode: 'MSBuild'
+    projectKey: 'dotnet-dash_dash'
+    projectName: 'dash'
+
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -32,14 +40,6 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-- task: SonarCloudPrepare@1
-  inputs:
-    organization: 'dotnet-dash'
-    SonarCloud: 'SonarCloud connection'
-    scannerMode: 'MSBuild'
-    projectKey: 'dotnet-dash_dash'
-    projectName: 'dash'
 
 - task: SonarCloudAnalyze@1
 
