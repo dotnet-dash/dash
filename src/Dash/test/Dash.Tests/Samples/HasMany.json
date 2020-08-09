@@ -1,0 +1,11 @@
+﻿{
+    "Model": {
+        "Order": {
+            "@@Has Many": ["OrderLine"]
+        },
+
+        "OrderLine": {
+            "Description": "String"
+        }
+    }
+}

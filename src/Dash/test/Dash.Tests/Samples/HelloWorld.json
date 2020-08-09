@@ -1,0 +1,8 @@
+﻿{
+    "Model": {
+        "Account": {
+            "Id": "Int",
+            "Email": "Email"
+        }
+    }
+}

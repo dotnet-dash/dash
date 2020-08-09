@@ -1,0 +1,11 @@
+﻿{
+    "Model": {
+        "Base": {
+            "Name": "I'm an Entity"
+        },
+
+        "Account": {
+            "Email": "Email"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+﻿{
+    "Model": {
+        "Order": {
+            "@@Has and belongs to many": ["Product"]
+        },
+
+        "Product": {
+            "Description": "String"
+        }
+    }
+}
