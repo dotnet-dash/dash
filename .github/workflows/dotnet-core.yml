@@ -20,14 +20,14 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./src/Dash/src
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./src/Dash/src --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test ./src/Dash/src --no-restore --verbosity normal
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v1.3
       with:
         # Set the sonar.projectBaseDir analysis property
-        projectBaseDir: . # optional, default is .
+        projectBaseDir: ./src/Dash/src # optional, default is .
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
