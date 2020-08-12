@@ -11,14 +11,14 @@ namespace Dash.Tests.Nodes
         {
             // Arrange
             var superEntity = new Entity("Base");
-            superEntity.Attributes.Add(new Attribute("Id", "Guid"));
-            superEntity.Attributes.Add(new Attribute("Created", "DateTime"));
-            superEntity.Attributes.Add(new Attribute("Name", "String"));
+            superEntity.Attributes.Add(new Attribute { Name = "Id", CodeDataType = "Guid" });
+            superEntity.Attributes.Add(new Attribute { Name = "Created", CodeDataType = "DateTime" });
+            superEntity.Attributes.Add(new Attribute { Name = "Name", CodeDataType = "String"});
 
             var sut = new Entity("Person");
-            sut.Attributes.Add(new Attribute("Name", "Unicode"));
-            sut.Attributes.Add(new Attribute("GivenName", "String"));
-            sut.Attributes.Add(new Attribute("Id", "Int"));
+            sut.Attributes.Add(new Attribute { Name = "Name", CodeDataType = "Unicode"});
+            sut.Attributes.Add(new Attribute { Name = "GivenName", CodeDataType = "String"});
+            sut.Attributes.Add(new Attribute { Name = "Id", CodeDataType = "Int"});
 
             // Act
             sut.InheritAttributes(superEntity);
@@ -29,22 +29,22 @@ namespace Dash.Tests.Nodes
                 first =>
                 {
                     first.Name.Should().Be("Id");
-                    first.DataType.Should().Be("Int");
+                    first.CodeDataType.Should().Be("Int");
                 },
                 second =>
                 {
                     second.Name.Should().Be("Created");
-                    second.DataType.Should().Be("DateTime");
+                    second.CodeDataType.Should().Be("DateTime");
                 },
                 third =>
                 {
                     third.Name.Should().Be("Name");
-                    third.DataType.Should().Be("Unicode");
+                    third.CodeDataType.Should().Be("Unicode");
                 },
                 fourth =>
                 {
                     fourth.Name.Should().Be("GivenName");
-                    fourth.DataType.Should().Be("String");
+                    fourth.CodeDataType.Should().Be("String");
                 }
             );
         }

@@ -11,7 +11,7 @@ namespace Dash.Tests
         public void Parse_EmptyJson()
         {
             // Arrange
-            var parser = new JsonParser();
+            var parser = new JsonParser(null);
 
             // Act
             var result = parser.Parse("{}");
@@ -21,7 +21,7 @@ namespace Dash.Tests
         public void Parse_EmptyModelJson_ShouldHaveParsedModelWithBaseEntityOnly()
         {
             // Arrange
-            var parser = new JsonParser();
+            var parser = new JsonParser(null);
 
             // Act
             var result = parser.Parse(File.ReadAllText("Samples/EmptyModel.json"));
@@ -36,7 +36,7 @@ namespace Dash.Tests
                         a =>
                         {
                             a.Name.Should().Be("Id");
-                            a.DataType.Should().Be("Int");
+                            a.CodeDataType.Should().Be("Int");
                         });
                     first.SingleReferences.Should().BeEmpty();
                     first.CollectionReferences.Should().BeEmpty();
@@ -47,7 +47,7 @@ namespace Dash.Tests
         public void Parse_HelloWorldJson_ShouldHaveCreatedModelWithoutErrors()
         {
             // Arrange
-            var parser = new JsonParser();
+            var parser = new JsonParser(null);
 
             // Act
             var result = parser.Parse(File.ReadAllText("Samples/HelloWorld.json"));
@@ -66,12 +66,12 @@ namespace Dash.Tests
                         a =>
                         {
                             a.Name.Should().Be("Id");
-                            a.DataType.Should().Be("Int");
+                            a.CodeDataType.Should().Be("Int");
                         },
                         b =>
                         {
                             b.Name.Should().Be("Email");
-                            b.DataType.Should().Be("Email");
+                            b.CodeDataType.Should().Be("Email");
                         });
                 });
         }
@@ -80,7 +80,7 @@ namespace Dash.Tests
         public void Parse_OverrideBaseIdJson_BaseOverridden()
         {
             // Arrange
-            var sut = new JsonParser();
+            var sut = new JsonParser(null);
 
             // Act
             var result = sut.Parse(File.ReadAllText("Samples/OverrideBaseId.json"));
@@ -93,7 +93,7 @@ namespace Dash.Tests
                     first.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.DataType.Should().Be("Guid");
+                        a.CodeDataType.Should().Be("Guid");
                     });
                 });
         }
@@ -102,7 +102,7 @@ namespace Dash.Tests
         public void Parse_HasAndBelongsToManyJson_ShouldHaveParsedModelWithoutErrors()
         {
             // Arrange
-            var parser = new JsonParser();
+            var parser = new JsonParser(null);
 
             // Act
             var result = parser.Parse(File.ReadAllText("Samples/HasAndBelongsToMany.json"));
@@ -119,7 +119,7 @@ namespace Dash.Tests
                     second.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.DataType.Should().Be("Int");
+                        a.CodeDataType.Should().Be("Int");
                     });
                 },
                 third =>
@@ -128,11 +128,11 @@ namespace Dash.Tests
                     third.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.DataType.Should().Be("Int");
+                        a.CodeDataType.Should().Be("Int");
                     }, b =>
                     {
                         b.Name.Should().Be("Description");
-                        b.DataType.Should().Be("String");
+                        b.CodeDataType.Should().Be("String");
                     });
                 },
                 fourth =>
@@ -156,7 +156,7 @@ namespace Dash.Tests
         public void Parse_HasMany_ShouldHaveParsedModelWithoutError()
         {
             // Arrange
-            var parser = new JsonParser();
+            var parser = new JsonParser(null);
 
             // Act
             var result = parser.Parse(File.ReadAllText("Samples/HasMany.json"));

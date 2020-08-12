@@ -36,7 +36,7 @@ namespace Dash.Tests
 
             // Assert
             x.Name.Should().Be("Name");
-            x.DataType.Should().Be("unicode");
+            x.CodeDataType.Should().Be("unicode");
             x.IsNullable.Should().BeTrue();
         }
 
@@ -111,7 +111,7 @@ namespace Dash.Tests
 
             // Assert
             result.Name.Should().Be("Username");
-            result.DataType.Should().Be("string");
+            result.CodeDataType.Should().Be("string");
             result.Length.Should().Be(200);
             result.IsNullable.Should().BeTrue();
             result.DefaultValue.Should().Be("unknown");

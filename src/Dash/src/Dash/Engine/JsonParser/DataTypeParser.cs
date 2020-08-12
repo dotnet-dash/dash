@@ -1,17 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Dash.Engine.Exceptions;
+using Dash.Engine.Abstractions;
+using Dash.Exceptions;
 using Attribute = Dash.Nodes.Attribute;
 
 namespace Dash.Engine.JsonParser
 {
     public class DataTypeParser
     {
+        private readonly ILanguageProvider _codeLanguageProvider;
+        private readonly ILanguageProvider _dataLanguageProvider;
+
+        public DataTypeParser(IEnumerable<ILanguageProvider> languageProvider)
+        {
+            _codeLanguageProvider = languageProvider.Single(e => e.Name == "cs");
+            _dataLanguageProvider = languageProvider.SingleOrDefault(e => e.Name == "sqlserver");
+        }
+
         public Attribute Parse(string name, string dataTypeSpecification)
         {
-            if (TryFindMatch("^([a-zA-Z_0-9]+)", dataTypeSpecification, out var dataType, out var remainingSpecification))
+            if (TryFindMatch("^([a-zA-Z_0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
             {
-                var result = new Attribute(name, dataType);
+                var result = new Attribute
+                {
+                    Name = name,
+                    CodeDataType = _codeLanguageProvider.Translate(dashDataType!),
+                    DatabaseDataType = _dataLanguageProvider.Translate(dashDataType!),
+                };
+
                 ParseConstraints(result, remainingSpecification);
 
                 return result;

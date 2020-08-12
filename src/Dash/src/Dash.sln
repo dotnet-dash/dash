@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dash", "Dash\Dash.csproj", "{C330EC06-448F-4B70-AE8E-DA304537086A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dash.Tests", "..\test\Dash.Tests\Dash.Tests.csproj", "{2E115D0E-035B-4583-8AF5-90E7107D40A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dash.Tests", "..\test\Dash.Tests\Dash.Tests.csproj", "{2E115D0E-035B-4583-8AF5-90E7107D40A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

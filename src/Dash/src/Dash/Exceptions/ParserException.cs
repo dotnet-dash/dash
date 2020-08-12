@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dash.Engine.Exceptions
+namespace Dash.Exceptions
 {
     public class ParserException : Exception
     {

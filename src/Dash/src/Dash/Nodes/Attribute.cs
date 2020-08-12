@@ -2,22 +2,13 @@
 {
     public class Attribute
     {
-        public Attribute(string name, string? dataType) : this(name, dataType, null)
-        {
-        }
-
-        public Attribute(string name, string? dataType, string? dataTypeRegularExpression)
-        {
-            Name = name;
-            DataType = dataType;
-            DataTypeRegularExpression = dataTypeRegularExpression;
-        }
-
-        public string Name { get; }
+        public string? Name { get; set; }
 
         public string? DefaultValue { get; set; }
 
-        public string? DataType { get; }
+        public string? CodeDataType { get; set; }
+
+        public string? DatabaseDataType { get; set; }
 
         public string? DataTypeRegularExpression { get; set; }
 

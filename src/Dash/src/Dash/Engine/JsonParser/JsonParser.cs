@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.Json;
 using Dash.Engine.Abstractions;
+using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 using Attribute = Dash.Nodes.Attribute;
@@ -10,7 +11,13 @@ namespace Dash.Engine.JsonParser
 {
     public class JsonParser : IParser
     {
+        private readonly DataTypeParser _dataTypeParser;
         private Model? _currentModel;
+
+        public JsonParser(DataTypeParser dataTypeParser)
+        {
+            _dataTypeParser = dataTypeParser;
+        }
 
         public Model Parse(string sourceCode)
         {
@@ -59,7 +66,7 @@ namespace Dash.Engine.JsonParser
             {
                 Inherits = null
             };
-            defaultBase.Attributes.Add(new Attribute("Id", "Int"));
+            defaultBase.Attributes.Add(_dataTypeParser.Parse("Id", "Int"));
 
             var baseEntities = _currentModel!.Entities.Where(e => e.Name.IsSame("Base")).ToList();
             if (baseEntities.Count > 0)
@@ -179,7 +186,15 @@ namespace Dash.Engine.JsonParser
                 {
                     if (!@object.Name.StartsWith("@@", StringComparison.OrdinalIgnoreCase))
                     {
-                        entity.Attributes.Add(new Attribute(@object.Name, @object.Value.GetString()));
+                        try
+                        {
+                            var attribute = _dataTypeParser.Parse(@object.Name, @object.Value.GetString());
+                            entity.Attributes.Add(attribute);
+                        }
+                        catch (InvalidDataTypeException exception)
+                        {
+                            _currentModel!.Errors.Add(exception.Message);
+                        }
                     }
 
                     if (@object.Name.Equals("@@Inherits", StringComparison.OrdinalIgnoreCase))
