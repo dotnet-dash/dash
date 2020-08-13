@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Templates\Ef" />
+    <None Remove="Templates\Erepo" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\Ef" />
+    <EmbeddedResource Include="Templates\Erepo" />
     <EmbeddedResource Include="Templates\Poco">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

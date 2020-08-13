@@ -15,35 +15,44 @@ namespace Dash
 {
     class Program
     {
-        static async Task Main(FileInfo inputFile, string[] templates, bool verbose = false)
+        static async Task Main(FileInfo file, DirectoryInfo output, string[] templates, bool verbose = false)
         {
-            //Console.WriteLine($"The value for --input-file is: {inputFile}");
-            //Console.WriteLine($"The value for --templates is: {string.Join(";", templates.Select(e => e))}");
-
-            if (inputFile == null)
+            if (file == null)
             {
-                Console.Error.WriteLine("No input file defined");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine("Please specify a model file.");
+                Console.ResetColor();
                 return;
             }
 
-            if (inputFile.Exists == false)
+            if (!file.Exists)
             {
-                Console.Error.WriteLine($"{inputFile} not found");
+                Console.Error.WriteLine($"The specified input {file} not found");
                 return;
             }
 
-            var services = RegisterServices(templates, verbose);
+            if (!output.Exists)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Error.WriteLine($"The specified output location '{output}' does not exist.");
+                Console.ResetColor();
+                return;
+            }
+
+            var services = RegisterServices(output, templates, verbose);
             using var scope = services.CreateScope();
             var app = scope.ServiceProvider.GetRequiredService<DashApplication>();
-            await app.Run(inputFile);
+            await app.Run(file);
         }
 
-        private static ServiceProvider RegisterServices(string[] templates, bool verbose)
+        private static ServiceProvider RegisterServices(DirectoryInfo output, string[] templates, bool verbose)
         {
             var services = new ServiceCollection();
             services.AddSingleton<DashApplication>();
             services.Configure<DashOptions>(options =>
             {
+                options.OutputDirectory = output.ToString();
+
                 if (templates?.Length > 0)
                 {
                     options.Templates = templates;
