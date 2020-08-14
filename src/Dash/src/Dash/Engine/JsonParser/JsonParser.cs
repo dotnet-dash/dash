@@ -24,40 +24,43 @@ namespace Dash.Engine.JsonParser
             _currentModel = new Model();
 
             var document = JsonDocument.Parse(sourceCode);
-            var modelProperty = GetModelProperty(document.RootElement);
-            if (modelProperty.HasValue)
-            {
-                var entities = modelProperty.Value.Value.EnumerateObject();
-                foreach (var property in entities)
-                {
-                    TraverseEntities(property);
-                }
 
-                ProcessBase();
-
-                entities.Reset();
-                foreach (var property in entities)
-                {
-                    TraverseRelationshipProperties(property);
-                }
-
-                ProcessInheritance();
-            }
+            ParseConfiguration(document);
+            ParseModel(document);
 
             return _currentModel;
         }
 
-        private JsonProperty? GetModelProperty(JsonElement jsonElement)
+        private void ParseConfiguration(JsonDocument document)
         {
-            foreach (var @object in jsonElement.EnumerateObject())
+            if (document.RootElement.TryGetProperty("Configuration", out var configurationProperty))
             {
-                if (@object.Name.IsSame("Model"))
-                {
-                    return @object;
-                }
+                _currentModel!.Configuration = JsonSerializer.Deserialize<Configuration>(configurationProperty.GetRawText());
+            }
+        }
+
+        private void ParseModel(JsonDocument document)
+        {
+            if (!document.RootElement.TryGetProperty("Model", out var modelProperty))
+            {
+                return;
             }
 
-            return null;
+            var entities = modelProperty.EnumerateObject();
+            foreach (var property in entities)
+            {
+                TraverseEntities(property);
+            }
+
+            ProcessBase();
+
+            entities.Reset();
+            foreach (var property in entities)
+            {
+                TraverseRelationshipProperties(property);
+            }
+
+            ProcessInheritance();
         }
 
         private void ProcessBase()

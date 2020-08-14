@@ -7,7 +7,6 @@ using Dash.Application;
 using Dash.Engine.Abstractions;
 using Dash.Nodes;
 using Microsoft.Extensions.Options;
-using Morestachio.Formatter.Framework;
 
 namespace Dash.Engine.Generator
 {

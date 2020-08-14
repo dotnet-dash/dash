@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Samples\Configuration.json" />
     <None Remove="Samples\EmptyBaseDefined.json" />
     <None Remove="Samples\EmptyModel.json" />
     <None Remove="Samples\ExtendBase.json" />
@@ -31,6 +32,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\EmptyModel.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\Configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HelloWorld.json">

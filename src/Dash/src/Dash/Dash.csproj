@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\Ef" />
-    <EmbeddedResource Include="Templates\Erepo" />
     <EmbeddedResource Include="Templates\Poco">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -32,10 +31,6 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20371.2" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Engine\ParseTree\Cst\" />
   </ItemGroup>
 
 </Project>
