@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
-using Attribute = Dash.Nodes.Attribute;
 
 namespace Dash.Engine.JsonParser
 {
@@ -107,57 +107,86 @@ namespace Dash.Engine.JsonParser
                 foreach (var property in propertiesOfEntity)
                 {
                     ProcessHas(property, currentEntity);
+                    ProcessHasMany(property, currentEntity);
                     ProcessHasAndBelongsToMany(property, currentEntity);
                 }
             }
         }
 
-        private void ProcessRelationshipProperty(JsonProperty property, Entity currentEntity, string relationshipProperty, Action<Entity> referencedEntityAction)
+        private void ProcessRelationshipProperty(JsonProperty property, Entity currentEntity, string relationshipProperty, Action<string, Entity> referencedEntityAction)
         {
             if (!property.Name.IsSame(relationshipProperty))
             {
                 return;
             }
 
-            if (property.Value.ValueKind != JsonValueKind.Array)
+            if (property.Value.ValueKind == JsonValueKind.Array)
             {
-                _currentModel!.Errors.Add($"The value of the '{currentEntity.Name}/{relationshipProperty}' property must be a JSON array");
+                var referencedEntities = property.Value.EnumerateArray();
+                foreach (var item in referencedEntities)
+                {
+                    var referencingEntityName = item.GetString();
+
+                    var referencedEntity = _currentModel!.Entities.FirstOrDefault(e => e.Name.IsSame(referencingEntityName));
+                    if (referencedEntity == null)
+                    {
+                        _currentModel!.Errors.Add($"Could not find the referenced Entity '{referencingEntityName}'");
+                    }
+                    else
+                    {
+                        referencedEntityAction(referencingEntityName, referencedEntity);
+                    }
+                }
+
                 return;
             }
 
-            var referencedEntities = property.Value.EnumerateArray();
-            foreach (var item in referencedEntities)
+            if (property.Value.ValueKind == JsonValueKind.Object)
             {
-                var entityName = item.GetString();
+                foreach (var item in property.Value.EnumerateObject())
+                {
+                    var entityName = item.Value.GetString();
+                    var referencedEntity = _currentModel!.Entities.FirstOrDefault(e => e.Name.IsSame(entityName));
+                    if (referencedEntity == null)
+                    {
+                        _currentModel!.Errors.Add($"Could not find the referenced Entity '{entityName}'");
+                    }
+                    else
+                    {
+                        referencedEntityAction(item.Name, referencedEntity);
+                    }
+                }
 
-                var referencedEntity = _currentModel!.Entities.FirstOrDefault(e => e.Name.IsSame(entityName));
-                if (referencedEntity == null)
-                {
-                    _currentModel!.Errors.Add($"Could not find the referenced Entity '{entityName}'");
-                }
-                else
-                {
-                    referencedEntityAction(referencedEntity);
-                }
+                return;
             }
+
+            _currentModel!.Errors.Add($"The value of the '{currentEntity.Name}/{relationshipProperty}' property must be a JSON array or JSON object but {property.Value.ValueKind} found");
         }
 
         private void ProcessHas(JsonProperty property, Entity currentEntity)
         {
-            ProcessRelationshipProperty(property, currentEntity, "@@Has Many", referencedEntity =>
+            ProcessRelationshipProperty(property, currentEntity, "@@Has", (referenceName, referencedEntity) =>
             {
-                currentEntity.CollectionReferences.Add(referencedEntity);
-                referencedEntity.SingleReferences.Add(currentEntity);
+                currentEntity.SingleReferences.Add(new KeyValuePair<string, Entity>(referenceName, referencedEntity));
+            });
+        }
+
+        private void ProcessHasMany(JsonProperty property, Entity currentEntity)
+        {
+            ProcessRelationshipProperty(property, currentEntity, "@@Has Many", (referenceName, referencedEntity) =>
+            {
+                currentEntity.CollectionReferences.Add(new KeyValuePair<string, Entity>(referenceName, referencedEntity));
+                referencedEntity.SingleReferences.Add(new KeyValuePair<string, Entity>(currentEntity.Name, currentEntity));
             });
         }
 
         private void ProcessHasAndBelongsToMany(JsonProperty property, Entity currentEntity)
         {
-            ProcessRelationshipProperty(property, currentEntity, "@@Has And Belongs To Many", referencedEntity =>
+            ProcessRelationshipProperty(property, currentEntity, "@@Has And Belongs To Many", (referenceName, referencedEntity) =>
             {
                 var joinedEntities = new JoinedEntity(currentEntity, referencedEntity);
-                currentEntity.CollectionReferences.Add(joinedEntities);
-                referencedEntity.CollectionReferences.Add(joinedEntities);
+                currentEntity.CollectionReferences.Add(new KeyValuePair<string, Entity>(referenceName, joinedEntities));
+                referencedEntity.CollectionReferences.Add(new KeyValuePair<string, Entity>(currentEntity.Name, joinedEntities));
                 _currentModel!.Entities.Add(joinedEntities);
             });
         }
@@ -166,17 +195,19 @@ namespace Dash.Engine.JsonParser
         {
             if (jsonProperty.Value.ValueKind == JsonValueKind.Object)
             {
-                var currentEntity = new Entity(jsonProperty.Name);
-                _currentModel!.Entities.Add(currentEntity);
-
                 var elements = jsonProperty.Value.EnumerateObject();
+
+                if (!jsonProperty.Name.StartsWith("@@"))
+                {
+                    var currentEntity = new Entity(jsonProperty.Name);
+                    _currentModel!.Entities.Add(currentEntity);
+                    TraverseAttributes(elements, currentEntity);
+                }
 
                 foreach (var e in elements)
                 {
                     TraverseEntities(e);
                 }
-
-                TraverseAttributes(elements, currentEntity);
             }
         }
 

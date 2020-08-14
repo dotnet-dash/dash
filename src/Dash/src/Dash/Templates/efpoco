@@ -17,13 +17,13 @@ namespace Nnn // {{ Namespace }}
 {{#if DataTypeRegularExpression}}
         [RegularExpression({{ DataTypeRegularExpression }})]{{#tnls}}
 {{/if}}
-        public {{ CodeDataType }} {{ Name }} { get; set; }{{#tnls}}
+        public {{ CodeDataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each SingleReferences}}
-        public ICollection<{{ Name }}> {{ Name }} { get; set; }{{#tnls}}
+        public {{ Value.Name }} {{ Key }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each CollectionReferences}}
-        public ICollection<{{ Name }}> {{ Name }} { get; set; }{{#tnls}}
+        public ICollection<{{ Value.Name }}> {{ Key }} { get; set; }{{#tnls}}
 {{/each}}
     }
 {{/each}}{{#tnls}}

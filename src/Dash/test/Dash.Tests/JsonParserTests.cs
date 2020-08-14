@@ -112,6 +112,8 @@ namespace Dash.Tests
                             b.DatabaseDataType.Should().Be("nvarchar");
                         });
                 });
+
+            result.Errors.Count.Should().Be(0);
         }
 
         [Fact]
@@ -132,6 +134,43 @@ namespace Dash.Tests
                         a.DatabaseDataType.Should().Be("uniqueidentifier");
                     });
                 });
+        }
+
+        [Fact]
+        public void Parse_Has_ShouldHaveParsedModelWithoutErrors()
+        {
+            // Act
+            var result = _sut.Parse(File.ReadAllText("Samples/Has.json"));
+
+            // Assert
+            result.Entities.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Name.Should().Be("Base");
+                },
+                second =>
+                {
+                    second.Name.Should().Be("Person");
+                    second.SingleReferences.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            a.Key.Should().Be("CountryOfBirth");
+                            a.Value.Name.Should().Be("Country");
+                        },
+                        b =>
+                        {
+                            b.Key.Should().Be("CountryOfResidence");
+                            b.Value.Name.Should().Be("Country");
+                        });
+                },
+                third =>
+                {
+                    third.Name.Should().Be("Country");
+                    third.CollectionReferences.Should().BeEmpty();
+                }
+            );
+
+            result.Errors.Count.Should().Be(0);
         }
 
         [Fact]
@@ -180,12 +219,16 @@ namespace Dash.Tests
                     });
                     fourth.SingleReferences.Should().SatisfyRespectively(a =>
                     {
-                        a.Name.Should().Be("Order");
+                        a.Key.Should().Be("Order");
+                        a.Value.Name.Should().Be("Order");
                     }, b =>
                     {
-                        b.Name.Should().Be("Product");
+                        b.Key.Should().Be("Product");
+                        b.Value.Name.Should().Be("Product");
                     });
                 });
+
+            result.Errors.Count.Should().Be(0);
         }
 
         [Fact]
@@ -203,14 +246,26 @@ namespace Dash.Tests
                 second =>
                 {
                     second.Name.Should().Be("Order");
-                    second.CollectionReferences.Should().ContainSingle(e => e.Name == "OrderLine");
+                    second.CollectionReferences.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            a.Key.Should().Be("OrderLine");
+                            a.Value.Name.Should().Be("OrderLine");
+                        });
                 },
                 third =>
                 {
                     third.Name.Should().Be("OrderLine");
-                    third.SingleReferences.Should().ContainSingle(e => e.Name == "Order");
+                    third.SingleReferences.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            a.Key.Should().Be("Order");
+                            a.Value.Name.Should().Be("Order");
+                        });
                 }
             );
+
+            result.Errors.Count.Should().Be(0);
         }
     }
 }

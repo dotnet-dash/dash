@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dash.Extensions;
 
@@ -19,15 +20,9 @@ namespace Dash.Nodes
 
         public IList<Attribute> Attributes { get; } = new List<Attribute>();
 
-        /// <summary>
-        /// Only relevant for generating POCO
-        /// </summary>
-        public IList<Entity> SingleReferences { get; set; } = new List<Entity>();
+        public IList<KeyValuePair<string, Entity>> SingleReferences { get; } = new List<KeyValuePair<string, Entity>>();
 
-        /// <summary>
-        /// Only relevant for generating POCO
-        /// </summary>
-        public IList<Entity> CollectionReferences { get; set; } = new List<Entity>();
+        public IList<KeyValuePair<string, Entity>> CollectionReferences { get; } = new List<KeyValuePair<string, Entity>>();
 
         public void InheritAttributes(Entity superEntity)
         {
