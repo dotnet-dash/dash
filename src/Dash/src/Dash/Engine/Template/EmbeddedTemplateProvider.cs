@@ -12,7 +12,7 @@ namespace Dash.Engine.Template
         {
             using var stream = Assembly
                 .GetAssembly(typeof(EmbeddedTemplateProvider))!
-                .GetManifestResourceStream("Dash.Templates." + templateName);
+                .GetManifestResourceStream("Dash.Templates." + templateName.ToLower());
 
             if (stream == null)
             {
