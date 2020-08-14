@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
-using Microsoft.Extensions.Options;
 
 namespace Dash.Application
 {
@@ -12,14 +11,12 @@ namespace Dash.Application
         private readonly IParser _parser;
         private readonly ISemanticAnalyzer _semanticAnalyzer;
         private readonly IGenerator _generator;
-        private readonly IOptions<DashOptions> _dashOptions;
 
-        public DashApplication(IParser parser, ISemanticAnalyzer semanticAnalyzer, IGenerator generator, IOptions<DashOptions> dashOptions)
+        public DashApplication(IParser parser, ISemanticAnalyzer semanticAnalyzer, IGenerator generator)
         {
             _parser = parser;
             _semanticAnalyzer = semanticAnalyzer;
             _generator = generator;
-            _dashOptions = dashOptions;
         }
 
         public async Task Run(FileInfo inputFile)
