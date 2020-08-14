@@ -4,6 +4,6 @@
     {
         public string? Template { get; set; }
 
-        public string? Output { get; set; }
+        public string Output { get; set; } = ".";
     }
 }

@@ -33,7 +33,7 @@ namespace Dash.Engine.Generator
 
                 var output = await template.CreateAndStringifyAsync(model);
 
-                var path = Path.Combine(_dashOptions.OutputDirectory, $"{templateNode.Template!}.generated.cs");
+                var path = Path.Combine(templateNode.Output, $"{templateNode.Template!}.generated.cs");
                 Console.Out.WriteLine($"Writing to file {path}");
 
                 await _fileSystem.File.WriteAllTextAsync(path, output, Encoding.UTF8);

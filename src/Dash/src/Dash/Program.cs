@@ -15,7 +15,7 @@ namespace Dash
 {
     class Program
     {
-        static async Task Main(FileInfo file, DirectoryInfo output, bool verbose = false)
+        static async Task Main(FileInfo file, bool verbose = false)
         {
             if (file == null)
             {
@@ -31,30 +31,21 @@ namespace Dash
                 return;
             }
 
-            if (!output.Exists)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Error.WriteLine($"The specified output location '{output}' does not exist.");
-                Console.ResetColor();
-                return;
-            }
-
-            var services = RegisterServices(output, verbose);
+            var services = RegisterServices(verbose);
             using var scope = services.CreateScope();
             var app = scope.ServiceProvider.GetRequiredService<DashApplication>();
             await app.Run(file);
         }
 
-        private static ServiceProvider RegisterServices(DirectoryInfo output, bool verbose)
+        private static ServiceProvider RegisterServices(bool verbose)
         {
             var services = new ServiceCollection();
-            services.AddSingleton<DashApplication>();
             services.Configure<DashOptions>(options =>
             {
-                options.OutputDirectory = output.ToString();
-
                 options.Verbose = verbose;
             });
+
+            services.AddSingleton<DashApplication>();
             services.AddSingleton<IGenerator, DefaultGenerator>();
             services.AddSingleton<ISemanticAnalyzer, DefaultSemanticAnalyzer>();
             services.AddSingleton<IParser, JsonParser>();
