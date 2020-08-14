@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.IO;
+using Dash.Engine.Abstractions;
 using Dash.Engine.JsonParser;
+using Dash.Engine.LanguageProviders;
 using FluentAssertions;
 using Xunit;
 
@@ -7,24 +10,34 @@ namespace Dash.Tests
 {
     public class JsonParserTests
     {
+        private readonly JsonParser _sut;
+
+        public JsonParserTests()
+        {
+            var dataTypeParser = new DataTypeParser(new List<ILanguageProvider>
+            {
+                new CSharpLanguageProvider(),
+                new SqlServerLanguageProvider(),
+            });
+
+            _sut = new JsonParser(dataTypeParser);
+        }
+
         [Fact]
         public void Parse_EmptyJson()
         {
-            // Arrange
-            var parser = new JsonParser(null);
-
             // Act
-            var result = parser.Parse("{}");
+            var result = _sut.Parse("{}");
+
+            // Assert
+            result.Entities.Should().BeEmpty();
         }
 
         [Fact]
         public void Parse_EmptyModelJson_ShouldHaveParsedModelWithBaseEntityOnly()
         {
-            // Arrange
-            var parser = new JsonParser(null);
-
             // Act
-            var result = parser.Parse(File.ReadAllText("Samples/EmptyModel.json"));
+            var result = _sut.Parse(File.ReadAllText("Samples/EmptyModel.json"));
 
             // Assert
             result.Entities.Should().SatisfyRespectively(
@@ -36,7 +49,8 @@ namespace Dash.Tests
                         a =>
                         {
                             a.Name.Should().Be("Id");
-                            a.CodeDataType.Should().Be("Int");
+                            a.CodeDataType.Should().Be("int");
+                            a.DatabaseDataType.Should().Be("int");
                         });
                     first.SingleReferences.Should().BeEmpty();
                     first.CollectionReferences.Should().BeEmpty();
@@ -46,11 +60,8 @@ namespace Dash.Tests
         [Fact]
         public void Parse_HelloWorldJson_ShouldHaveCreatedModelWithoutErrors()
         {
-            // Arrange
-            var parser = new JsonParser(null);
-
             // Act
-            var result = parser.Parse(File.ReadAllText("Samples/HelloWorld.json"));
+            var result = _sut.Parse(File.ReadAllText("Samples/HelloWorld.json"));
 
             // Assert
             result.Entities.Should().SatisfyRespectively(
@@ -66,12 +77,14 @@ namespace Dash.Tests
                         a =>
                         {
                             a.Name.Should().Be("Id");
-                            a.CodeDataType.Should().Be("Int");
+                            a.CodeDataType.Should().Be("int");
+                            a.DatabaseDataType.Should().Be("int");
                         },
                         b =>
                         {
                             b.Name.Should().Be("Email");
-                            b.CodeDataType.Should().Be("Email");
+                            b.CodeDataType.Should().Be("string");
+                            b.DatabaseDataType.Should().Be("nvarchar");
                         });
                 });
         }
@@ -79,11 +92,8 @@ namespace Dash.Tests
         [Fact]
         public void Parse_OverrideBaseIdJson_BaseOverridden()
         {
-            // Arrange
-            var sut = new JsonParser(null);
-
             // Act
-            var result = sut.Parse(File.ReadAllText("Samples/OverrideBaseId.json"));
+            var result = _sut.Parse(File.ReadAllText("Samples/OverrideBaseId.json"));
 
             // Assert
             result.Entities.Should().SatisfyRespectively(
@@ -93,7 +103,8 @@ namespace Dash.Tests
                     first.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.CodeDataType.Should().Be("Guid");
+                        a.CodeDataType.Should().Be("System.Guid");
+                        a.DatabaseDataType.Should().Be("uniqueidentifier");
                     });
                 });
         }
@@ -101,11 +112,8 @@ namespace Dash.Tests
         [Fact]
         public void Parse_HasAndBelongsToManyJson_ShouldHaveParsedModelWithoutErrors()
         {
-            // Arrange
-            var parser = new JsonParser(null);
-
             // Act
-            var result = parser.Parse(File.ReadAllText("Samples/HasAndBelongsToMany.json"));
+            var result = _sut.Parse(File.ReadAllText("Samples/HasAndBelongsToMany.json"));
 
             // Assert
             result.Entities.Should().SatisfyRespectively(
@@ -119,7 +127,8 @@ namespace Dash.Tests
                     second.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.CodeDataType.Should().Be("Int");
+                        a.CodeDataType.Should().Be("int");
+                        a.DatabaseDataType.Should().Be("int");
                     });
                 },
                 third =>
@@ -128,11 +137,13 @@ namespace Dash.Tests
                     third.Attributes.Should().SatisfyRespectively(a =>
                     {
                         a.Name.Should().Be("Id");
-                        a.CodeDataType.Should().Be("Int");
+                        a.CodeDataType.Should().Be("int");
+                        a.DatabaseDataType.Should().Be("int");
                     }, b =>
                     {
                         b.Name.Should().Be("Description");
-                        b.CodeDataType.Should().Be("String");
+                        b.CodeDataType.Should().Be("string");
+                        b.DatabaseDataType.Should().Be("varchar");
                     });
                 },
                 fourth =>
@@ -155,11 +166,8 @@ namespace Dash.Tests
         [Fact]
         public void Parse_HasMany_ShouldHaveParsedModelWithoutError()
         {
-            // Arrange
-            var parser = new JsonParser(null);
-
             // Act
-            var result = parser.Parse(File.ReadAllText("Samples/HasMany.json"));
+            var result = _sut.Parse(File.ReadAllText("Samples/HasMany.json"));
 
             // Assert
             result.Entities.Should().SatisfyRespectively(
