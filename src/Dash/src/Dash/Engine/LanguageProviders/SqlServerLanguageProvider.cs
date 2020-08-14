@@ -5,6 +5,7 @@
         public override string Name => "sqlserver";
         public override string Int => "int";
         public override string Bool => "bit";
+        public override string DateTime => "datetime";
         public override string Email => "nvarchar";
         public override string Guid => "uniqueidentifier";
         public override string String => "varchar";

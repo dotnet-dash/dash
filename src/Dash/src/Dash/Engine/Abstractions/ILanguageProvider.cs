@@ -5,6 +5,7 @@
         string Name { get; }
         string Int { get; }
         string Bool { get; }
+        string DateTime { get; }
         string Guid { get; }
         string String { get; }
         string Unicode { get; }

@@ -8,6 +8,7 @@ namespace Dash.Engine.LanguageProviders
         public abstract string Name { get; }
         public abstract string Int { get; }
         public abstract string Bool { get; }
+        public abstract string DateTime { get; }
         public abstract string Email { get; }
         public abstract string Guid { get; }
         public abstract string String { get; }
@@ -22,6 +23,9 @@ namespace Dash.Engine.LanguageProviders
 
                 case "bool":
                     return Bool;
+
+                case "datetime":
+                    return DateTime;
 
                 case "email":
                     return Email;
