@@ -5,7 +5,5 @@
         public string OutputDirectory { get; set; } = ".";
 
         public bool Verbose { get; set; }
-
-        public string[] Templates { get; set; } = { "Poco" };
     }
 }

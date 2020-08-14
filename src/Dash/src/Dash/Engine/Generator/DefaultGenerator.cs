@@ -25,16 +25,15 @@ namespace Dash.Engine.Generator
 
         public async Task Generate(Model model)
         {
-            foreach (var templateName in _dashOptions.Templates)
+            foreach (var templateNode in model.Configuration.Templates)
             {
-                var templateContent = await _templateProvider.GetTemplate(templateName);
+                var templateContent = await _templateProvider.GetTemplate(templateNode.Template!);
                 var options = new Morestachio.ParserOptions(templateContent);
                 var template = Morestachio.Parser.ParseWithOptions(options);
 
                 var output = await template.CreateAndStringifyAsync(model);
 
-                var path = Path.Combine(_dashOptions.OutputDirectory, $"{templateName}.generated.cs");
-
+                var path = Path.Combine(_dashOptions.OutputDirectory, $"{templateNode.Template!}.generated.cs");
                 Console.Out.WriteLine($"Writing to file {path}");
 
                 await _fileSystem.File.WriteAllTextAsync(path, output, Encoding.UTF8);

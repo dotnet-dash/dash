@@ -15,7 +15,7 @@ namespace Dash
 {
     class Program
     {
-        static async Task Main(FileInfo file, DirectoryInfo output, string[] templates, bool verbose = false)
+        static async Task Main(FileInfo file, DirectoryInfo output, bool verbose = false)
         {
             if (file == null)
             {
@@ -39,24 +39,19 @@ namespace Dash
                 return;
             }
 
-            var services = RegisterServices(output, templates, verbose);
+            var services = RegisterServices(output, verbose);
             using var scope = services.CreateScope();
             var app = scope.ServiceProvider.GetRequiredService<DashApplication>();
             await app.Run(file);
         }
 
-        private static ServiceProvider RegisterServices(DirectoryInfo output, string[] templates, bool verbose)
+        private static ServiceProvider RegisterServices(DirectoryInfo output, bool verbose)
         {
             var services = new ServiceCollection();
             services.AddSingleton<DashApplication>();
             services.Configure<DashOptions>(options =>
             {
                 options.OutputDirectory = output.ToString();
-
-                if (templates?.Length > 0)
-                {
-                    options.Templates = templates;
-                }
 
                 options.Verbose = verbose;
             });
