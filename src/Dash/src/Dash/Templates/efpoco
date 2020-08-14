@@ -20,7 +20,7 @@ namespace Nnn // {{ Namespace }}
         public {{ CodeDataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each SingleReferences}}
-        public {{ Value.Name }} {{ Key }} { get; set; }{{#tnls}}
+        public {{ Entity.Name }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each CollectionReferences}}
         public ICollection<{{ Value.Name }}> {{ Key }} { get; set; }{{#tnls}}

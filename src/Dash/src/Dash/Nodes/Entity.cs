@@ -20,7 +20,7 @@ namespace Dash.Nodes
 
         public IList<Attribute> Attributes { get; } = new List<Attribute>();
 
-        public IList<KeyValuePair<string, Entity>> SingleReferences { get; } = new List<KeyValuePair<string, Entity>>();
+        public IList<ReferencingEntity> SingleReferences { get; } = new List<ReferencingEntity>();
 
         public IList<KeyValuePair<string, Entity>> CollectionReferences { get; } = new List<KeyValuePair<string, Entity>>();
 

@@ -154,18 +154,59 @@ namespace Dash.Tests
                     second.SingleReferences.Should().SatisfyRespectively(
                         a =>
                         {
-                            a.Key.Should().Be("CountryOfBirth");
-                            a.Value.Name.Should().Be("Country");
+                            a.Name.Should().Be("CountryOfBirth");
+                            a.Entity.Name.Should().Be("Country");
+                            a.IsNullable.Should().BeFalse();
                         },
                         b =>
                         {
-                            b.Key.Should().Be("CountryOfResidence");
-                            b.Value.Name.Should().Be("Country");
+                            b.Name.Should().Be("CountryOfResidence");
+                            b.Entity.Name.Should().Be("Country");
+                            b.IsNullable.Should().BeFalse();
                         });
                 },
                 third =>
                 {
                     third.Name.Should().Be("Country");
+                    third.CollectionReferences.Should().BeEmpty();
+                }
+            );
+
+            result.Errors.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Parse_HasNullable_ShouldHaveParsedModelWithoutErrors()
+        {
+            // Act
+            var result = _sut.Parse(File.ReadAllText("Samples/HasNullable.json"));
+
+            // Assert
+            result.Entities.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Name.Should().Be("Base");
+                },
+                second =>
+                {
+                    second.Name.Should().Be("Person");
+                    second.SingleReferences.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            a.Name.Should().Be("MotherTongue");
+                            a.Entity.Name.Should().Be("Language");
+                            a.IsNullable.Should().BeFalse();
+                        },
+                        b =>
+                        {
+                            b.Name.Should().Be("PreferredLanguage");
+                            b.Entity.Name.Should().Be("Language");
+                            b.IsNullable.Should().BeTrue();
+                        });
+                },
+                third =>
+                {
+                    third.Name.Should().Be("Language");
                     third.CollectionReferences.Should().BeEmpty();
                 }
             );
@@ -219,12 +260,14 @@ namespace Dash.Tests
                     });
                     fourth.SingleReferences.Should().SatisfyRespectively(a =>
                     {
-                        a.Key.Should().Be("Order");
-                        a.Value.Name.Should().Be("Order");
+                        a.Name.Should().Be("Order");
+                        a.Entity.Name.Should().Be("Order");
+                        a.IsNullable.Should().BeFalse();
                     }, b =>
                     {
-                        b.Key.Should().Be("Product");
-                        b.Value.Name.Should().Be("Product");
+                        b.Name.Should().Be("Product");
+                        b.Entity.Name.Should().Be("Product");
+                        b.IsNullable.Should().BeFalse();
                     });
                 });
 
@@ -259,8 +302,9 @@ namespace Dash.Tests
                     third.SingleReferences.Should().SatisfyRespectively(
                         a =>
                         {
-                            a.Key.Should().Be("Order");
-                            a.Value.Name.Should().Be("Order");
+                            a.Name.Should().Be("Order");
+                            a.Entity.Name.Should().Be("Order");
+                            a.IsNullable.Should().BeFalse();
                         });
                 }
             );

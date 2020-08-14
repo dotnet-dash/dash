@@ -1,0 +1,14 @@
+﻿{
+    "Model": {
+        "Person": {
+            "@@Has": {
+                "MotherTongue": "Language",
+                "PreferredLanguage": "Language?"
+            }
+        },
+
+        "Language": {
+            "LanguageCode": "String"
+        }
+    }
+}

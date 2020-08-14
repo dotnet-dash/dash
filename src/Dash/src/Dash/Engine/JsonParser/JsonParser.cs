@@ -167,7 +167,7 @@ namespace Dash.Engine.JsonParser
         {
             ProcessRelationshipProperty(property, currentEntity, "@@Has", (referenceName, referencedEntity) =>
             {
-                currentEntity.SingleReferences.Add(new KeyValuePair<string, Entity>(referenceName, referencedEntity));
+                currentEntity.SingleReferences.Add(new ReferencingEntity(referenceName, referencedEntity));
             });
         }
 
@@ -176,7 +176,7 @@ namespace Dash.Engine.JsonParser
             ProcessRelationshipProperty(property, currentEntity, "@@Has Many", (referenceName, referencedEntity) =>
             {
                 currentEntity.CollectionReferences.Add(new KeyValuePair<string, Entity>(referenceName, referencedEntity));
-                referencedEntity.SingleReferences.Add(new KeyValuePair<string, Entity>(currentEntity.Name, currentEntity));
+                referencedEntity.SingleReferences.Add(new ReferencingEntity(currentEntity));
             });
         }
 
