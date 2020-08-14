@@ -9,9 +9,11 @@ namespace Dash.Nodes
         public Entity(string name)
         {
             Name = name;
+
+            Inherits = Name.IsSame("Base") ? null : "Base";
         }
 
-        public string? Inherits { get; set; } = "Base";
+        public string? Inherits { get; set; }
 
         public string Name { get; set; }
 

@@ -1,11 +1,25 @@
 ﻿using Dash.Nodes;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace Dash.Tests.Nodes
 {
     public class EntityTests
     {
+        [Theory]
+        [InlineData("base", null)]
+        [InlineData("BASE", null)]
+        [InlineData("Account", "Base")]
+        public void Ctor_GivenEntityName_ShouldResultInExpectedInheritance(string entityName, [CanBeNull] string expectedInheritance)
+        {
+            // Act
+            var sut = new Entity(entityName);
+
+            // Assert
+            sut.Inherits.Should().Be(expectedInheritance);
+        }
+
         [Fact]
         public void InheritAttributes()
         {
