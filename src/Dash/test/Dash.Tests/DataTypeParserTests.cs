@@ -1,4 +1,6 @@
-﻿using Dash.Engine.JsonParser;
+﻿using Dash.Engine.Abstractions;
+using Dash.Engine.JsonParser;
+using Dash.Engine.LanguageProviders;
 using FluentAssertions;
 using Xunit;
 
@@ -6,21 +8,29 @@ namespace Dash.Tests
 {
     public class DataTypeParserTests
     {
+        private readonly DataTypeParser _sut;
+
+        public DataTypeParserTests()
+        {
+            _sut = new DataTypeParser(new ILanguageProvider[]
+            {
+                new CSharpLanguageProvider(),
+                new SqlServerLanguageProvider(),
+            });
+        }
+
         [Fact]
         public void Parse_ConstraintsNotSpecified_AllConstraintsShouldBeDefault()
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var x = sut.Parse("Name", "unicode");
+            var attribute = _sut.Parse("Name", "unicode");
 
             // Assert
-            x.IsNullable.Should().BeFalse();
-            x.Length.Should().BeNull();
-            x.DataTypeRegularExpression.Should().BeNull();
-            x.RangeLowerBound.Should().BeNull();
-            x.RangeUpperBound.Should().BeNull();
+            attribute.IsNullable.Should().BeFalse();
+            attribute.Length.Should().BeNull();
+            attribute.DataTypeRegularExpression.Should().BeNull();
+            attribute.RangeLowerBound.Should().BeNull();
+            attribute.RangeUpperBound.Should().BeNull();
         }
 
         [Theory]
@@ -28,16 +38,14 @@ namespace Dash.Tests
         [InlineData("unicode[100]?")]
         public void Parse_NullableIsSpecified_IsNullableShouldBeTrue(string dataTypeSpecification)
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var x = sut.Parse("Name", dataTypeSpecification);
+            var attribute = _sut.Parse("Name", dataTypeSpecification);
 
             // Assert
-            x.Name.Should().Be("Name");
-            x.CodeDataType.Should().Be("unicode");
-            x.IsNullable.Should().BeTrue();
+            attribute.Name.Should().Be("Name");
+            attribute.CodeDataType.Should().Be("string");
+            attribute.DatabaseDataType.Should().Be("nvarchar");
+            attribute.IsNullable.Should().BeTrue();
         }
 
         [Theory]
@@ -46,27 +54,21 @@ namespace Dash.Tests
         [InlineData("unicode[150]?", 150)]
         public void Parse_LengthSpecified_LengthShouldBeSet(string dataTypeSpecification, int expectedLength)
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var x = sut.Parse("Name", dataTypeSpecification);
+            var attribute = _sut.Parse("Name", dataTypeSpecification);
 
             // Assert
-            x.Length.Should().Be(expectedLength);
+            attribute.Length.Should().Be(expectedLength);
         }
 
         [Fact]
         public void Parse_DefaultValueSpecified_DefaultValueShouldBeSet()
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var result = sut.Parse("Name", "unicode(==John Doe)");
+            var attribute = _sut.Parse("Name", "unicode(==John Doe)");
 
             // Assert
-            result.DefaultValue.Should().Be("John Doe");
+            attribute.DefaultValue.Should().Be("John Doe");
         }
 
         [Theory]
@@ -75,49 +77,40 @@ namespace Dash.Tests
         [InlineData("int[10..]", 10, null)]
         public void Parse_RangeSpecified_RangeShouldBeSet(string dataTypeSpecification, int? expectedLowerBound, int? expectedUpperBound)
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var result = sut.Parse("Age", dataTypeSpecification);
+            var attribute = _sut.Parse("Age", dataTypeSpecification);
 
             // Assert
-            result.RangeLowerBound.Should().Be(expectedLowerBound);
-            result.RangeUpperBound.Should().Be(expectedUpperBound);
+            attribute.RangeLowerBound.Should().Be(expectedLowerBound);
+            attribute.RangeUpperBound.Should().Be(expectedUpperBound);
         }
 
         [Theory]
         [InlineData("string:[a-z{5,10}", "[a-z{5,10}")]
         public void Parse_RegularExpressionSpecified_RegularExpressionShouldBeSet(string dataTypeSpecification, string expectedRegularExpression)
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var result = sut.Parse("Username", dataTypeSpecification);
+            var attribute = _sut.Parse("Username", dataTypeSpecification);
 
             // Assert
-            result.DataTypeRegularExpression.Should().Be(expectedRegularExpression);
+            attribute.DataTypeRegularExpression.Should().Be(expectedRegularExpression);
         }
 
         [Fact]
         public void Parse_ComplexSpecification_ShouldParseCorrectly()
         {
-            // Arrange
-            var sut = new DataTypeParser();
-
             // Act
-            var result = sut.Parse("Username", "string[200]?(==unknown):[a-zA-Z0-9]");
+            var attribute = _sut.Parse("Username", "string[200]?(==unknown):[a-zA-Z0-9]");
 
             // Assert
-            result.Name.Should().Be("Username");
-            result.CodeDataType.Should().Be("string");
-            result.Length.Should().Be(200);
-            result.IsNullable.Should().BeTrue();
-            result.DefaultValue.Should().Be("unknown");
-            result.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
-            result.RangeLowerBound.Should().BeNull();
-            result.RangeUpperBound.Should().BeNull();
+            attribute.Name.Should().Be("Username");
+            attribute.CodeDataType.Should().Be("string");
+            attribute.Length.Should().Be(200);
+            attribute.IsNullable.Should().BeTrue();
+            attribute.DefaultValue.Should().Be("unknown");
+            attribute.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
+            attribute.RangeLowerBound.Should().BeNull();
+            attribute.RangeUpperBound.Should().BeNull();
         }
     }
 }

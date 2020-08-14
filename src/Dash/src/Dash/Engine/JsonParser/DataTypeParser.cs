@@ -15,8 +15,10 @@ namespace Dash.Engine.JsonParser
 
         public DataTypeParser(IEnumerable<ILanguageProvider> languageProvider)
         {
-            _codeLanguageProvider = languageProvider.Single(e => e.Name == "cs");
-            _dataLanguageProvider = languageProvider.SingleOrDefault(e => e.Name == "sqlserver");
+            var languageProviderList = languageProvider.ToList();
+
+            _codeLanguageProvider = languageProviderList.Single(e => e.Name == "cs");
+            _dataLanguageProvider = languageProviderList.SingleOrDefault(e => e.Name == "sqlserver");
         }
 
         public Attribute Parse(string name, string dataTypeSpecification)
