@@ -16,6 +16,7 @@
     <None Remove="Samples\HasMany.json" />
     <None Remove="Samples\HasNullable.json" />
     <None Remove="Samples\HelloWorld.json" />
+    <None Remove="Samples\Inheritance.json" />
     <None Remove="Samples\OverrideBaseId.json" />
     <None Remove="Samples\Smoketest1.json" />
   </ItemGroup>
@@ -43,6 +44,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\Inheritance.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HelloWorld.json">

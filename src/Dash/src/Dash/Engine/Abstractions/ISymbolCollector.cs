@@ -7,5 +7,7 @@ namespace Dash.Engine.Abstractions
         HashSet<string> GetEntityNames();
 
         HashSet<string> GetAttributeNames(string entityName);
+
+        bool EntityExists(string entityName);
     }
 }

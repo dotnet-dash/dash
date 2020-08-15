@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
+using Dash.Extensions;
 using Dash.Nodes;
 
 namespace Dash.Engine
@@ -10,13 +11,20 @@ namespace Dash.Engine
     public class DefaultSemanticAnalyzer : ISemanticAnalyzer
     {
         private readonly IDataTypeParser _dataTypeParser;
+        private readonly ISymbolCollector _symbolCollector;
+        private readonly IReservedSymbolProvider _reservedSymbolProvider;
         private readonly List<string> _errors = new List<string>();
 
         public IEnumerable<string> Errors => _errors;
 
-        public DefaultSemanticAnalyzer(IDataTypeParser dataTypeParser)
+        public DefaultSemanticAnalyzer(
+            IDataTypeParser dataTypeParser,
+            ISymbolCollector symbolCollector,
+            IReservedSymbolProvider reservedSymbolProvider)
         {
             _dataTypeParser = dataTypeParser;
+            _symbolCollector = symbolCollector;
+            _reservedSymbolProvider = reservedSymbolProvider;
         }
 
         public void Visit(ModelNode node)
@@ -39,7 +47,23 @@ namespace Dash.Engine
 
             if (!Regex.IsMatch(node.Name, "^([a-zA-Z]+[a-zA-Z0-9]*)$"))
             {
-                _errors.Add("Entity name must be alphanumeric and cannot start with a number");
+                _errors.Add($"'{node.Name}' is an invalid name. You can only use alphanumeric characters, and it cannot start with a number");
+            }
+
+            if (_reservedSymbolProvider.IsReservedEntityName(node.Name))
+            {
+                _errors.Add($"'{node.Name}' is a reserved name and cannot be used as an entity name.");
+            }
+
+            if (node.InheritedEntity != null &&
+                !_symbolCollector.EntityExists(node.InheritedEntity))
+            {
+                _errors.Add($"Entity '{node.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
+            }
+
+            if (node.InheritedEntity != null && node.InheritedEntity.IsSame(node.Name))
+            {
+                _errors.Add($"Self-inheritance not allowed: '{node.Name}'");
             }
 
             ValidateDuplicateAttributeDeclarations(node);
@@ -59,7 +83,10 @@ namespace Dash.Engine
 
         public void Visit(ReferenceDeclarationNode node)
         {
-            // Validate that referenced entity exists
+            if (!_symbolCollector.EntityExists(node.ReferencedEntity))
+            {
+                _errors.Add($"Referenced entity '{node.ReferencedEntity}' does not exist");
+            }
         }
 
         private void ValidateDuplicateEntityDeclarations(ModelNode node)

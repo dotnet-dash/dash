@@ -3,7 +3,7 @@ using Dash.Engine.JsonParser;
 using FluentAssertions;
 using Xunit;
 
-namespace Dash.Tests
+namespace Dash.Tests.Engine
 {
     public class JsonParserTests
     {
@@ -221,6 +221,16 @@ namespace Dash.Tests
                     second.SingleEntityReferences.Should().BeEmpty();
                     second.CollectionEntityReferences.Should().BeEmpty();
                 });
+        }
+
+        [Fact]
+        public void Parse_Inheritance_ShouldHaveParsedTree()
+        {
+            // Act
+            var result = _sut.Parse(File.ReadAllText("Samples/Inheritance.json"));
+
+            // Assert
+            //result.EntityDeclarations.
         }
     }
 }

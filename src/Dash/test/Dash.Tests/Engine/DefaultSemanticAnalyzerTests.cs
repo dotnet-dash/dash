@@ -1,11 +1,9 @@
-﻿using System.IO;
-using Dash.Engine;
+﻿using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 using Dash.Nodes;
 using FluentAssertions;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Dash.Tests.Engine
@@ -16,7 +14,7 @@ namespace Dash.Tests.Engine
         public void Visit_ModelNode_ShouldHaveVisitedEntityDeclarationNodes()
         {
             // Arrange
-            var sut = new DefaultSemanticAnalyzer(Substitute.For<IDataTypeParser>());
+            var sut = CreateDefaultSut();
 
             var modelNode = new ModelNode();
             modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>("Account"));
@@ -34,7 +32,7 @@ namespace Dash.Tests.Engine
         public void Visit_ModelNode_ContainsDuplicateEntityName_ShouldResultInError()
         {
             // Arrange
-            var sut = new DefaultSemanticAnalyzer(Substitute.For<IDataTypeParser>());
+            var sut = CreateDefaultSut();
 
                 var modelNode = new ModelNode();
             modelNode.EntityDeclarations.Add(new EntityDeclarationNode("Account"));
@@ -58,7 +56,7 @@ namespace Dash.Tests.Engine
         public void Visit_EntityDeclarationNode_WithNullOrWhitespaceName_ShouldResultInError(string name)
         {
             // Arrange
-            var sut = new DefaultSemanticAnalyzer(Substitute.For<IDataTypeParser>());
+            var sut = CreateDefaultSut();
 
             var entityDeclarationNode = new EntityDeclarationNode(name);
 
@@ -82,7 +80,7 @@ namespace Dash.Tests.Engine
         public void Visit_EntityDeclarationNode_WithNonAllowedCharacters_ShouldResultInError(string name)
         {
             // Arrange
-            var sut = new DefaultSemanticAnalyzer(Substitute.For<IDataTypeParser>());
+            var sut = CreateDefaultSut();
 
             var entityDeclarationNode = new EntityDeclarationNode(name);
 
@@ -93,7 +91,7 @@ namespace Dash.Tests.Engine
             sut.Errors.Should().SatisfyRespectively(
                 first =>
                 {
-                    first.Should().Be("Entity name must be alphanumeric and cannot start with a number");
+                    first.Should().Be($"'{name}' is an invalid name. You can only use alphanumeric characters, and it cannot start with a number");
                 });
         }
 
@@ -101,7 +99,7 @@ namespace Dash.Tests.Engine
         public void Visit_EntityDeclarationNode_ContainsDuplicateAttributeNames_ShouldResultInError()
         {
             // Arrange
-            var sut = new DefaultSemanticAnalyzer(Substitute.For<IDataTypeParser>());
+            var sut = CreateDefaultSut();
 
             var entityDeclarationNode = new EntityDeclarationNode("Account");
             entityDeclarationNode.AddAttributeDeclaration("Id", "Int");
@@ -119,13 +117,38 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
+        public void Visit_EntityDeclarationNode_InheritedEntityNotFound_ShouldResultInError()
+        {
+            // Arrange
+            var symbolCollector = Substitute.For<ISymbolCollector>();
+            symbolCollector.EntityExists("User").Returns(false);
+
+            var sut = new DefaultSemanticAnalyzer(
+                Substitute.For<IDataTypeParser>(),
+                symbolCollector,
+                Substitute.For<IReservedSymbolProvider>());
+
+            // Act
+            sut.Visit(new EntityDeclarationNode("Account") { InheritedEntity = "User" });
+
+            // Assert
+            sut.Errors.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Should().Be("Entity 'Account' wants to inherit unknown entity 'User'");
+                });
+        }
+
+        [Fact]
         public void Visit_AttributeDeclarationNode_ThrowsInvalidDataTypeException_ShouldResultInError()
         {
             // Arrange
             var parser = Substitute.For<IDataTypeParser>();
             parser.Parse("Invalid").Returns(x => throw new InvalidDataTypeException("Invalid"));
 
-            var sut = new DefaultSemanticAnalyzer(parser);
+            var sut = new DefaultSemanticAnalyzer(parser,
+                Substitute.For<ISymbolCollector>(),
+                Substitute.For<IReservedSymbolProvider>());
 
             // Act
             sut.Visit(new AttributeDeclarationNode(new EntityDeclarationNode("Parent"),  "Id", "Invalid"));
@@ -138,48 +161,54 @@ namespace Dash.Tests.Engine
                 });
         }
 
-        //[Fact]
-        //public void Analyze_InheritUnknownEntity_ShouldProduceError()
-        //{
-        //    // Arrange
-        //    var sut = new DefaultSemanticAnalyzer();
+        [Fact]
+        public void Visit_EntityDeclarationNode_SelfInheritance_ShouldResultInError()
+        {
+            // Arrange
+            var symbolCollector = Substitute.For<ISymbolCollector>();
+            symbolCollector.EntityExists("Account").Returns(true);
 
-        //    var model = new Model();
-        //    model.Entities.Add(
-        //        new Entity("MyEntity")
-        //        {
-        //            Inherits = "SuperEntity"
-        //        }
-        //    );
+            var sut = new DefaultSemanticAnalyzer(
+                Substitute.For<IDataTypeParser>(),
+                symbolCollector,
+                Substitute.For<IReservedSymbolProvider>());
 
-        //    // Act
-        //    var result = sut.Analyze(model).ToList();
+            sut.Visit(new EntityDeclarationNode("Account") { InheritedEntity = "Account" });
 
-        //    // Assert
-        //    result.Count().Should().Be(1);
-        //    result.Should().Contain("Unknown Entity Inheritance: 'MyEntity' wants to inherit unknown entity 'SuperEntity'");
-        //}
+            sut.Errors.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Should().Be("Self-inheritance not allowed: 'Account'");
+                });
+        }
 
-        //[Fact]
-        //public void Analyze_EntityInheritingItself_ShouldProduceError()
-        //{
-        //    // Arrange
-        //    var sut = new DefaultSemanticAnalyzer();
+        [Fact]
+        public void Visit_EntityDeclarationNode_ReservedEntityNameUsed_ShouldResultInError()
+        {
+            // Arrange
+            var reservedSymbolProvider = Substitute.For<IReservedSymbolProvider>();
+            reservedSymbolProvider.IsReservedEntityName("Account").Returns(true);
 
-        //    var model = new Model();
-        //    model.Entities.Add(
-        //        new Entity("MyEntity")
-        //        {
-        //            Inherits = "MyEntity"
-        //        }
-        //    );
+            var sut = new DefaultSemanticAnalyzer(
+                Substitute.For<IDataTypeParser>(),
+                Substitute.For<ISymbolCollector>(),
+                reservedSymbolProvider);
 
-        //    // Act
-        //    var result = sut.Analyze(model).ToList();
+            sut.Visit(new EntityDeclarationNode("Account"));
 
-        //    // Assert
-        //    result.Count().Should().Be(1);
-        //    result.Should().Contain("Self-Inheritance Not Allowed: 'MyEntity'");
-        //}
+            sut.Errors.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Should().Be("'Account' is a reserved name and cannot be used as an entity name.");
+                });
+        }
+
+        private static DefaultSemanticAnalyzer CreateDefaultSut()
+        {
+            return new DefaultSemanticAnalyzer(
+                Substitute.For<IDataTypeParser>(),
+                Substitute.For<ISymbolCollector>(),
+                Substitute.For<IReservedSymbolProvider>());
+        }
     }
 }

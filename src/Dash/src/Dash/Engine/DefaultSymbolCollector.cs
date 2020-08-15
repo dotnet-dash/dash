@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Dash.Engine.Abstractions;
+using Dash.Extensions;
 using Dash.Nodes;
 
 namespace Dash.Engine
@@ -47,6 +48,12 @@ namespace Dash.Engine
             return _allEntities.TryGetValue(entityName, out var result)
                 ? result
                 : new HashSet<string>();
+        }
+
+        public bool EntityExists(string entityName)
+        {
+            var entity = GetEntityNames().FirstOrDefault(e => e.IsSame(entityName));
+            return entity != null;
         }
     }
 }

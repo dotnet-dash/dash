@@ -5,7 +5,7 @@ namespace Dash.Nodes
 {
     public class EntityDeclarationNode : AstNode
     {
-        private List<AttributeDeclarationNode> _attributeDeclarations = new List<AttributeDeclarationNode>();
+        private readonly List<AttributeDeclarationNode> _attributeDeclarations = new List<AttributeDeclarationNode>();
 
         public EntityDeclarationNode(string name)
         {
@@ -13,6 +13,8 @@ namespace Dash.Nodes
         }
 
         public string Name { get; }
+
+        public string? InheritedEntity { get; set; }
 
         public IEnumerable<AttributeDeclarationNode> AttributeDeclarations => _attributeDeclarations;
 
