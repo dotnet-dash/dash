@@ -6,4 +6,9 @@ namespace Dash.Engine.Abstractions
     {
         Model Parse(string sourceCode);
     }
+
+    public interface IParser2
+    {
+        ModelNode Parse(string sourceCode);
+    }
 }

@@ -48,7 +48,7 @@ namespace Dash
             services.AddSingleton<DashApplication>();
             services.AddSingleton<IGenerator, DefaultGenerator>();
             services.AddSingleton<ISemanticAnalyzer, DefaultSemanticAnalyzer>();
-            services.AddSingleton<IParser, JsonParser>();
+            //services.AddSingleton<IParser, JsonParser>();
             services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
