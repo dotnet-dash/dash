@@ -47,13 +47,27 @@ namespace Dash.Engine.JsonParser
 
             foreach (var property in objectProperties)
             {
-                ProcessRelationshipProperty(property, "@@Has", node => entityDeclarationNode.SingleEntityReferences.Add(node));
-                ProcessRelationshipProperty(property, "@@Has Many", node => entityDeclarationNode.CollectionEntityReferences.Add(node));
-                ProcessRelationshipProperty(property, "@@Has And Belongs To Many", node => entityDeclarationNode.CollectionEntityReferences.Add(node));
+                ProcessRelationshipProperty(property, "@@Has",
+                    entityDeclarationNode, (name, referencedEntity) =>
+                    {
+                        entityDeclarationNode.Has.Add(new HasReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
+                    });
+
+                ProcessRelationshipProperty(property, "@@Has Many",
+                    entityDeclarationNode, (name, referencedEntity) =>
+                    {
+                        entityDeclarationNode.HasMany.Add(new HasManyReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
+                    });
+
+                ProcessRelationshipProperty(property, "@@Has And Belongs To Many",
+                    entityDeclarationNode, (name, referencedEntity) =>
+                    {
+                        entityDeclarationNode.HasAndBelongsToMany.Add(new HasAndBelongsToManyDeclarationNode(entityDeclarationNode, name, referencedEntity));
+                    });
             }
         }
 
-        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<ReferenceDeclarationNode> func)
+        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, EntityDeclarationNode parent, Action<string, string> func)
         {
             if (objectProperty.Name.IsSame(relationship))
             {
@@ -61,14 +75,14 @@ namespace Dash.Engine.JsonParser
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateObject())
                     {
-                        func(new ReferenceDeclarationNode(hasProperty.Name, hasProperty.Value.GetString()));
+                        func(hasProperty.Name, hasProperty.Value.GetString());
                     }
                 }
                 else if (objectProperty.Value.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateArray())
                     {
-                        func(new ReferenceDeclarationNode(hasProperty.GetString(), hasProperty.GetString()));
+                        func(hasProperty.GetString(), hasProperty.GetString());
                     }
                 }
             }

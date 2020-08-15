@@ -1,22 +1,18 @@
-﻿using Dash.Engine.Abstractions;
-
-namespace Dash.Nodes
+﻿namespace Dash.Nodes
 {
-    public class ReferenceDeclarationNode : AstNode
+    public abstract class ReferenceDeclarationNode : AstNode
     {
-        public ReferenceDeclarationNode(string name, string referencedEntity)
+        protected ReferenceDeclarationNode(EntityDeclarationNode parent, string name, string referencedEntity)
         {
+            Parent = parent;
             Name = name;
             ReferencedEntity = referencedEntity;
         }
 
+        public EntityDeclarationNode Parent { get; }
+
         public string Name { get; }
 
         public string ReferencedEntity { get; }
-
-        public override void Accept(INodeVisitor visitor)
-        {
-            visitor.Visit(this);
-        }
     }
 }

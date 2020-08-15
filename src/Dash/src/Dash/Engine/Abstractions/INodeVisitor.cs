@@ -7,6 +7,8 @@ namespace Dash.Engine.Abstractions
         void Visit(ModelNode node);
         void Visit(EntityDeclarationNode node);
         void Visit(AttributeDeclarationNode node);
-        void Visit(ReferenceDeclarationNode node);
+        void Visit(HasReferenceDeclarationNode node);
+        void Visit(HasManyReferenceDeclarationNode node);
+        void Visit(HasAndBelongsToManyDeclarationNode node);
     }
 }

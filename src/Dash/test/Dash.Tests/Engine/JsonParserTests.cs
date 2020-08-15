@@ -107,7 +107,7 @@ namespace Dash.Tests.Engine
                 first =>
                 {
                     first.Name.Should().Be("Person");
-                    first.SingleEntityReferences.Should().SatisfyRespectively(
+                    first.Has.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("CountryOfBirth");
@@ -122,7 +122,9 @@ namespace Dash.Tests.Engine
                 second =>
                 {
                     second.Name.Should().Be("Country");
-                    second.CollectionEntityReferences.Should().BeEmpty();
+                    second.Has.Should().BeEmpty();
+                    second.HasMany.Should().BeEmpty();
+                    second.HasAndBelongsToMany.Should().BeEmpty();
                 }
             );
         }
@@ -138,7 +140,7 @@ namespace Dash.Tests.Engine
                 first =>
                 {
                     first.Name.Should().Be("Person");
-                    first.SingleEntityReferences.Should().SatisfyRespectively(
+                    first.Has.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("MotherTongue");
@@ -153,7 +155,9 @@ namespace Dash.Tests.Engine
                 second =>
                 {
                     second.Name.Should().Be("Language");
-                    second.CollectionEntityReferences.Should().BeEmpty();
+                    second.Has.Should().BeEmpty();
+                    second.HasMany.Should().BeEmpty();
+                    second.HasAndBelongsToMany.Should().BeEmpty();
                 }
             );
         }
@@ -169,12 +173,14 @@ namespace Dash.Tests.Engine
                 first =>
                 {
                     first.Name.Should().Be("Order");
-                    first.CollectionEntityReferences.Should().SatisfyRespectively(
+                    first.Has.Should().BeEmpty();
+                    first.HasMany.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("OrderLine");
                             a.ReferencedEntity.Should().Be("OrderLine");
                         });
+                    first.HasAndBelongsToMany.Should().BeEmpty();
                 },
                 second =>
                 {
@@ -201,8 +207,8 @@ namespace Dash.Tests.Engine
                 {
                     first.Name.Should().Be("Order");
                     first.AttributeDeclarations.Should().BeEmpty();
-                    first.SingleEntityReferences.Should().BeEmpty();
-                    first.CollectionEntityReferences.Should().SatisfyRespectively(
+                    first.Has.Should().BeEmpty();
+                    first.HasAndBelongsToMany.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("Product");
@@ -218,8 +224,9 @@ namespace Dash.Tests.Engine
                             a.AttributeName.Should().Be("Description");
                             a.AttributeDataType.Should().Be("String");
                         });
-                    second.SingleEntityReferences.Should().BeEmpty();
-                    second.CollectionEntityReferences.Should().BeEmpty();
+                    second.Has.Should().BeEmpty();
+                    second.HasMany.Should().BeEmpty();
+                    second.HasAndBelongsToMany.Should().BeEmpty();
                 });
         }
 

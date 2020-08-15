@@ -38,6 +38,18 @@ namespace Dash.Engine
         {
         }
 
+        public void Visit(HasReferenceDeclarationNode node)
+        {
+        }
+
+        public void Visit(HasManyReferenceDeclarationNode node)
+        {
+        }
+
+        public void Visit(HasAndBelongsToManyDeclarationNode node)
+        {
+        }
+
         public HashSet<string> GetEntityNames()
         {
             return _allEntities.Select(e => e.Key).ToHashSet();

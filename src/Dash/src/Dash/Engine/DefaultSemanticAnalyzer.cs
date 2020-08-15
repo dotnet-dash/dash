@@ -89,6 +89,18 @@ namespace Dash.Engine
             }
         }
 
+        public void Visit(HasReferenceDeclarationNode node)
+        {
+        }
+
+        public void Visit(HasManyReferenceDeclarationNode node)
+        {
+        }
+
+        public void Visit(HasAndBelongsToManyDeclarationNode node)
+        {
+        }
+
         private void ValidateDuplicateEntityDeclarations(ModelNode node)
         {
             var duplicateNames = node.EntityDeclarations

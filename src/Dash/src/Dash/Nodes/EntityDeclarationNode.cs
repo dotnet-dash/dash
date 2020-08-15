@@ -18,9 +18,11 @@ namespace Dash.Nodes
 
         public IEnumerable<AttributeDeclarationNode> AttributeDeclarations => _attributeDeclarations;
 
-        public IList<ReferenceDeclarationNode> SingleEntityReferences { get; } = new List<ReferenceDeclarationNode>();
+        public IList<HasReferenceDeclarationNode> Has { get; } = new List<HasReferenceDeclarationNode>();
 
-        public IList<ReferenceDeclarationNode> CollectionEntityReferences { get; } = new List<ReferenceDeclarationNode>();
+        public IList<HasManyReferenceDeclarationNode> HasMany { get; } = new List<HasManyReferenceDeclarationNode>();
+
+        public IList<HasAndBelongsToManyDeclarationNode> HasAndBelongsToMany { get; } = new List<HasAndBelongsToManyDeclarationNode>();
 
         public override void Accept(INodeVisitor visitor)
         {
@@ -31,6 +33,12 @@ namespace Dash.Nodes
         {
             var attribute = new AttributeDeclarationNode(this, attributeName, attributeDataType);
             _attributeDeclarations.Add(attribute);
+        }
+
+        public void AddHasDeclaration(string name, string referencedEntity)
+        {
+            var has = new HasReferenceDeclarationNode(this, name, referencedEntity);
+            Has.Add(has);
         }
     }
 }
