@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.IO;
-using Dash.Engine.Abstractions;
 using Dash.Engine.JsonParser;
-using Dash.Engine.LanguageProviders;
 using FluentAssertions;
 using Xunit;
 
@@ -14,11 +11,7 @@ namespace Dash.Tests
 
         public JsonParserTests()
         {
-            var dataTypeParser = new DataTypeParser(new List<ILanguageProvider>
-            {
-                new CSharpLanguageProvider(),
-                new SqlServerLanguageProvider(),
-            });
+            var dataTypeParser = new DataTypeParser();
 
             _sut = new JsonParser(dataTypeParser);
         }

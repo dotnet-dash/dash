@@ -1,62 +1,90 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Dash.Engine.Abstractions;
-using Dash.Extensions;
+using Dash.Exceptions;
 using Dash.Nodes;
 
 namespace Dash.Engine
 {
     public class DefaultSemanticAnalyzer : ISemanticAnalyzer
     {
-        private readonly HashSet<string> _analysisErrors = new HashSet<string>();
+        private readonly IDataTypeParser _dataTypeParser;
+        private readonly List<string> _errors = new List<string>();
 
-        public IEnumerable<string> Analyze(Model model)
+        public IEnumerable<string> Errors => _errors;
+
+        public DefaultSemanticAnalyzer(IDataTypeParser dataTypeParser)
         {
-            _analysisErrors.Clear();
-
-            foreach (var entity in model.Entities)
-            {
-                ValidateName(entity.Name);
-                ValidateMultipleDeclaration(model, entity.Name);
-            }
-
-            ValidateInherits(model);
-
-            return _analysisErrors;
+            _dataTypeParser = dataTypeParser;
         }
 
-        private void ValidateName(string entityName)
+        public void Visit(ModelNode node)
         {
-            if (string.IsNullOrWhiteSpace(entityName))
+            ValidateDuplicateEntityDeclarations(node);
+
+            foreach (var declaration in node.EntityDeclarations)
             {
-                _analysisErrors.Add("Entity Name Cannot Be Null, Empty, or Whitespaces");
+                declaration.Accept(this);
             }
         }
 
-        private void ValidateMultipleDeclaration(Model model, string entityName)
+        public void Visit(EntityDeclarationNode node)
         {
-            var count = model.Entities.Count(e => e.Name.IsSame(entityName));
-
-            if (count > 1)
+            if (string.IsNullOrWhiteSpace(node.Name))
             {
-                _analysisErrors.Add($"Entity Declared Multiple Times: '{entityName}' ({count} times)");
+                _errors.Add("Entity name cannot be null, empty or contain only white-spaces");
+                return;
+            }
+
+            if (!Regex.IsMatch(node.Name, "^([a-zA-Z]+[a-zA-Z0-9]*)$"))
+            {
+                _errors.Add("Entity name must be alphanumeric and cannot start with a number");
+            }
+
+            ValidateDuplicateAttributeDeclarations(node);
+        }
+
+        public void Visit(AttributeDeclarationNode node)
+        {
+            try
+            {
+                _dataTypeParser.Parse(node.AttributeDataType);
+            }
+            catch (InvalidDataTypeException exception)
+            {
+                _errors.Add(exception.Message);
             }
         }
 
-        private void ValidateInherits(Model model)
+        public void Visit(ReferenceDeclarationNode node)
         {
-            foreach (var entity in model.Entities.Where(e => e.Inherits != null))
-            {
-                if (entity.Name.IsSame(entity.Inherits))
-                {
-                    _analysisErrors.Add($"Self-Inheritance Not Allowed: '{entity.Name}'");
-                }
+            // Validate that referenced entity exists
+        }
 
-                var nameOccurence = model.Entities.Count(e => e.Name.IsSame(entity.Inherits));
-                if (nameOccurence == 0)
-                {
-                    _analysisErrors!.Add($"Unknown Entity Inheritance: '{entity.Name}' wants to inherit unknown entity '{entity.Inherits}'");
-                }
+        private void ValidateDuplicateEntityDeclarations(ModelNode node)
+        {
+            var duplicateNames = node.EntityDeclarations
+                .GroupBy(e => e.Name)
+                .Where(e => e.Count() > 1)
+                .Select(e => e.Key);
+
+            foreach (var item in duplicateNames)
+            {
+                _errors.Add($"Model contains duplicate declarations for entity '{item}'");
+            }
+        }
+
+        private void ValidateDuplicateAttributeDeclarations(EntityDeclarationNode expression)
+        {
+            var duplicateAttributeNames = expression.AttributeDeclarations
+                .GroupBy(e => e.AttributeName)
+                .Where(e => e.Count() > 1)
+                .Select(e => e.Key);
+
+            foreach (var item in duplicateAttributeNames)
+            {
+                _errors.Add($"Entity '{expression.Name}' contains duplicate declarations for attribute '{item}'");
             }
         }
     }

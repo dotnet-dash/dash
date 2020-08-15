@@ -1,6 +1,4 @@
-﻿using Dash.Engine.Abstractions;
-using Dash.Engine.JsonParser;
-using Dash.Engine.LanguageProviders;
+﻿using Dash.Engine.JsonParser;
 using FluentAssertions;
 using Xunit;
 
@@ -12,25 +10,21 @@ namespace Dash.Tests
 
         public DataTypeParserTests()
         {
-            _sut = new DataTypeParser(new ILanguageProvider[]
-            {
-                new CSharpLanguageProvider(),
-                new SqlServerLanguageProvider(),
-            });
+            _sut = new DataTypeParser();
         }
 
         [Fact]
         public void Parse_ConstraintsNotSpecified_AllConstraintsShouldBeDefault()
         {
             // Act
-            var attribute = _sut.Parse("Name", "unicode");
+            var result = _sut.Parse("unicode");
 
             // Assert
-            attribute.IsNullable.Should().BeFalse();
-            attribute.Length.Should().BeNull();
-            attribute.DataTypeRegularExpression.Should().BeNull();
-            attribute.RangeLowerBound.Should().BeNull();
-            attribute.RangeUpperBound.Should().BeNull();
+            result.IsNullable.Should().BeFalse();
+            result.Length.Should().BeNull();
+            result.DataTypeRegularExpression.Should().BeNull();
+            result.RangeLowerBound.Should().BeNull();
+            result.RangeUpperBound.Should().BeNull();
         }
 
         [Theory]
@@ -39,13 +33,10 @@ namespace Dash.Tests
         public void Parse_NullableIsSpecified_IsNullableShouldBeTrue(string dataTypeSpecification)
         {
             // Act
-            var attribute = _sut.Parse("Name", dataTypeSpecification);
+            var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            attribute.Name.Should().Be("Name");
-            attribute.CodeDataType.Should().Be("string");
-            attribute.DatabaseDataType.Should().Be("nvarchar");
-            attribute.IsNullable.Should().BeTrue();
+            result.IsNullable.Should().BeTrue();
         }
 
         [Theory]
@@ -55,20 +46,20 @@ namespace Dash.Tests
         public void Parse_LengthSpecified_LengthShouldBeSet(string dataTypeSpecification, int expectedLength)
         {
             // Act
-            var attribute = _sut.Parse("Name", dataTypeSpecification);
+            var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            attribute.Length.Should().Be(expectedLength);
+            result.Length.Should().Be(expectedLength);
         }
 
         [Fact]
         public void Parse_DefaultValueSpecified_DefaultValueShouldBeSet()
         {
             // Act
-            var attribute = _sut.Parse("Name", "unicode(==John Doe)");
+            var result = _sut.Parse("unicode(==John Doe)");
 
             // Assert
-            attribute.DefaultValue.Should().Be("John Doe");
+            result.DefaultValue.Should().Be("John Doe");
         }
 
         [Theory]
@@ -78,11 +69,11 @@ namespace Dash.Tests
         public void Parse_RangeSpecified_RangeShouldBeSet(string dataTypeSpecification, int? expectedLowerBound, int? expectedUpperBound)
         {
             // Act
-            var attribute = _sut.Parse("Age", dataTypeSpecification);
+            var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            attribute.RangeLowerBound.Should().Be(expectedLowerBound);
-            attribute.RangeUpperBound.Should().Be(expectedUpperBound);
+            result.RangeLowerBound.Should().Be(expectedLowerBound);
+            result.RangeUpperBound.Should().Be(expectedUpperBound);
         }
 
         [Theory]
@@ -90,27 +81,26 @@ namespace Dash.Tests
         public void Parse_RegularExpressionSpecified_RegularExpressionShouldBeSet(string dataTypeSpecification, string expectedRegularExpression)
         {
             // Act
-            var attribute = _sut.Parse("Username", dataTypeSpecification);
+            var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            attribute.DataTypeRegularExpression.Should().Be(expectedRegularExpression);
+            result.DataTypeRegularExpression.Should().Be(expectedRegularExpression);
         }
 
         [Fact]
         public void Parse_ComplexSpecification_ShouldParseCorrectly()
         {
             // Act
-            var attribute = _sut.Parse("Username", "string[200]?(==unknown):[a-zA-Z0-9]");
+            var result = _sut.Parse("string[200]?(==unknown):[a-zA-Z0-9]");
 
             // Assert
-            attribute.Name.Should().Be("Username");
-            attribute.CodeDataType.Should().Be("string");
-            attribute.Length.Should().Be(200);
-            attribute.IsNullable.Should().BeTrue();
-            attribute.DefaultValue.Should().Be("unknown");
-            attribute.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
-            attribute.RangeLowerBound.Should().BeNull();
-            attribute.RangeUpperBound.Should().BeNull();
+            result.DataType.Should().Be("string");
+            result.Length.Should().Be(200);
+            result.IsNullable.Should().BeTrue();
+            result.DefaultValue.Should().Be("unknown");
+            result.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
+            result.RangeLowerBound.Should().BeNull();
+            result.RangeUpperBound.Should().BeNull();
         }
     }
 }

@@ -35,18 +35,18 @@ namespace Dash.Application
                 return;
             }
 
-            var semanticErrors = _semanticAnalyzer.Analyze(model);
-            if (semanticErrors.Any())
-            {
-                foreach (var error in semanticErrors)
-                {
-                    Console.Error.WriteLine(error);
-                }
+            //var semanticErrors = _semanticAnalyzer.Analyze(model);
+            //if (semanticErrors.Any())
+            //{
+            //    foreach (var error in semanticErrors)
+            //    {
+            //        Console.Error.WriteLine(error);
+            //    }
 
-                return;
-            }
+            //    return;
+            //}
 
-            await _generator.Generate(model);
+            //await _generator.Generate(model);
         }
     }
 }

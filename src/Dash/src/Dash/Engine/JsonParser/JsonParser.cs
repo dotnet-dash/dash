@@ -97,7 +97,7 @@ namespace Dash.Engine.JsonParser
             {
                 if (attribute.Value.ValueKind == JsonValueKind.String)
                 {
-                    entityDeclarationNode.AttributeDeclarations.Add(new AttributeDeclarationNode(attribute.Name, attribute.Value.GetString()));
+                    entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString());
                 }
             }
         }

@@ -1,46 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
-using Attribute = Dash.Nodes.Attribute;
 
 namespace Dash.Engine.JsonParser
 {
-    public class DataTypeParser
+    public class DataTypeParser : IDataTypeParser
     {
-        private readonly ILanguageProvider _codeLanguageProvider;
-        private readonly ILanguageProvider _dataLanguageProvider;
-
-        public DataTypeParser(IEnumerable<ILanguageProvider> languageProvider)
-        {
-            var languageProviderList = languageProvider.ToList();
-
-            _codeLanguageProvider = languageProviderList.Single(e => e.Name == "cs");
-            _dataLanguageProvider = languageProviderList.SingleOrDefault(e => e.Name == "sqlserver");
-        }
-
-        public Attribute Parse(string name, string dataTypeSpecification)
+        public DataTypeParserResult Parse(string dataTypeSpecification)
         {
             if (TryFindMatch("^([a-zA-Z_0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
             {
-                var result = new Attribute
-                {
-                    Name = name,
-                    CodeDataType = _codeLanguageProvider.Translate(dashDataType!),
-                    DatabaseDataType = _dataLanguageProvider.Translate(dashDataType!),
-                };
+                var result = new DataTypeParserResult(dashDataType!);
 
                 ParseConstraints(result, remainingSpecification);
 
                 return result;
             }
 
-            throw new ParserException($"The specified DataType is invalid: '{dataTypeSpecification}'");
+            throw new InvalidDataTypeException(dataTypeSpecification);
         }
 
-        private void ParseConstraints(Attribute attribute, string constraints)
+        private void ParseConstraints(DataTypeParserResult result, string constraints)
         {
             var alreadyProcessed = "";
 
@@ -56,20 +37,20 @@ namespace Dash.Engine.JsonParser
                 switch (constraints[0])
                 {
                     case ':':
-                        attribute.DataTypeRegularExpression = constraints.Substring(1);
+                        result.DataTypeRegularExpression = constraints.Substring(1);
                         return;
 
                     case '?':
-                        attribute.IsNullable = true;
+                        result.IsNullable = true;
                         constraints = constraints.Substring(1);
                         break;
 
                     case '[':
-                        ParseLength(attribute, constraints, out constraints);
+                        ParseLength(result, constraints, out constraints);
                         break;
 
                     case '(':
-                        ParseDefaultValue(attribute, constraints, out constraints);
+                        ParseDefaultValue(result, constraints, out constraints);
                         break;
 
                     default:
@@ -78,12 +59,12 @@ namespace Dash.Engine.JsonParser
             }
         }
 
-        private void ParseLength(Attribute attribute, string value, out string remaining)
+        private void ParseLength(DataTypeParserResult result, string value, out string remaining)
         {
             if (TryFindMatch(@"^(\[\d+\])", value, out var foundValue, out remaining))
             {
                 foundValue = foundValue![1..^1];
-                attribute.Length = int.Parse(foundValue);
+                result.Length = int.Parse(foundValue);
                 return;
             }
 
@@ -93,17 +74,17 @@ namespace Dash.Engine.JsonParser
                 var ranges = foundValue.Split("..");
                 if (ranges.Length == 2)
                 {
-                    attribute.RangeLowerBound = ranges[0] == string.Empty ? (int?)null : int.Parse(ranges[0]);
-                    attribute.RangeUpperBound = ranges[1] == string.Empty ? (int?)null : int.Parse(ranges[1]);
+                    result.RangeLowerBound = ranges[0] == string.Empty ? (int?)null : int.Parse(ranges[0]);
+                    result.RangeUpperBound = ranges[1] == string.Empty ? (int?)null : int.Parse(ranges[1]);
                 }
             }
         }
 
-        private void ParseDefaultValue(Attribute attribute, string value, out string remaining)
+        private void ParseDefaultValue(DataTypeParserResult result, string value, out string remaining)
         {
             if (TryFindMatch(@"^(\(==.+\))", value, out var parsedValue, out remaining))
             {
-                attribute.DefaultValue = parsedValue![3..^1];
+                result.DefaultValue = parsedValue![3..^1];
             }
         }
 

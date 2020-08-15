@@ -3,8 +3,8 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Abstractions
 {
-    public interface ISemanticAnalyzer
+    public interface ISemanticAnalyzer : INodeVisitor
     {
-        IEnumerable<string> Analyze(Model model);
+        IEnumerable<string> Errors { get; }
     }
 }

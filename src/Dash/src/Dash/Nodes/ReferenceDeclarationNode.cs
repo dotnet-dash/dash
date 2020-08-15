@@ -1,4 +1,6 @@
-﻿namespace Dash.Nodes
+﻿using Dash.Engine.Abstractions;
+
+namespace Dash.Nodes
 {
     public class ReferenceDeclarationNode : AstNode
     {
