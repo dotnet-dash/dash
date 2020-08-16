@@ -7,7 +7,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nnn // {{ Namespace }}
 {{{#tnls}}
-{{#each Entities}}
+{{#each Entities}}{{#tnls}}
+{{#if CodeGeneration}}
     public partial class {{ Name }}
     {{{#tnls}}
 {{#each CodeAttributes}}{{#tnls}}
@@ -26,5 +27,6 @@ namespace Nnn // {{ Namespace }}
         public ICollection<{{ EntityModel }}> {{ ReferenceName }} { get; set; }{{#tnls}}
 {{/each}}
     }
+{{/if}}{{#tnls}}
 {{/each}}{{#tnls}}
 }

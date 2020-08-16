@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
 using Dash.Extensions;
@@ -29,7 +30,6 @@ namespace Dash.Engine.Visitors
         {
             var model = new EntityModel(node.Name);
             _modelRepository.Add(model);
-
             base.Visit(node);
         }
 
@@ -40,9 +40,11 @@ namespace Dash.Engine.Visitors
             var codeDataType = _codeLanguageProvider.Translate(result.DataType);
             var databaseDataType = _databaseLanguageProvider.Translate(result.DataType);
 
-            var entityModel = _modelRepository.Get(node.Parent.Name);
-            entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
-            entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
+            if (_modelRepository.TryGet(node.Parent.Name, out var entityModel))
+            {
+                entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable, result.DefaultValue));
+                entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable, result.DefaultValue));
+            }
 
             base.Visit(node);
         }

@@ -17,6 +17,14 @@ namespace Nnn // {{ Namespace }}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+        {{#each Entities}}
+        {{#each CodeAttributes}}
+            // {{ Name }}
+            // {{#if DefaultValue }}
+            // default value: {{ DefaultValue }}
+            // {{/if}}
+        {{/each}}
+        {{/each}}
         }
     }
 }
