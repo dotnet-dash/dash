@@ -8,7 +8,6 @@ using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
 using Dash.Engine.JsonParser;
 using Dash.Engine.LanguageProviders;
-using Dash.Engine.Models;
 using Dash.Engine.Template;
 using Dash.Engine.Visitors;
 using Microsoft.Extensions.DependencyInjection;
@@ -76,7 +75,8 @@ namespace Dash
 
         private static void RegisterNodeVisitors(ServiceCollection services)
         {
-            services.AddSingleton<INodeVisitor, PostParsingVisitor>();
+            services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
+            services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
             services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
             services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
             services.AddSingleton<INodeVisitor, DefaultModelBuilder>();

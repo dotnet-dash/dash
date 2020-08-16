@@ -5,14 +5,14 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class PostParsingVisitor : BaseVisitor
+    public class SetInheritanceVisitor : BaseVisitor
     {
         private const string BaseEntityName = "Base";
         private const string BaseEntityIdAttributeName = "Id";
         private const string BaseEntityIdAttributeDataType = "Int";
         private readonly IConsole _console;
 
-        public PostParsingVisitor(IConsole console)
+        public SetInheritanceVisitor(IConsole console)
         {
             _console = console;
         }

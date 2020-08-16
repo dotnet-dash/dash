@@ -49,9 +49,6 @@ namespace Dash.Engine.Visitors
         public override void Visit(HasAndBelongsToManyDeclarationNode node)
         {
             var joinedEntity = new JoinedEntityModel(node.Parent.Name, node.ReferencedEntity);
-            joinedEntity.SingleReferences.Add(new ReferencedEntityModel(node.Parent.Name, node.Parent.Name, false));
-            joinedEntity.SingleReferences.Add(new ReferencedEntityModel(node.ReferencedEntity, node.ReferencedEntity, false));
-            _modelRepository.Add(joinedEntity);
 
             var referencedEntityModel = new ReferencedEntityModel(joinedEntity.Name, joinedEntity.Name, false);
 

@@ -13,17 +13,9 @@ namespace Dash.Extensions
             return enumerable.Contains(value, StringComparer.OrdinalIgnoreCase);
         }
 
-        public static void Visit(this IEnumerable<INodeVisitor> visitors, ModelNode modelNode)
-        {
-            foreach (var visitor in visitors)
-            {
-                visitor.Visit(modelNode);
-            }
-        }
-
         public static void Accept<T>(this IEnumerable<T> nodes, INodeVisitor visitor) where T : AstNode
         {
-            foreach (var entityDeclaration in nodes)
+            foreach (var entityDeclaration in nodes.ToList())
             {
                 entityDeclaration.Accept(visitor);
             }

@@ -184,23 +184,6 @@ namespace Dash.Tests.Engine
                             a.EntityModel.Should().Be("OrderProduct");
                             a.IsNullable.Should().BeFalse();
                         });
-                },
-                third =>
-                {
-                    third.Name.Should().Be("OrderProduct");
-                    third.SingleReferences.Should().SatisfyRespectively(
-                        a =>
-                        {
-                            a.ReferenceName.Should().Be("Order");
-                            a.EntityModel.Should().Be("Order");
-                            a.IsNullable.Should().BeFalse();
-                        },
-                        b =>
-                        {
-                            b.ReferenceName.Should().Be("Product");
-                            b.EntityModel.Should().Be("Product");
-                            b.IsNullable.Should().BeFalse();
-                        });
                 });
         }
     }
