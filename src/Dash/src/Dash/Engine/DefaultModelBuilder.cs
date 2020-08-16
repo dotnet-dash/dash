@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
@@ -11,36 +10,30 @@ namespace Dash.Engine
     public class DefaultModelBuilder : IModelBuilder
     {
         private readonly IDataTypeParser _dataTypeParser;
-        private readonly IEntityReferenceValueParser _entityReferenceValueParser;
-        private readonly IDictionary<string, EntityModel> _entityModels = new Dictionary<string, EntityModel>(StringComparer.OrdinalIgnoreCase);
+        private readonly IModelRepository _modelRepository;
         private readonly ILanguageProvider _codeLanguageProvider;
         private readonly ILanguageProvider _databaseLanguageProvider;
 
-        public IEnumerable<EntityModel> EntityModels => _entityModels.Select(e => e.Value).ToList();
-
         public DefaultModelBuilder(
             IDataTypeParser dataTypeParser,
-            IEntityReferenceValueParser entityReferenceValueParser,
-            IEnumerable<ILanguageProvider> languageProviders)
+            IEnumerable<ILanguageProvider> languageProviders,
+            IModelRepository modelRepository)
         {
             _dataTypeParser = dataTypeParser;
-            _entityReferenceValueParser = entityReferenceValueParser;
+            _modelRepository = modelRepository;
             _codeLanguageProvider = languageProviders.Single(e => e.Name.IsSame("cs"));
             _databaseLanguageProvider = languageProviders.Single(e => e.Name.IsSame("SqlServer"));
         }
 
         public void Visit(ModelNode node)
         {
-            foreach (var entityDeclarationNode in node.EntityDeclarations)
-            {
-                entityDeclarationNode.Accept(this);
-            }
+            node.EntityDeclarations.Accept(this);
         }
 
         public void Visit(EntityDeclarationNode node)
         {
             var model = new EntityModel(node.Name);
-            _entityModels.Add(node.Name, model);
+            _modelRepository.Add(model);
 
             foreach (var attribute in node.AttributeDeclarations)
             {
@@ -70,43 +63,21 @@ namespace Dash.Engine
             var codeDataType = _codeLanguageProvider.Translate(result.DataType);
             var databaseDataType = _databaseLanguageProvider.Translate(result.DataType);
 
-            if (_entityModels.TryGetValue(node.Parent.Name, out var entityModel))
-            {
-                entityModel.CodeAttributeModels.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
-                entityModel.DataAttributeModels.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
-            }
+            var entityModel = _modelRepository.Get(node.Parent.Name);
+            entityModel.CodeAttributeModels.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
+            entityModel.DataAttributeModels.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
         }
 
         public void Visit(HasReferenceDeclarationNode node)
         {
-            var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
-
-            var referencedEntityModel = new ReferencedEntityModel(node.Name, result.EntityName!, result.IsNullable);
-
-            _entityModels[node.Parent.Name].SingleReferences.Add(referencedEntityModel);
         }
 
         public void Visit(HasManyReferenceDeclarationNode node)
         {
-            var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
-
-            var referencedEntityModel = new ReferencedEntityModel(node.Name, result.EntityName!, result.IsNullable);
-            _entityModels[node.Parent.Name].CollectionReferences.Add(referencedEntityModel);
-
-            var singleReference = new ReferencedEntityModel(node.Parent.Name, node.Parent.Name, false);
-            _entityModels[node.ReferencedEntity].SingleReferences.Add(singleReference);
         }
 
         public void Visit(HasAndBelongsToManyDeclarationNode node)
         {
-            var joinedEntity = new JoinedEntityModel(node.Parent.Name, node.ReferencedEntity);
-            joinedEntity.SingleReferences.Add(new ReferencedEntityModel(node.Parent.Name, node.Parent.Name, false));
-            joinedEntity.SingleReferences.Add(new ReferencedEntityModel(node.ReferencedEntity, node.ReferencedEntity, false));
-            _entityModels[joinedEntity.Name] = joinedEntity;
-
-            var referencedEntityModel = new ReferencedEntityModel(joinedEntity.Name, joinedEntity.Name, false);
-            _entityModels[node.Parent.Name].CollectionReferences.Add(referencedEntityModel);
-            _entityModels[node.ReferencedEntity].CollectionReferences.Add(referencedEntityModel);
         }
     }
 }

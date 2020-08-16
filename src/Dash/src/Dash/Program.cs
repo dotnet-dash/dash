@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash
 {
-    class Program
+    public class Program
     {
         static async Task Main(FileInfo file, bool verbose = false)
         {
@@ -46,16 +46,47 @@ namespace Dash
             });
 
             services.AddSingleton<DashApplication>();
-            services.AddSingleton<IGenerator, DefaultGenerator>();
-            services.AddSingleton<ISemanticAnalyzer, DefaultSemanticAnalyzer>();
-            //services.AddSingleton<IParser, JsonParser>();
-            services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
             services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
-            services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
-            services.AddSingleton<DataTypeParser>();
+            services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
+            services.AddSingleton<IGenerator, DefaultGenerator>();
+            services.AddSingleton<IModelRepository, DefaultModelRepository>();
+            RegisterTemplateProviders(services);
+            RegisterValueParsers(services);
+            RegisterNodeVisitors(services);
+            RegisterLanguageProviders(services);
+            RegisterModelBuilders(services);
 
             return services.BuildServiceProvider(true);
+        }
+
+        private static void RegisterTemplateProviders(ServiceCollection services)
+        {
+            services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
+        }
+
+        private static void RegisterValueParsers(ServiceCollection services)
+        {
+            services.AddSingleton<IDataTypeParser, DataTypeParser>();
+            services.AddSingleton<IEntityReferenceValueParser, EntityReferenceValueParser>();
+        }
+
+        private static void RegisterNodeVisitors(ServiceCollection services)
+        {
+            services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
+            services.AddSingleton<ISemanticAnalyzer, DefaultSemanticAnalyzer>();
+            services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
+        }
+
+        private static void RegisterLanguageProviders(ServiceCollection services)
+        {
+            services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
+            services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
+        }
+
+        private static void RegisterModelBuilders(ServiceCollection services)
+        {
+            services.AddSingleton<IModelBuilder, DefaultModelBuilder>();
+            services.AddSingleton<IModelBuilder, ReferenceModelBuilder>();
         }
     }
 }

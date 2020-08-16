@@ -1,6 +1,4 @@
-﻿using Dash.Engine.JsonParser;
-
-namespace Dash.Engine.Abstractions
+﻿namespace Dash.Engine.Abstractions
 {
     public interface IDataTypeParser
     {

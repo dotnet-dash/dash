@@ -14,12 +14,18 @@ namespace Dash.Engine.Generator
     {
         private readonly ITemplateProvider _templateProvider;
         private readonly IFileSystem _fileSystem;
+        private readonly IModelRepository _modelRepository;
         private readonly DashOptions _dashOptions;
 
-        public DefaultGenerator(ITemplateProvider templateProvider, IFileSystem fileSystem, IOptions<DashOptions> dashOptions)
+        public DefaultGenerator(
+            ITemplateProvider templateProvider,
+            IFileSystem fileSystem,
+            IModelRepository modelRepository,
+            IOptions<DashOptions> dashOptions)
         {
             _templateProvider = templateProvider;
             _fileSystem = fileSystem;
+            _modelRepository = modelRepository;
             _dashOptions = dashOptions.Value;
         }
 
@@ -30,6 +36,8 @@ namespace Dash.Engine.Generator
                 var templateContent = await _templateProvider.GetTemplate(templateNode.Template!);
                 var options = new Morestachio.ParserOptions(templateContent);
                 var template = Morestachio.Parser.ParseWithOptions(options);
+
+                model.Entities = _modelRepository.EntityModels;
 
                 var output = await template.CreateAndStringifyAsync(model);
 

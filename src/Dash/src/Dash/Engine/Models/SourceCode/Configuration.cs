@@ -1,4 +1,6 @@
-﻿namespace Dash.Nodes
+﻿using Dash.Nodes;
+
+namespace Dash.Engine.Models.SourceCode
 {
     public class Configuration
     {

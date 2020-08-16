@@ -33,4 +33,9 @@
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Engine\Models\Program\" />
+    <Folder Include="Engine\Visitors\" />
+  </ItemGroup>
+
 </Project>

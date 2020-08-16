@@ -1,44 +1,51 @@
 ﻿using System;
 using System.Text.Json;
 using Dash.Engine.Abstractions;
+using Dash.Engine.Models.SourceCode;
 using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine.JsonParser
+namespace Dash.Engine
 {
-    public class JsonParser : IParser2
+    public class DefaultSourceCodeParser : ISourceCodeParser
     {
-        private readonly DataTypeParser _dataTypeParser;
-
-        public JsonParser(DataTypeParser dataTypeParser)
+        public SourceCode Parse(string sourceCode)
         {
-            _dataTypeParser = dataTypeParser;
-        }
-
-        public ModelNode Parse(string sourceCode)
-        {
-            var currentModel = new ModelNode();
-
             var document = JsonDocument.Parse(sourceCode);
 
-            // ParseConfiguration(document);
-            ParseModel(currentModel, document);
+            var configuration = ParseConfiguration(document);
+            var modelNode = ParseModel(document);
 
-            return currentModel;
+            return new SourceCode(configuration, modelNode);
         }
 
-        private void ParseModel(ModelNode modelNode, JsonDocument document)
+        private Configuration ParseConfiguration(JsonDocument document)
         {
+            if (!document.RootElement.TryGetProperty("Configuration", out var configurationProperty))
+            {
+                return new Configuration();
+            }
+
+            var configurationSourceCode = configurationProperty.GetString();
+            return JsonSerializer.Deserialize<Configuration>(configurationSourceCode);
+        }
+
+        private ModelNode ParseModel(JsonDocument document)
+        {
+            var result = new ModelNode();
+
             if (!document.RootElement.TryGetProperty("Model", out var modelProperty))
             {
-                return;
+                return result;
             }
 
             var entityObjects = modelProperty.EnumerateObject();
             foreach (var entityObject in entityObjects)
             {
-                TraverseModelEntities(modelNode, entityObject);
+                TraverseModelEntities(result, entityObject);
             }
+
+            return result;
         }
 
         private void TraverseRelationshipProperties(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator objectProperties)

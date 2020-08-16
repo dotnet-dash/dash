@@ -1,21 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
+using Dash.Extensions;
+using Dash.Nodes;
 
 namespace Dash.Application
 {
     public class DashApplication
     {
-        private readonly IParser _parser;
+        private readonly ISourceCodeParser _sourceCodeParser;
+        private readonly ISymbolCollector _symbolCollector;
         private readonly ISemanticAnalyzer _semanticAnalyzer;
+        private readonly IEnumerable<IModelBuilder> _modelBuilders;
         private readonly IGenerator _generator;
 
-        public DashApplication(IParser parser, ISemanticAnalyzer semanticAnalyzer, IGenerator generator)
+        public DashApplication(ISourceCodeParser sourceCodeParser,
+            ISymbolCollector symbolCollector,
+            ISemanticAnalyzer semanticAnalyzer,
+            IEnumerable<IModelBuilder> modelBuilders,
+            IGenerator generator)
         {
-            _parser = parser;
+            _sourceCodeParser = sourceCodeParser;
+            _symbolCollector = symbolCollector;
             _semanticAnalyzer = semanticAnalyzer;
+            _modelBuilders = modelBuilders;
             _generator = generator;
         }
 
@@ -24,29 +35,30 @@ namespace Dash.Application
             var fileStream = inputFile.OpenText();
             var sourceCode = await fileStream.ReadToEndAsync();
 
-            var model = _parser.Parse(sourceCode);
-            if (model.Errors.Any())
-            {
-                foreach (var error in model.Errors)
-                {
-                    Console.Error.WriteLine(error);
-                }
+            var modelNode = _sourceCodeParser.Parse(sourceCode);
 
+            _symbolCollector.Visit(modelNode);
+            if (!SemanticAnalyzer(modelNode))
+            {
                 return;
             }
 
-            //var semanticErrors = _semanticAnalyzer.Analyze(model);
-            //if (semanticErrors.Any())
-            //{
-            //    foreach (var error in semanticErrors)
-            //    {
-            //        Console.Error.WriteLine(error);
-            //    }
+            _modelBuilders.Visit(modelNode);
 
-            //    return;
-            //}
+            var model = new Model();
+            await _generator.Generate(model);
+        }
 
-            //await _generator.Generate(model);
+        private bool SemanticAnalyzer(ModelNode modelNode)
+        {
+            _semanticAnalyzer.Visit(modelNode);
+
+            foreach (var error in _semanticAnalyzer.Errors)
+            {
+                Console.Error.WriteLine(error);
+            }
+
+            return !_semanticAnalyzer.Errors.Any();
         }
     }
 }

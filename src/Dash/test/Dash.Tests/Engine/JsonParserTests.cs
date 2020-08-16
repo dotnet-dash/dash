@@ -1,5 +1,5 @@
 using System.IO;
-using Dash.Engine.JsonParser;
+using Dash.Engine;
 using FluentAssertions;
 using Xunit;
 
@@ -7,13 +7,11 @@ namespace Dash.Tests.Engine
 {
     public class JsonParserTests
     {
-        private readonly JsonParser _sut;
+        private readonly DefaultSourceCodeParser _sut;
 
         public JsonParserTests()
         {
-            var dataTypeParser = new DataTypeParser();
-
-            _sut = new JsonParser(dataTypeParser);
+            _sut = new DefaultSourceCodeParser();
         }
 
         [Fact]
@@ -23,7 +21,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse("{}");
 
             // Assert
-            result.EntityDeclarations.Count.Should().Be(0);
+            result.ModelNode.EntityDeclarations.Count.Should().Be(0);
         }
 
         ///
@@ -59,7 +57,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/HelloWorld.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Account");
@@ -84,7 +82,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/OverrideBaseId.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Base");
@@ -103,7 +101,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/Has.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Person");
@@ -136,7 +134,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/HasNullable.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Person");
@@ -169,7 +167,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/HasMany.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Order");
@@ -202,7 +200,7 @@ namespace Dash.Tests.Engine
             var result = _sut.Parse(File.ReadAllText("Samples/HasAndBelongsToMany.json"));
 
             // Assert
-            result.EntityDeclarations.Should().SatisfyRespectively(
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Order");
@@ -228,16 +226,6 @@ namespace Dash.Tests.Engine
                     second.HasMany.Should().BeEmpty();
                     second.HasAndBelongsToMany.Should().BeEmpty();
                 });
-        }
-
-        [Fact]
-        public void Parse_Inheritance_ShouldHaveParsedTree()
-        {
-            // Act
-            var result = _sut.Parse(File.ReadAllText("Samples/Inheritance.json"));
-
-            // Assert
-            //result.EntityDeclarations.
         }
     }
 }
