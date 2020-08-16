@@ -18,8 +18,8 @@ namespace Dash.Tests.Engine
             var sut = CreateDefaultSut();
 
             var modelNode = new ModelNode();
-            modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>("Account"));
-            modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>("Person"));
+            modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>(modelNode, "Account"));
+            modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>(modelNode, "Person"));
 
             // Act
             sut.Visit(modelNode);
@@ -35,9 +35,9 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = CreateDefaultSut();
 
-                var modelNode = new ModelNode();
-            modelNode.EntityDeclarations.Add(new EntityDeclarationNode("Account"));
-            modelNode.EntityDeclarations.Add(new EntityDeclarationNode("Account"));
+            var modelNode = new ModelNode();
+            modelNode.AddEntityDeclarationNode("Account");
+            modelNode.AddEntityDeclarationNode("Account");
 
             // Act
             sut.Visit(modelNode);
@@ -59,7 +59,7 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = CreateDefaultSut();
 
-            var entityDeclarationNode = new EntityDeclarationNode(name);
+            var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), name);
 
             // Act
             sut.Visit(entityDeclarationNode);
@@ -83,7 +83,7 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = CreateDefaultSut();
 
-            var entityDeclarationNode = new EntityDeclarationNode(name);
+            var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), name);
 
             // Act
             sut.Visit(entityDeclarationNode);
@@ -102,7 +102,7 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = CreateDefaultSut();
 
-            var entityDeclarationNode = new EntityDeclarationNode("Account");
+            var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), "Account");
             entityDeclarationNode.AddAttributeDeclaration("Id", "Int");
             entityDeclarationNode.AddAttributeDeclaration("Id", "Guid");
 
@@ -129,7 +129,7 @@ namespace Dash.Tests.Engine
                 symbolCollector,
                 Substitute.For<IReservedSymbolProvider>());
 
-            var node = new EntityDeclarationNode("Account");
+            var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("User");
 
             // Act
@@ -154,8 +154,11 @@ namespace Dash.Tests.Engine
                 Substitute.For<ISymbolCollector>(),
                 Substitute.For<IReservedSymbolProvider>());
 
+            var entity = new EntityDeclarationNode(new ModelNode(), "Parent");
+            var node = new AttributeDeclarationNode(entity, "Id", "Invalid");
+
             // Act
-            sut.Visit(new AttributeDeclarationNode(new EntityDeclarationNode("Parent"),  "Id", "Invalid"));
+            sut.Visit(node);
 
             // Assert
             sut.Errors.Should().SatisfyRespectively(
@@ -177,7 +180,7 @@ namespace Dash.Tests.Engine
                 symbolCollector,
                 Substitute.For<IReservedSymbolProvider>());
 
-            var node = new EntityDeclarationNode("Account");
+            var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("Account");
 
             sut.Visit(node);
@@ -201,7 +204,7 @@ namespace Dash.Tests.Engine
                 Substitute.For<ISymbolCollector>(),
                 reservedSymbolProvider);
 
-            sut.Visit(new EntityDeclarationNode("Account"));
+            sut.Visit(new EntityDeclarationNode(new ModelNode(), "Account"));
 
             sut.Errors.Should().SatisfyRespectively(
                 first =>

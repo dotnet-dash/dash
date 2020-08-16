@@ -1,16 +1,33 @@
 ﻿using System;
+using Dash.Application;
 using Dash.Engine.Abstractions;
+using Microsoft.Extensions.Options;
 
 namespace Dash.Engine
 {
     public class DefaultConsole : IConsole
     {
-        public void WriteLine(string message)
+        private readonly DashOptions _dashOptions;
+
+        public DefaultConsole(IOptions<DashOptions> dashOptions)
+        {
+            _dashOptions = dashOptions.Value;
+        }
+
+        public void Trace(string message)
+        {
+            if (_dashOptions.Verbose)
+            {
+                Console.Out.WriteLine(message);
+            }
+        }
+
+        public void Info(string message)
         {
             Console.Out.WriteLine(message);
         }
 
-        public void WriteError(string errorMessage)
+        public void Error(string errorMessage)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Error.WriteLine(errorMessage);

@@ -27,7 +27,7 @@ namespace Dash.Engine.Visitors
         public override void Visit(EntityDeclarationNode node)
         {
             _allEntities.TryAdd(node.Name, new HashSet<string>());
-            _console.WriteLine($"Adding symbol: {node.Name}");
+            _console.Trace($"Adding symbol: {node.Name}");
 
             base.Visit(node);
         }

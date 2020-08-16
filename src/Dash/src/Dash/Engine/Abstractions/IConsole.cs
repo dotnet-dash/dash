@@ -2,7 +2,8 @@
 {
     public interface IConsole
     {
-        void WriteLine(string message);
-        void WriteError(string errorMessage);
+        void Trace(string message);
+        void Info(string message);
+        void Error(string errorMessage);
     }
 }

@@ -11,5 +11,13 @@ namespace Dash.Nodes
         {
             visitor.Visit(this);
         }
+
+        public EntityDeclarationNode AddEntityDeclarationNode(string name)
+        {
+            var node = new EntityDeclarationNode(this, name);
+            EntityDeclarations.Add(node);
+
+            return node;
+        }
     }
 }

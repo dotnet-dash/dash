@@ -31,7 +31,7 @@ namespace Dash.Engine.Visitors
             {
                 if (!node.Name.IsSame(BaseEntityName))
                 {
-                    _console.WriteLine($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
+                    _console.Trace($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
                     node.AddInheritanceDeclaration(BaseEntityName);
                 }
             }
@@ -44,9 +44,8 @@ namespace Dash.Engine.Visitors
             var baseEntity = node.EntityDeclarations.SingleOrDefault(e => e.Name.IsSame(BaseEntityName));
             if (baseEntity == null)
             {
-                _console.WriteLine($"No entity '{BaseEntityName}' declared. Adding '{BaseEntityName}'");
-                baseEntity = new EntityDeclarationNode(BaseEntityName);
-                node.EntityDeclarations.Add(baseEntity);
+                _console.Trace($"No entity '{BaseEntityName}' declared. Adding '{BaseEntityName}'");
+                baseEntity = node.AddEntityDeclarationNode(BaseEntityName);
             }
 
             return baseEntity;
@@ -57,7 +56,7 @@ namespace Dash.Engine.Visitors
             var idAttribute = baseEntity.AttributeDeclarations.FirstOrDefault(e => e.AttributeName.IsSame(BaseEntityIdAttributeName));
             if (idAttribute == null)
             {
-                _console.WriteLine($"No attribute '{BaseEntityIdAttributeName}' declared. Adding '{BaseEntityIdAttributeName}'");
+                _console.Trace($"No attribute '{BaseEntityIdAttributeName}' declared. Adding '{BaseEntityIdAttributeName}'");
                 baseEntity.InsertAttributeDeclaration(0, BaseEntityIdAttributeName, BaseEntityIdAttributeDataType);
             }
         }

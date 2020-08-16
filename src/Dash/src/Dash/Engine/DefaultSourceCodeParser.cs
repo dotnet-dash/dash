@@ -101,8 +101,7 @@ namespace Dash.Engine
             {
                 if (!entityObject.Name.StartsWith("@@"))
                 {
-                    var entityDeclarationNode = new EntityDeclarationNode(entityObject.Name);
-                    modelNode.EntityDeclarations.Add(entityDeclarationNode);
+                    var entityDeclarationNode = modelNode.AddEntityDeclarationNode(entityObject.Name);
 
                     var entityObjectProperties = entityObject.Value.EnumerateObject();
                     TraverseAttributes(entityDeclarationNode, entityObjectProperties);

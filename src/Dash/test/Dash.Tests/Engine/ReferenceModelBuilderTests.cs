@@ -82,7 +82,8 @@ namespace Dash.Tests.Engine
         {
             // Arrange
             _modelRepository.Add(new EntityModel("Account"));
-            var account = new EntityDeclarationNode("Account");
+
+            var account = new EntityDeclarationNode(new ModelNode(), "Account");
 
             _sut.Visit(account);
 
@@ -114,11 +115,14 @@ namespace Dash.Tests.Engine
             // Arrange
             _modelRepository.CreateEntityModel("Order", "OrderLine");
 
-            var account = new EntityDeclarationNode("Order");
-            _sut.Visit(account);
-            _sut.Visit(new EntityDeclarationNode("OrderLine"));
+            var modelNode = new ModelNode();
+            var accountNode = modelNode.AddEntityDeclarationNode("Order");
+            var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
 
-            var node = new HasManyReferenceDeclarationNode(account, "OrderLines", "OrderLine");
+            _sut.Visit(accountNode);
+            _sut.Visit(orderLineNode);
+
+            var node = new HasManyReferenceDeclarationNode(accountNode, "OrderLines", "OrderLine");
 
             // Act
             _sut.Visit(node);
@@ -153,10 +157,14 @@ namespace Dash.Tests.Engine
             // Arrange
             _modelRepository.CreateEntityModel("Order", "Product");
 
-            _sut.Visit(new EntityDeclarationNode("Order"));
-            _sut.Visit(new EntityDeclarationNode("Product"));
+            var modelNode = new ModelNode();
+            var orderNode = modelNode.AddEntityDeclarationNode("Order");
+            var productNode = modelNode.AddEntityDeclarationNode("Product");
 
-            var node = new HasAndBelongsToManyDeclarationNode(new EntityDeclarationNode("Order"), "Product", "Product");
+            _sut.Visit(orderNode);
+            _sut.Visit(productNode);
+
+            var node = new HasAndBelongsToManyDeclarationNode(orderNode, "Product", "Product");
 
             // Act
             _sut.Visit(node);

@@ -29,9 +29,11 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
 
-            sut.Visit(new EntityDeclarationNode("Account"));
-            sut.Visit(new EntityDeclarationNode("Order"));
-            sut.Visit(new EntityDeclarationNode("OrderLine"));
+            var modelNode = new ModelNode();
+
+            sut.Visit(new EntityDeclarationNode(modelNode, "Account"));
+            sut.Visit(new EntityDeclarationNode(modelNode, "Order"));
+            sut.Visit(new EntityDeclarationNode(modelNode, "OrderLine"));
 
             // Act
             var result = sut.GetEntityNames();
@@ -54,9 +56,11 @@ namespace Dash.Tests.Engine
             // Arrange
             var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
 
-            sut.Visit(new EntityDeclarationNode("Account"));
-            sut.Visit(new EntityDeclarationNode("Order"));
-            sut.Visit(new EntityDeclarationNode("OrderLine"));
+            var modelNode = new ModelNode();
+
+            sut.Visit(new EntityDeclarationNode(modelNode, "Account"));
+            sut.Visit(new EntityDeclarationNode(modelNode, "Order"));
+            sut.Visit(new EntityDeclarationNode(modelNode, "OrderLine"));
 
             // Act
             var result = sut.EntityExists(entityName);

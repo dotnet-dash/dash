@@ -32,21 +32,14 @@ namespace Dash.Tests.Engine
         public void Visit_ModelNode_EntityModelCreated()
         {
             // Arrange
-            var countryNode = new EntityDeclarationNode("Country");
+            var modelNode = new ModelNode();
+
+            var countryNode = modelNode.AddEntityDeclarationNode("Country");
             countryNode.AddAttributeDeclaration("Id", "Int");
 
-            var personNode = new EntityDeclarationNode("Person");
+            var personNode = modelNode.AddEntityDeclarationNode("Person");
             personNode.AddHasDeclaration("CountryOfBirth", "Country");
             personNode.AddHasDeclaration("CountryOfResidence", "Country");
-
-            var modelNode = new ModelNode
-            {
-                EntityDeclarations =
-                {
-                    countryNode,
-                    personNode
-                }
-            };
 
             // Act
             _sut.Visit(modelNode);
@@ -71,7 +64,8 @@ namespace Dash.Tests.Engine
         public void Visit_EntityDeclarationNode_EntityModelCreated()
         {
             // Arrange
-            var node = new EntityDeclarationNode("Account");
+            var modelNode = new ModelNode();
+            var node = modelNode.AddEntityDeclarationNode("Account");
             node.AddAttributeDeclaration("Surname", "Unicode");
             node.AddAttributeDeclaration("Username", "String");
             node.AddAttributeDeclaration("Nickname", "Unicode?");

@@ -8,10 +8,13 @@ namespace Dash.Nodes
         private readonly List<AttributeDeclarationNode> _attributeDeclarations = new List<AttributeDeclarationNode>();
         private readonly List<InheritanceDeclarationNode> _inheritanceDeclarations = new List<InheritanceDeclarationNode>();
 
-        public EntityDeclarationNode(string name)
+        public EntityDeclarationNode(ModelNode parent, string name)
         {
+            Parent = parent;
             Name = name;
         }
+
+        public ModelNode Parent { get; set; }
 
         public string Name { get; }
 
