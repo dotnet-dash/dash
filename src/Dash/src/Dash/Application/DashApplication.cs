@@ -33,8 +33,20 @@ namespace Dash.Application
             _console = console;
         }
 
-        public async Task Run(FileInfo inputFile)
+        public async Task Run(FileInfo inputFile, bool verbose)
         {
+            if (inputFile == null)
+            {
+                _console.Error("Please specify a model file.");
+                return;
+            }
+
+            if (!_fileSystem.File.Exists(inputFile.FullName))
+            {
+                _console.Error($"Could not find the model file '{inputFile.FullName}'.");
+                return;
+            }
+
             var fileStream = _fileSystem.File.OpenText(inputFile.FullName);
             var sourceCode = await fileStream.ReadToEndAsync();
 

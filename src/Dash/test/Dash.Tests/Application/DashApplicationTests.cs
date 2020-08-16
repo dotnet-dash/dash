@@ -45,7 +45,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("/test.json"));
+            await sut.Run(new FileInfo("/test.json"), false);
 
             // Assert
             nodeVisitors[0].Received(1).Visit(modelNode);
@@ -88,7 +88,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("/test.json"));
+            await sut.Run(new FileInfo("/test.json"), false);
 
             // Assert
             visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
