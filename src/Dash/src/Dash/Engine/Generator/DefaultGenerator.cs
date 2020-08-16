@@ -3,10 +3,8 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Text;
 using System.Threading.Tasks;
-using Dash.Application;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models.SourceCode;
-using Microsoft.Extensions.Options;
 
 namespace Dash.Engine.Generator
 {
@@ -15,18 +13,15 @@ namespace Dash.Engine.Generator
         private readonly ITemplateProvider _templateProvider;
         private readonly IFileSystem _fileSystem;
         private readonly IModelRepository _modelRepository;
-        private readonly DashOptions _dashOptions;
 
         public DefaultGenerator(
             ITemplateProvider templateProvider,
             IFileSystem fileSystem,
-            IModelRepository modelRepository,
-            IOptions<DashOptions> dashOptions)
+            IModelRepository modelRepository)
         {
             _templateProvider = templateProvider;
             _fileSystem = fileSystem;
             _modelRepository = modelRepository;
-            _dashOptions = dashOptions.Value;
         }
 
         public async Task Generate(SourceCodeDocument model)
