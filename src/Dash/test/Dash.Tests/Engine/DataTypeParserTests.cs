@@ -1,8 +1,8 @@
-﻿using Dash.Engine.JsonParser;
+﻿using Dash.Engine;
 using FluentAssertions;
 using Xunit;
 
-namespace Dash.Tests
+namespace Dash.Tests.Engine
 {
     public class DataTypeParserTests
     {

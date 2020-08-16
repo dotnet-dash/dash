@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 
-namespace Dash.Engine.JsonParser
+namespace Dash.Engine
 {
     public class DataTypeParser : IDataTypeParser
     {
