@@ -64,8 +64,8 @@ namespace Dash.Engine
             var databaseDataType = _databaseLanguageProvider.Translate(result.DataType);
 
             var entityModel = _modelRepository.Get(node.Parent.Name);
-            entityModel.CodeAttributeModels.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
-            entityModel.DataAttributeModels.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
+            entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
+            entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
         }
 
         public void Visit(HasReferenceDeclarationNode node)

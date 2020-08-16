@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Engine.Abstractions;
-using Dash.Nodes;
+using Dash.Engine.Models.SourceCode;
 using Microsoft.Extensions.Options;
 
 namespace Dash.Engine.Generator
@@ -29,7 +29,7 @@ namespace Dash.Engine.Generator
             _dashOptions = dashOptions.Value;
         }
 
-        public async Task Generate(Model model)
+        public async Task Generate(SourceCodeDocument model)
         {
             foreach (var templateNode in model.Configuration.Templates)
             {
@@ -37,9 +37,13 @@ namespace Dash.Engine.Generator
                 var options = new Morestachio.ParserOptions(templateContent);
                 var template = Morestachio.Parser.ParseWithOptions(options);
 
-                model.Entities = _modelRepository.EntityModels;
-
-                var output = await template.CreateAndStringifyAsync(model);
+                var output = await template.CreateAndStringifyAsync
+                (
+                    new
+                    {
+                        Entities = _modelRepository.EntityModels
+                    }
+                );
 
                 var path = Path.Combine(templateNode.Output, $"{templateNode.Template!}.generated.cs");
                 Console.Out.WriteLine($"Writing to file {path}");

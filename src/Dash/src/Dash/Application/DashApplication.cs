@@ -45,8 +45,7 @@ namespace Dash.Application
 
             _modelBuilders.Visit(sourceCodeDocument.ModelNode);
 
-            var model = new Model();
-            await _generator.Generate(model);
+            await _generator.Generate(sourceCodeDocument);
         }
 
         private bool SemanticAnalyzer(ModelNode modelNode)

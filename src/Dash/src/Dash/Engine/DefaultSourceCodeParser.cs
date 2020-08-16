@@ -26,7 +26,7 @@ namespace Dash.Engine
                 return new Configuration();
             }
 
-            var configurationSourceCode = configurationProperty.GetString();
+            var configurationSourceCode = configurationProperty.GetRawText();
             return JsonSerializer.Deserialize<Configuration>(configurationSourceCode);
         }
 

@@ -10,20 +10,20 @@ namespace Nnn // {{ Namespace }}
 {{#each Entities}}
     public partial class {{ Name }}
     {{{#tnls}}
-{{#each Attributes}}{{#tnls}}
+{{#each CodeAttributes}}{{#tnls}}
 {{#if Length}}
         [StringLength({{ Length }})]{{#tnls}}
 {{/if}}{{#tnls}}
 {{#if DataTypeRegularExpression}}
         [RegularExpression({{ DataTypeRegularExpression }})]{{#tnls}}
 {{/if}}
-        public {{ CodeDataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
+        public {{ DataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each SingleReferences}}
-        public {{ Entity.Name }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
+        public {{ EntityModel }}{{#if IsNullable}}?{{/if}} {{ ReferenceName }} { get; set; }{{#tnls}}
 {{/each}}{{#tnls}}
 {{#each CollectionReferences}}
-        public ICollection<{{ Value.Name }}> {{ Key }} { get; set; }{{#tnls}}
+        public ICollection<{{ EntityModel }}> {{ ReferenceName }} { get; set; }{{#tnls}}
 {{/each}}
     }
 {{/each}}{{#tnls}}

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Dash.Nodes;
+using Dash.Engine.Models.SourceCode;
 
 namespace Dash.Engine.Abstractions
 {
     public interface IGenerator
     {
-        Task Generate(Model model);
+        Task Generate(SourceCodeDocument model);
     }
 }

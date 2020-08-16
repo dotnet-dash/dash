@@ -11,8 +11,8 @@ namespace Dash.Engine.Models
 
         public string Name { get; }
 
-        public IList<AttributeModel> CodeAttributeModels { get; } = new List<AttributeModel>();
-        public IList<AttributeModel> DataAttributeModels { get; } = new List<AttributeModel>();
+        public IList<AttributeModel> CodeAttributes { get; } = new List<AttributeModel>();
+        public IList<AttributeModel> DataAttributes { get; } = new List<AttributeModel>();
 
         public IList<ReferencedEntityModel> SingleReferences { get; } = new List<ReferencedEntityModel>();
 

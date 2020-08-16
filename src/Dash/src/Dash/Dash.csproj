@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Engine\Models\Program\" />
     <Folder Include="Engine\Visitors\" />
   </ItemGroup>
 

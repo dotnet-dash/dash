@@ -83,7 +83,7 @@ namespace Dash.Tests.Engine
                 first =>
                 {
                     first.Name.Should().Be("Account");
-                    first.CodeAttributeModels.Should().SatisfyRespectively(
+                    first.CodeAttributes.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("Surname");
@@ -103,7 +103,7 @@ namespace Dash.Tests.Engine
                             c.IsNullable.Should().BeTrue();
                         });
 
-                    first.DataAttributeModels.Should().SatisfyRespectively(
+                    first.DataAttributes.Should().SatisfyRespectively(
                         a =>
                         {
                             a.Name.Should().Be("Surname");
