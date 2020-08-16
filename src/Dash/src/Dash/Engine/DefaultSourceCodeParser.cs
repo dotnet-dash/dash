@@ -116,9 +116,19 @@ namespace Dash.Engine
             attributes.Reset();
             foreach (var attribute in attributes)
             {
-                if (attribute.Value.ValueKind == JsonValueKind.String)
+                if (!attribute.Name.StartsWith("@@"))
                 {
-                    entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString());
+                    if (attribute.Value.ValueKind == JsonValueKind.String)
+                    {
+                        entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString());
+                    }
+                }
+                else
+                {
+                    if (attribute.Name.IsSame("@@Inherits"))
+                    {
+                        entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString());
+                    }
                 }
             }
         }

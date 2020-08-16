@@ -1,11 +1,10 @@
 ﻿using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
-using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine
+namespace Dash.Engine.Visitors
 {
-    public class ReferenceModelBuilder : IModelBuilder
+    public class ReferenceModelBuilder : BaseVisitor, IModelBuilder
     {
         private readonly IModelRepository _modelRepository;
         private readonly IEntityReferenceValueParser _entityReferenceValueParser;
@@ -18,23 +17,7 @@ namespace Dash.Engine
             _entityReferenceValueParser = entityReferenceValueParser;
         }
 
-        public void Visit(ModelNode node)
-        {
-            node.EntityDeclarations.Accept(this);
-        }
-
-        public void Visit(EntityDeclarationNode node)
-        {
-            node.Has.Accept(this);
-            node.HasMany.Accept(this);
-            node.HasAndBelongsToMany.Accept(this);
-        }
-
-        public void Visit(AttributeDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasReferenceDeclarationNode node)
+        public override void Visit(HasReferenceDeclarationNode node)
         {
             var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
 
@@ -46,7 +29,7 @@ namespace Dash.Engine
                 .Add(referencedEntityModel);
         }
 
-        public void Visit(HasManyReferenceDeclarationNode node)
+        public override void Visit(HasManyReferenceDeclarationNode node)
         {
             var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
 
@@ -63,7 +46,7 @@ namespace Dash.Engine
                 .Add(singleReference);
         }
 
-        public void Visit(HasAndBelongsToManyDeclarationNode node)
+        public override void Visit(HasAndBelongsToManyDeclarationNode node)
         {
             var joinedEntity = new JoinedEntityModel(node.Parent.Name, node.ReferencedEntity);
             joinedEntity.SingleReferences.Add(new ReferencedEntityModel(node.Parent.Name, node.Parent.Name, false));
@@ -81,6 +64,13 @@ namespace Dash.Engine
                 .Get(node.ReferencedEntity)
                 .CollectionReferences
                 .Add(referencedEntityModel);
+        }
+
+        public override void Visit(InheritanceDeclarationNode node)
+        {
+            _modelRepository
+                .Get(node.Parent.Name)
+                .InheritAttributes(_modelRepository.Get(node.InheritedEntity));
         }
     }
 }

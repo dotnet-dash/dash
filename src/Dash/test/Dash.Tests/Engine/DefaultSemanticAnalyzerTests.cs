@@ -1,5 +1,6 @@
 ﻿using Dash.Engine;
 using Dash.Engine.Abstractions;
+using Dash.Engine.Visitors;
 using Dash.Exceptions;
 using Dash.Nodes;
 using FluentAssertions;
@@ -128,8 +129,11 @@ namespace Dash.Tests.Engine
                 symbolCollector,
                 Substitute.For<IReservedSymbolProvider>());
 
+            var node = new EntityDeclarationNode("Account");
+            node.AddInheritanceDeclaration("User");
+
             // Act
-            sut.Visit(new EntityDeclarationNode("Account") { InheritedEntity = "User" });
+            sut.Visit(node);
 
             // Assert
             sut.Errors.Should().SatisfyRespectively(
@@ -173,7 +177,10 @@ namespace Dash.Tests.Engine
                 symbolCollector,
                 Substitute.For<IReservedSymbolProvider>());
 
-            sut.Visit(new EntityDeclarationNode("Account") { InheritedEntity = "Account" });
+            var node = new EntityDeclarationNode("Account");
+            node.AddInheritanceDeclaration("Account");
+
+            sut.Visit(node);
 
             sut.Errors.Should().SatisfyRespectively(
                 first =>

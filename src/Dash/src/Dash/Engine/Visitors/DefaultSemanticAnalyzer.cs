@@ -6,9 +6,9 @@ using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine
+namespace Dash.Engine.Visitors
 {
-    public class DefaultSemanticAnalyzer : ISemanticAnalyzer
+    public class DefaultSemanticAnalyzer : BaseVisitor, ISemanticAnalyzer
     {
         private readonly IDataTypeParser _dataTypeParser;
         private readonly ISymbolCollector _symbolCollector;
@@ -27,17 +27,14 @@ namespace Dash.Engine
             _reservedSymbolProvider = reservedSymbolProvider;
         }
 
-        public void Visit(ModelNode node)
+        public override void Visit(ModelNode node)
         {
             ValidateDuplicateEntityDeclarations(node);
 
-            foreach (var declaration in node.EntityDeclarations)
-            {
-                declaration.Accept(this);
-            }
+            base.Visit(node);
         }
 
-        public void Visit(EntityDeclarationNode node)
+        public override void Visit(EntityDeclarationNode node)
         {
             if (string.IsNullOrWhiteSpace(node.Name))
             {
@@ -55,21 +52,28 @@ namespace Dash.Engine
                 _errors.Add($"'{node.Name}' is a reserved name and cannot be used as an entity name.");
             }
 
-            if (node.InheritedEntity != null &&
-                !_symbolCollector.EntityExists(node.InheritedEntity))
-            {
-                _errors.Add($"Entity '{node.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
-            }
-
-            if (node.InheritedEntity != null && node.InheritedEntity.IsSame(node.Name))
-            {
-                _errors.Add($"Self-inheritance not allowed: '{node.Name}'");
-            }
-
             ValidateDuplicateAttributeDeclarations(node);
+
+            if (node.InheritanceDeclarationNodes.Count() > 1)
+            {
+                _errors.Add($"Multiple inheritance declaration found for '{node.Name}'");
+            }
+
+            foreach (var item in node.InheritanceDeclarationNodes)
+            {
+                if (!_symbolCollector.EntityExists(item.InheritedEntity))
+                {
+                    _errors.Add($"Entity '{node.Name}' wants to inherit unknown entity '{item.InheritedEntity}'");
+                }
+
+                if (item.InheritedEntity.IsSame(node.Name))
+                {
+                    _errors.Add($"Self-inheritance not allowed: '{node.Name}'");
+                }
+            }
         }
 
-        public void Visit(AttributeDeclarationNode node)
+        public override void Visit(AttributeDeclarationNode node)
         {
             try
             {
@@ -81,24 +85,12 @@ namespace Dash.Engine
             }
         }
 
-        public void Visit(ReferenceDeclarationNode node)
+        public override void Visit(InheritanceDeclarationNode node)
         {
-            if (!_symbolCollector.EntityExists(node.ReferencedEntity))
+            if (!_symbolCollector.EntityExists(node.InheritedEntity))
             {
-                _errors.Add($"Referenced entity '{node.ReferencedEntity}' does not exist");
+                _errors.Add($"Cannot inherit unknown entity '{node.InheritedEntity}'");
             }
-        }
-
-        public void Visit(HasReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasManyReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasAndBelongsToManyDeclarationNode node)
-        {
         }
 
         private void ValidateDuplicateEntityDeclarations(ModelNode node)

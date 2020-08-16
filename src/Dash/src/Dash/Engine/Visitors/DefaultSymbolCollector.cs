@@ -5,49 +5,41 @@ using Dash.Engine.Abstractions;
 using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine
+namespace Dash.Engine.Visitors
 {
-    public class DefaultSymbolCollector : ISymbolCollector
+    public class DefaultSymbolCollector : BaseVisitor, ISymbolCollector
     {
+        private readonly IConsole _console;
         private readonly Dictionary<string, HashSet<string>> _allEntities = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
 
-        public void Visit(ModelNode node)
+        public DefaultSymbolCollector(IConsole console)
+        {
+            _console = console;
+        }
+
+        public override void Visit(ModelNode node)
         {
             _allEntities.Clear();
 
-            foreach (var entityDeclarationNode in node.EntityDeclarations)
-            {
-                entityDeclarationNode.Accept(this);
-            }
+            base.Visit(node);
         }
 
-        public void Visit(EntityDeclarationNode node)
+        public override void Visit(EntityDeclarationNode node)
         {
             _allEntities.TryAdd(node.Name, new HashSet<string>());
+            _console.WriteLine($"Adding symbol: {node.Name}");
+
+            base.Visit(node);
         }
 
-        public void Visit(AttributeDeclarationNode node)
+        public override void Visit(AttributeDeclarationNode node)
         {
             if (_allEntities.TryGetValue(node.Parent.Name, out var attributeHashSet))
             {
                 attributeHashSet.Add(node.AttributeName);
             }
-        }
 
-        public void Visit(ReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasManyReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasAndBelongsToManyDeclarationNode node)
-        {
+            base.Visit(node);
         }
 
         public HashSet<string> GetEntityNames()

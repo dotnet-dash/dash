@@ -6,6 +6,7 @@ namespace Dash.Nodes
     public class EntityDeclarationNode : AstNode
     {
         private readonly List<AttributeDeclarationNode> _attributeDeclarations = new List<AttributeDeclarationNode>();
+        private readonly List<InheritanceDeclarationNode> _inheritanceDeclarations = new List<InheritanceDeclarationNode>();
 
         public EntityDeclarationNode(string name)
         {
@@ -14,9 +15,9 @@ namespace Dash.Nodes
 
         public string Name { get; }
 
-        public string? InheritedEntity { get; set; }
-
         public IEnumerable<AttributeDeclarationNode> AttributeDeclarations => _attributeDeclarations;
+
+        public IEnumerable<InheritanceDeclarationNode> InheritanceDeclarationNodes => _inheritanceDeclarations;
 
         public IList<HasReferenceDeclarationNode> Has { get; } = new List<HasReferenceDeclarationNode>();
 
@@ -33,6 +34,18 @@ namespace Dash.Nodes
         {
             var attribute = new AttributeDeclarationNode(this, attributeName, attributeDataType);
             _attributeDeclarations.Add(attribute);
+        }
+
+        public void InsertAttributeDeclaration(int index, string attributeName, string attributeDataType)
+        {
+            var attribute = new AttributeDeclarationNode(this, attributeName, attributeDataType);
+            _attributeDeclarations.Insert(index, attribute);
+        }
+
+        public void AddInheritanceDeclaration(string inheritedEntity)
+        {
+            var inheritance = new InheritanceDeclarationNode(this, inheritedEntity);
+            _inheritanceDeclarations.Add(inheritance);
         }
 
         public void AddHasDeclaration(string name, string referencedEntity)

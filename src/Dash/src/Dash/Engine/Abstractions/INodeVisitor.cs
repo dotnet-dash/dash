@@ -10,5 +10,6 @@ namespace Dash.Engine.Abstractions
         void Visit(HasReferenceDeclarationNode node);
         void Visit(HasManyReferenceDeclarationNode node);
         void Visit(HasAndBelongsToManyDeclarationNode node);
+        void Visit(InheritanceDeclarationNode node);
     }
 }

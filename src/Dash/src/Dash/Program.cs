@@ -8,7 +8,9 @@ using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
 using Dash.Engine.JsonParser;
 using Dash.Engine.LanguageProviders;
+using Dash.Engine.Models;
 using Dash.Engine.Template;
+using Dash.Engine.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash
@@ -49,12 +51,14 @@ namespace Dash
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
             services.AddSingleton<IGenerator, DefaultGenerator>();
+            services.AddSingleton<IErrorRepository, ErrorRepository>();
             services.AddSingleton<IModelRepository, DefaultModelRepository>();
+            services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
+            services.AddSingleton<IConsole, DefaultConsole>();
             RegisterTemplateProviders(services);
             RegisterValueParsers(services);
             RegisterNodeVisitors(services);
             RegisterLanguageProviders(services);
-            RegisterModelBuilders(services);
 
             return services.BuildServiceProvider(true);
         }
@@ -72,21 +76,19 @@ namespace Dash
 
         private static void RegisterNodeVisitors(ServiceCollection services)
         {
+            services.AddSingleton<INodeVisitor, PostParsingVisitor>();
+            services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
+            services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
+            services.AddSingleton<INodeVisitor, DefaultModelBuilder>();
+            services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
+
             services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
-            services.AddSingleton<ISemanticAnalyzer, DefaultSemanticAnalyzer>();
-            services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
         }
 
         private static void RegisterLanguageProviders(ServiceCollection services)
         {
             services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
             services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
-        }
-
-        private static void RegisterModelBuilders(ServiceCollection services)
-        {
-            services.AddSingleton<IModelBuilder, DefaultModelBuilder>();
-            services.AddSingleton<IModelBuilder, ReferenceModelBuilder>();
         }
     }
 }

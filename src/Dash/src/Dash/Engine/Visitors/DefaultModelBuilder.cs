@@ -5,9 +5,9 @@ using Dash.Engine.Models;
 using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine
+namespace Dash.Engine.Visitors
 {
-    public class DefaultModelBuilder : IModelBuilder
+    public class DefaultModelBuilder : BaseVisitor, IModelBuilder
     {
         private readonly IDataTypeParser _dataTypeParser;
         private readonly IModelRepository _modelRepository;
@@ -25,38 +25,15 @@ namespace Dash.Engine
             _databaseLanguageProvider = languageProviders.Single(e => e.Name.IsSame("SqlServer"));
         }
 
-        public void Visit(ModelNode node)
-        {
-            node.EntityDeclarations.Accept(this);
-        }
-
-        public void Visit(EntityDeclarationNode node)
+        public override void Visit(EntityDeclarationNode node)
         {
             var model = new EntityModel(node.Name);
             _modelRepository.Add(model);
 
-            foreach (var attribute in node.AttributeDeclarations)
-            {
-                attribute.Accept(this);
-            }
-
-            foreach (var referenceNode in node.Has)
-            {
-                referenceNode.Accept(this);
-            }
-
-            foreach (var referenceNode in node.HasMany)
-            {
-                referenceNode.Accept(this);
-            }
-
-            foreach (var referenceNode in node.HasAndBelongsToMany)
-            {
-                referenceNode.Accept(this);
-            }
+            base.Visit(node);
         }
 
-        public void Visit(AttributeDeclarationNode node)
+        public override void Visit(AttributeDeclarationNode node)
         {
             var result = _dataTypeParser.Parse(node.AttributeDataType);
 
@@ -66,18 +43,8 @@ namespace Dash.Engine
             var entityModel = _modelRepository.Get(node.Parent.Name);
             entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable));
             entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable));
-        }
 
-        public void Visit(HasReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasManyReferenceDeclarationNode node)
-        {
-        }
-
-        public void Visit(HasAndBelongsToManyDeclarationNode node)
-        {
+            base.Visit(node);
         }
     }
 }

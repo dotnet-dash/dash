@@ -1,5 +1,6 @@
 ﻿using Dash.Engine;
 using Dash.Engine.Models;
+using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
 using Xunit;
