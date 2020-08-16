@@ -8,7 +8,7 @@ using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
 using Dash.Engine.JsonParser;
 using Dash.Engine.LanguageProviders;
-using Dash.Engine.Template;
+using Dash.Engine.TemplateProviders;
 using Dash.Engine.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 

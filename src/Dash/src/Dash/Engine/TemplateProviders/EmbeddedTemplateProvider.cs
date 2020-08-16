@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 
-namespace Dash.Engine.Template
+namespace Dash.Engine.TemplateProviders
 {
     public class EmbeddedTemplateProvider : ITemplateProvider
     {
