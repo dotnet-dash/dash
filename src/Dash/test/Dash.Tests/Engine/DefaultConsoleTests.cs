@@ -42,6 +42,22 @@ namespace Dash.Tests.Engine
             textWriter.ToString().Should().Be("Hello" + Environment.NewLine);
         }
 
+        [Fact]
+        public void Info_VerboseDisabled_ShouldHaveWrittenToConsole()
+        {
+            // Arrange
+            var sut = CreateSut(false);
+            var textWriter = new StringWriter();
+            Console.SetOut(textWriter);
+
+            // Act
+            sut.Info("Hello");
+
+            // Assert
+            textWriter.Close();
+            textWriter.ToString().Should().Be("Hello" + Environment.NewLine);
+        }
+
         private static DefaultConsole CreateSut(bool verbose)
         {
             return new DefaultConsole(new OptionsWrapper<DashOptions>(new DashOptions()
