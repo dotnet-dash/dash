@@ -9,14 +9,14 @@ namespace Dash.Engine
 {
     public class DefaultSourceCodeParser : ISourceCodeParser
     {
-        public SourceCode Parse(string sourceCode)
+        public SourceCodeDocument Parse(string sourceCode)
         {
             var document = JsonDocument.Parse(sourceCode);
 
             var configuration = ParseConfiguration(document);
             var modelNode = ParseModel(document);
 
-            return new SourceCode(configuration, modelNode);
+            return new SourceCodeDocument(configuration, modelNode);
         }
 
         private Configuration ParseConfiguration(JsonDocument document)

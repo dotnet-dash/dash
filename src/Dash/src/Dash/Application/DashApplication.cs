@@ -35,15 +35,15 @@ namespace Dash.Application
             var fileStream = inputFile.OpenText();
             var sourceCode = await fileStream.ReadToEndAsync();
 
-            var modelNode = _sourceCodeParser.Parse(sourceCode);
+            var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
 
-            _symbolCollector.Visit(modelNode);
-            if (!SemanticAnalyzer(modelNode))
+            _symbolCollector.Visit(sourceCodeDocument.ModelNode);
+            if (!SemanticAnalyzer(sourceCodeDocument.ModelNode))
             {
                 return;
             }
 
-            _modelBuilders.Visit(modelNode);
+            _modelBuilders.Visit(sourceCodeDocument.ModelNode);
 
             var model = new Model();
             await _generator.Generate(model);

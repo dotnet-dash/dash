@@ -2,9 +2,9 @@
 
 namespace Dash.Engine.Models.SourceCode
 {
-    public class SourceCode
+    public class SourceCodeDocument
     {
-        public SourceCode(Configuration configuration, ModelNode modelNode)
+        public SourceCodeDocument(Configuration configuration, ModelNode modelNode)
         {
             Configuration = configuration;
             ModelNode = modelNode;

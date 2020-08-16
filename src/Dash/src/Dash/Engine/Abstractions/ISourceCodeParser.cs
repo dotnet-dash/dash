@@ -4,6 +4,6 @@ namespace Dash.Engine.Abstractions
 {
     public interface ISourceCodeParser
     {
-        SourceCode Parse(string sourceCode);
+        SourceCodeDocument Parse(string sourceCode);
     }
 }
