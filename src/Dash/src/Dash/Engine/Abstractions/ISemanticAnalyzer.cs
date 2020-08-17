@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Dash.Nodes;
 
 namespace Dash.Engine.Abstractions
 {
-    interface ISemanticAnalyzer
+    public interface ISemanticAnalyzer : INodeVisitor
     {
-        IEnumerable<string> Analyze(Model model);
+        IEnumerable<string> Errors { get; }
     }
 }

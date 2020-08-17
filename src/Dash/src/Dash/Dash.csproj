@@ -5,10 +5,37 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.0.1</Version>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-dash</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <AssemblyName>dotnet-dash</AssemblyName>
+    <Authors>Huy Hoang</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Example2.json" />
+    <None Remove="Templates\efcontext" />
+    <None Remove="Templates\Erepo" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\efcontext" />
+    <EmbeddedResource Include="Templates\efpoco">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.7" />
+    <PackageReference Include="Morestachio" Version="4.2.0.376" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
+    <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20371.2" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
   </ItemGroup>
 
 </Project>

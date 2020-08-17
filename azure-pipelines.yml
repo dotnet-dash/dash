@@ -22,7 +22,10 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'dotnet-dash_dash'
     projectName: 'dash'
-
+    extraProperties: |
+      # Additional properties that will be passed to the scanner, 
+      # Put one key=value per line, example:
+      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -41,18 +44,11 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*Tests.csproj'
-    arguments: '/p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=branch /p:ThresholdStat=total /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
+    arguments: '/p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=branch /p:ThresholdStat=total /p:CoverletOutputFormat=OpenCover /p:CoverletOutput=./MyCoverage/'
     publishTestResults: true
 
 - task: SonarCloudAnalyze@1
   displayName: 'Analyze'
-
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage Results'
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml'
-    failIfCoverageEmpty: true
 
 - task: SonarCloudPublish@1
   inputs:

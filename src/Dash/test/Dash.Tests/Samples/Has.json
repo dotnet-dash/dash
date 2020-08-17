@@ -1,0 +1,14 @@
+﻿{
+    "Model": {
+        "Person": {
+            "@@Has": {
+                "CountryOfBirth": "Country",
+                "CountryOfResidence": "Country"
+            }
+        },
+
+        "Country": {
+            "CountryCode": "String"
+        }
+    }
+}

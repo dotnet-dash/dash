@@ -1,0 +1,10 @@
+﻿{
+    "Model": {
+        "User": {
+            "Name": "Unicode"
+        },
+        "Account": {
+            "@@Inherits": "User"
+        }
+    }
+}
