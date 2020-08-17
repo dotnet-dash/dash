@@ -15,6 +15,14 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloud connection'
+    organization: 'dotnet-dash'
+    scannerMode: 'MSBuild'
+    projectKey: 'dotnet-dash_dash'
+    projectName: 'dash'
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -36,9 +44,16 @@ steps:
     arguments: '/p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=branch /p:ThresholdStat=total /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
     publishTestResults: true
 
+- task: SonarCloudAnalyze@1
+  displayName: 'Analyze'
+
 - task: PublishCodeCoverageResults@1
   displayName: 'Publish Code Coverage Results'
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml'
     failIfCoverageEmpty: true
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '600'
