@@ -9,6 +9,7 @@
     <ToolCommandName>dotnet-dash</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyName>dotnet-dash</AssemblyName>
+    <Authors>Huy Hoang</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
