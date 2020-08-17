@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
@@ -23,16 +23,16 @@ namespace Dash.Engine
 
         private void ParseConstraints(DataTypeParserResult result, string constraints)
         {
-            var alreadyProcessed = "";
+            var alreadyProcessed = new StringBuilder();
 
             while (constraints.Length > 0)
             {
-                if (alreadyProcessed.Contains(constraints[0]))
+                if (alreadyProcessed.ToString().Contains(constraints[0]))
                 {
-                    throw new Exception("Constraints cannot be defined more than once");
+                    throw new InvalidDataTypeConstraintException("Constraints cannot be defined more than once");
                 }
 
-                alreadyProcessed += constraints[0];
+                alreadyProcessed.Append(constraints[0]);
 
                 switch (constraints[0])
                 {
@@ -54,7 +54,7 @@ namespace Dash.Engine
                         break;
 
                     default:
-                        throw new Exception($"Unable to parse {constraints}");
+                        throw new InvalidDataTypeConstraintException($"Unable to parse {constraints}");
                 }
             }
         }
@@ -82,9 +82,9 @@ namespace Dash.Engine
 
         private void ParseDefaultValue(DataTypeParserResult result, string value, out string remaining)
         {
-            if (TryFindMatch(@"^(\(==.+\))", value, out var parsedValue, out remaining))
+            if (TryFindMatch(@"^(\(=='(.+)'\))", value, out var parsedValue, out remaining))
             {
-                result.DefaultValue = parsedValue![3..^1];
+                result.DefaultValue = parsedValue![4..^2];
             }
         }
 

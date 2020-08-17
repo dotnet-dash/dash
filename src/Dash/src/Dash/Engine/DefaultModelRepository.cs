@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
+using Dash.Exceptions;
 using Dash.Extensions;
 
 namespace Dash.Engine
@@ -25,7 +26,7 @@ namespace Dash.Engine
         {
             if (TryGet(entityModel.Name, out _))
             {
-                throw new Exception("Cannot add a duplicate EntityModel"); // TODO: introduce new exception type
+                throw new InvalidOperationException("Cannot add a duplicate EntityModel");
             }
 
             _entityModels.Add(entityModel);
@@ -35,7 +36,7 @@ namespace Dash.Engine
         {
             if (!TryGet(entityName, out var entity))
             {
-                throw new Exception($"Entity '{entityName}' was not found in the repository"); // TODO: introduce new exception type
+                throw new EntityModelNotFoundException($"Entity '{entityName}' was not found in the repository");
             }
 
             return entity;

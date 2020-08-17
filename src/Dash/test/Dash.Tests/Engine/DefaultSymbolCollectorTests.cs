@@ -46,6 +46,42 @@ namespace Dash.Tests.Engine
             );
         }
 
+        [Fact]
+        public void GetAttributeNames_EntityNameNotFound_ShouldReturnEmptyList()
+        {
+            // Arrange
+            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
+
+            // Act
+            var result = sut.GetAttributeNames("Order");
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void GetAttributeNames_EntityNameFound_ShouldReturnEntityAttributeNames()
+        {
+            // Arrange
+            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
+
+            var modelNode = new ModelNode();
+            var orderNode = modelNode.AddEntityDeclarationNode("Order");
+            orderNode.AddAttributeDeclaration("Description", "String");
+
+            var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
+            orderLineNode.AddAttributeDeclaration("Quantity", "Int");
+
+            sut.Visit(modelNode);
+
+            // Act
+            var result = sut.GetAttributeNames("Order");
+
+            // Assert
+            result.Should().SatisfyRespectively(
+                first => first.Should().Be("Description"));
+        }
+
         [Theory]
         [InlineData("Account", true)]
         [InlineData("Order", true)]

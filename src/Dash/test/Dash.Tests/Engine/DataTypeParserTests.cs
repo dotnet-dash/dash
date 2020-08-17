@@ -1,4 +1,6 @@
-﻿using Dash.Engine;
+﻿using System;
+using Dash.Engine;
+using Dash.Exceptions;
 using FluentAssertions;
 using Xunit;
 
@@ -52,14 +54,21 @@ namespace Dash.Tests.Engine
             result.Length.Should().Be(expectedLength);
         }
 
-        [Fact]
-        public void Parse_DefaultValueSpecified_DefaultValueShouldBeSet()
+        [Theory]
+        [InlineData("unicode(==' ')", " ")]
+        [InlineData("unicode(=='John Doe')", "John Doe")]
+        [InlineData("unicode(=='=')", "=")]
+        [InlineData("unicode(=='(')", "(")]
+        [InlineData(@"unicode(=='\')", "\\")]
+        [InlineData(@"unicode(==''')", @"'")]
+        [InlineData(@"unicode(=='''')", "''")]
+        public void Parse_DefaultValueSpecified_DefaultValueShouldBeSet(string dataType, string expectedDefaultValue)
         {
             // Act
-            var result = _sut.Parse("unicode(==John Doe)");
+            var result = _sut.Parse(dataType);
 
             // Assert
-            result.DefaultValue.Should().Be("John Doe");
+            result.DefaultValue.Should().Be(expectedDefaultValue);
         }
 
         [Theory]
@@ -91,7 +100,7 @@ namespace Dash.Tests.Engine
         public void Parse_ComplexSpecification_ShouldParseCorrectly()
         {
             // Act
-            var result = _sut.Parse("string[200]?(==unknown):[a-zA-Z0-9]");
+            var result = _sut.Parse("string[200]?(=='unknown'):[a-zA-Z0-9]");
 
             // Assert
             result.DataType.Should().Be("string");
@@ -101,6 +110,19 @@ namespace Dash.Tests.Engine
             result.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
             result.RangeLowerBound.Should().BeNull();
             result.RangeUpperBound.Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData("string??")]
+        [InlineData("int[1..10][2..10]")]
+        public void Parse_ConstraintDefinedTwice_ShouldThrowInvalidDataTypeException(string dataTypeConstraintDefinedTwice)
+        {
+            // Act
+            Action act = () => _sut.Parse(dataTypeConstraintDefinedTwice);
+
+            // Assert
+            act.Should().Throw<InvalidDataTypeConstraintException>()
+                .And.Message.Should().Be("Constraints cannot be defined more than once");
         }
     }
 }
