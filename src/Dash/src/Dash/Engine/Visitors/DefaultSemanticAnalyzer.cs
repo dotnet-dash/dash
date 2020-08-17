@@ -83,6 +83,10 @@ namespace Dash.Engine.Visitors
             {
                 _errors.Add(exception.Message);
             }
+            catch (InvalidDataTypeConstraintException exception)
+            {
+                _errors.Add(exception.Message);
+            }
         }
 
         public override void Visit(InheritanceDeclarationNode node)

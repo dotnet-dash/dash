@@ -9,7 +9,7 @@ namespace Dash.Engine
     {
         public DataTypeParserResult Parse(string dataTypeSpecification)
         {
-            if (TryFindMatch("^([a-zA-Z_0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
+            if (TryFindMatch("^([a-zA-Z0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
             {
                 var result = new DataTypeParserResult(dashDataType!);
 

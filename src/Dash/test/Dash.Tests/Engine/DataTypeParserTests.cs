@@ -15,6 +15,21 @@ namespace Dash.Tests.Engine
             _sut = new DataTypeParser();
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void Parse_InvalidDataTypeSpecification_ShouldReturn(string invalidDataTypeSpecification)
+        {
+            // Arrange
+            var sut = new DataTypeParser();
+
+            // Act
+            Action act = () => sut.Parse(invalidDataTypeSpecification);
+
+            // Assert
+            act.Should().Throw<InvalidDataTypeException>(invalidDataTypeSpecification);
+        }
+
         [Fact]
         public void Parse_ConstraintsNotSpecified_AllConstraintsShouldBeDefault()
         {

@@ -54,27 +54,24 @@ namespace Dash.Engine
 
             foreach (var property in objectProperties)
             {
-                ProcessRelationshipProperty(property, "@@Has",
-                    entityDeclarationNode, (name, referencedEntity) =>
+                ProcessRelationshipProperty(property, "@@Has", (name, referencedEntity) =>
                     {
                         entityDeclarationNode.Has.Add(new HasReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
                     });
 
-                ProcessRelationshipProperty(property, "@@Has Many",
-                    entityDeclarationNode, (name, referencedEntity) =>
+                ProcessRelationshipProperty(property, "@@Has Many", (name, referencedEntity) =>
                     {
                         entityDeclarationNode.HasMany.Add(new HasManyReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
                     });
 
-                ProcessRelationshipProperty(property, "@@Has And Belongs To Many",
-                    entityDeclarationNode, (name, referencedEntity) =>
+                ProcessRelationshipProperty(property, "@@Has And Belongs To Many", (name, referencedEntity) =>
                     {
                         entityDeclarationNode.HasAndBelongsToMany.Add(new HasAndBelongsToManyDeclarationNode(entityDeclarationNode, name, referencedEntity));
                     });
             }
         }
 
-        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, EntityDeclarationNode parent, Action<string, string> func)
+        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<string, string> func)
         {
             if (objectProperty.Name.IsSame(relationship))
             {
