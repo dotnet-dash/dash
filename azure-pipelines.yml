@@ -49,13 +49,6 @@ steps:
 
 - task: SonarCloudAnalyze@1
   displayName: 'Analyze'
-  
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish Code Coverage Results'
-  inputs:
-    # codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.opencover.xml'
-    failIfCoverageEmpty: true
 
 - task: SonarCloudPublish@1
   inputs:
