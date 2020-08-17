@@ -55,7 +55,7 @@ namespace Dash.Tests.Application
         }
 
         [Fact]
-        public async Task Run_X_Y()
+        public async Task Run_Error_ShouldStopAfterFirstVisitor()
         {
             // Arrange
             var mockFileSystem = new MockFileSystem();
