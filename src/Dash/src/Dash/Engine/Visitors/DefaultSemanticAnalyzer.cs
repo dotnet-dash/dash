@@ -59,18 +59,7 @@ namespace Dash.Engine.Visitors
                 _errors.Add($"Multiple inheritance declaration found for '{node.Name}'");
             }
 
-            foreach (var item in node.InheritanceDeclarationNodes)
-            {
-                if (!_symbolCollector.EntityExists(item.InheritedEntity))
-                {
-                    _errors.Add($"Entity '{node.Name}' wants to inherit unknown entity '{item.InheritedEntity}'");
-                }
-
-                if (item.InheritedEntity.IsSame(node.Name))
-                {
-                    _errors.Add($"Self-inheritance not allowed: '{node.Name}'");
-                }
-            }
+            base.Visit(node);
         }
 
         public override void Visit(AttributeDeclarationNode node)
@@ -87,14 +76,23 @@ namespace Dash.Engine.Visitors
             {
                 _errors.Add(exception.Message);
             }
+
+            base.Visit(node);
         }
 
         public override void Visit(InheritanceDeclarationNode node)
         {
             if (!_symbolCollector.EntityExists(node.InheritedEntity))
             {
-                _errors.Add($"Cannot inherit unknown entity '{node.InheritedEntity}'");
+                _errors.Add($"Entity '{node.Parent.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
             }
+
+            if (node.InheritedEntity.IsSame(node.Parent.Name))
+            {
+                _errors.Add($"Self-inheritance not allowed: '{node.Parent.Name}'");
+            }
+
+            base.Visit(node);
         }
 
         private void ValidateDuplicateEntityDeclarations(ModelNode node)

@@ -1,5 +1,4 @@
-﻿using Dash.Engine;
-using Dash.Engine.Abstractions;
+﻿using Dash.Engine.Abstractions;
 using Dash.Engine.Visitors;
 using Dash.Exceptions;
 using Dash.Nodes;
@@ -141,6 +140,33 @@ namespace Dash.Tests.Engine
                 {
                     first.Should().Be("Entity 'Account' wants to inherit unknown entity 'User'");
                 });
+        }
+
+        [Fact]
+        public void Visit_EntityDeclarationNode_MultipleInheritanceDeclaration_ShouldResultInError()
+        {
+            // Arrange
+            var symbolCollector = Substitute.For<ISymbolCollector>();
+            symbolCollector.EntityExists(Arg.Any<string>()).Returns(true);
+
+            var sut = new DefaultSemanticAnalyzer(
+                Substitute.For<IDataTypeParser>(),
+                symbolCollector,
+                Substitute.For<IReservedSymbolProvider>());
+
+            var node = new EntityDeclarationNode(new ModelNode(), "Account");
+            node.AddInheritanceDeclaration("User");
+            node.AddInheritanceDeclaration("Person");
+
+            // Act
+            sut.Visit(node);
+
+            // Assert
+            sut.Errors.Should().SatisfyRespectively(
+            first =>
+            {
+                first.Should().Be("Multiple inheritance declaration found for 'Account'");
+            });
         }
 
         [Fact]
