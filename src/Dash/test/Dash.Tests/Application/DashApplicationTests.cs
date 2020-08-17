@@ -18,7 +18,7 @@ namespace Dash.Tests.Application
         {
             // Arrange
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile("/test.json", new MockFileData("{}"));
+            mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
             var modelNode = new ModelNode();
 
@@ -27,12 +27,7 @@ namespace Dash.Tests.Application
             var sourceCodeParser = Substitute.For<ISourceCodeParser>();
             sourceCodeParser.Parse("{}").Returns(sourceCodeDocument);
 
-            var nodeVisitors = new List<INodeVisitor>
-            {
-                Substitute.For<INodeVisitor>(),
-                Substitute.For<INodeVisitor>(),
-                Substitute.For<INodeVisitor>(),
-            };
+            var nodeVisitors = new List<INodeVisitor> { Substitute.For<INodeVisitor>(), Substitute.For<INodeVisitor>(), Substitute.For<INodeVisitor>() };
 
             var generator = Substitute.For<IGenerator>();
 
@@ -45,7 +40,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("/test.json"), false);
+            await sut.Run(new FileInfo("c:\\test.json"), false);
 
             // Assert
             nodeVisitors[0].Received(1).Visit(modelNode);
@@ -59,7 +54,7 @@ namespace Dash.Tests.Application
         {
             // Arrange
             var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile("/test.json", new MockFileData("{}"));
+            mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
             var sourceCodeParser = Substitute.For<ISourceCodeParser>();
             sourceCodeParser.Parse("{}").Returns(new SourceCodeDocument(new Configuration(), new ModelNode()));
@@ -88,7 +83,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("/test.json"), false);
+            await sut.Run(new FileInfo("c:\\test.json"), false);
 
             // Assert
             visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
