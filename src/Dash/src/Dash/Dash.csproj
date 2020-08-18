@@ -11,16 +11,8 @@
     <AssemblyName>dotnet-dash</AssemblyName>
     <Authors>Huy Hoang</Authors>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Templates\efcontext" />
-    <None Remove="Templates\Erepo" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\efcontext" />
