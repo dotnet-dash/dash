@@ -11,8 +11,20 @@
     <AssemblyName>dotnet-dash</AssemblyName>
     <Authors>Huy Hoang</Authors>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\.sonarlint\dotnet-dash_dash\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\efcontext" />
