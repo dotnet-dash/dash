@@ -10,11 +10,11 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyName>dotnet-dash</AssemblyName>
     <Authors>Huy Hoang</Authors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
