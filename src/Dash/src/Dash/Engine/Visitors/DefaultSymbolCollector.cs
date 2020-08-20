@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -17,29 +18,29 @@ namespace Dash.Engine.Visitors
             _console = console;
         }
 
-        public override void Visit(ModelNode node)
+        public override Task Visit(ModelNode node)
         {
             _allEntities.Clear();
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(EntityDeclarationNode node)
+        public override Task Visit(EntityDeclarationNode node)
         {
             _allEntities.TryAdd(node.Name, new HashSet<string>());
             _console.Trace($"Adding symbol: {node.Name}");
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(AttributeDeclarationNode node)
+        public override Task Visit(AttributeDeclarationNode node)
         {
             if (_allEntities.TryGetValue(node.Parent.Name, out var attributeHashSet))
             {
                 attributeHashSet.Add(node.AttributeName);
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
         public HashSet<string> GetEntityNames()

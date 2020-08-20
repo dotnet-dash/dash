@@ -1,4 +1,5 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
 using Dash.Nodes;
 
@@ -17,7 +18,7 @@ namespace Dash.Engine.Visitors
             _entityReferenceValueParser = entityReferenceValueParser;
         }
 
-        public override void Visit(HasReferenceDeclarationNode node)
+        public override Task Visit(HasReferenceDeclarationNode node)
         {
             var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
 
@@ -27,9 +28,11 @@ namespace Dash.Engine.Visitors
                 .Get(node.Parent.Name)
                 .SingleReferences
                 .Add(referencedEntityModel);
+
+            return base.Visit(node);
         }
 
-        public override void Visit(HasManyReferenceDeclarationNode node)
+        public override Task Visit(HasManyReferenceDeclarationNode node)
         {
             var result = _entityReferenceValueParser.Parse(node.ReferencedEntity);
 
@@ -44,9 +47,11 @@ namespace Dash.Engine.Visitors
                 .Get(node.ReferencedEntity)
                 .SingleReferences
                 .Add(singleReference);
+
+            return base.Visit(node);
         }
 
-        public override void Visit(HasAndBelongsToManyDeclarationNode node)
+        public override Task Visit(HasAndBelongsToManyDeclarationNode node)
         {
             var joinedEntity = new JoinedEntityModel(node.Parent.Name, node.ReferencedEntity);
 
@@ -61,13 +66,17 @@ namespace Dash.Engine.Visitors
                 .Get(node.ReferencedEntity)
                 .CollectionReferences
                 .Add(referencedEntityModel);
+
+            return base.Visit(node);
         }
 
-        public override void Visit(InheritanceDeclarationNode node)
+        public override Task Visit(InheritanceDeclarationNode node)
         {
             _modelRepository
                 .Get(node.Parent.Name)
                 .InheritAttributes(_modelRepository.Get(node.InheritedEntity));
+
+            return base.Visit(node);
         }
     }
 }

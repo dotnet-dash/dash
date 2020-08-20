@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -17,26 +18,23 @@ namespace Dash.Engine.Visitors
             _console = console;
         }
 
-        public override void Visit(ModelNode node)
+        public override Task Visit(ModelNode node)
         {
             var entity = GetOrAddBaseEntityIfNotDeclared(node);
             AddIdAttributeIfNotDeclared(entity);
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(EntityDeclarationNode node)
+        public override Task Visit(EntityDeclarationNode node)
         {
-            if (!node.InheritanceDeclarationNodes.Any())
+            if (!node.InheritanceDeclarationNodes.Any() && !node.Name.IsSame(BaseEntityName))
             {
-                if (!node.Name.IsSame(BaseEntityName))
-                {
-                    _console.Trace($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
-                    node.AddInheritanceDeclaration(BaseEntityName);
-                }
+                _console.Trace($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
+                node.AddInheritanceDeclaration(BaseEntityName);
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
         private EntityDeclarationNode GetOrAddBaseEntityIfNotDeclared(ModelNode node)

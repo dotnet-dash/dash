@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 using Dash.Extensions;
@@ -27,19 +28,19 @@ namespace Dash.Engine.Visitors
             _reservedSymbolProvider = reservedSymbolProvider;
         }
 
-        public override void Visit(ModelNode node)
+        public override Task Visit(ModelNode node)
         {
             ValidateDuplicateEntityDeclarations(node);
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(EntityDeclarationNode node)
+        public override Task Visit(EntityDeclarationNode node)
         {
             if (string.IsNullOrWhiteSpace(node.Name))
             {
                 _errors.Add("Entity name cannot be null, empty or contain only white-spaces");
-                return;
+                return Task.CompletedTask;
             }
 
             if (!Regex.IsMatch(node.Name, "^([a-zA-Z]+[a-zA-Z0-9]*)$"))
@@ -59,10 +60,10 @@ namespace Dash.Engine.Visitors
                 _errors.Add($"Multiple inheritance declaration found for '{node.Name}'");
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(AttributeDeclarationNode node)
+        public override Task Visit(AttributeDeclarationNode node)
         {
             try
             {
@@ -77,10 +78,10 @@ namespace Dash.Engine.Visitors
                 _errors.Add(exception.Message);
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(InheritanceDeclarationNode node)
+        public override Task Visit(InheritanceDeclarationNode node)
         {
             if (!_symbolCollector.EntityExists(node.InheritedEntity))
             {
@@ -92,7 +93,7 @@ namespace Dash.Engine.Visitors
                 _errors.Add($"Self-inheritance not allowed: '{node.Parent.Name}'");
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
 
         private void ValidateDuplicateEntityDeclarations(ModelNode node)

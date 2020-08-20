@@ -1,4 +1,5 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
 using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
@@ -12,7 +13,7 @@ namespace Dash.Engine.Visitors
             _console = console;
         }
 
-        public override void Visit(HasAndBelongsToManyDeclarationNode node)
+        public override Task Visit(HasAndBelongsToManyDeclarationNode node)
         {
             var joinedEntityName = node.Parent.Name + node.ReferencedEntity;
             _console.Trace($"Adding joined entity: {joinedEntityName}");
@@ -21,7 +22,7 @@ namespace Dash.Engine.Visitors
             joinedEntity.AddHasDeclaration(node.Parent.Name, node.Parent.Name);
             joinedEntity.AddHasDeclaration(node.ReferencedEntity, node.ReferencedEntity);
 
-            base.Visit(node);
+            return base.Visit(node);
         }
     }
 }
