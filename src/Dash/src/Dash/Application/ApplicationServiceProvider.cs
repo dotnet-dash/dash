@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO.Abstractions;
-using System.Net.Http;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
