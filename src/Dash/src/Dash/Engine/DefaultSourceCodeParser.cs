@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models.SourceCode;
+using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
@@ -11,12 +14,19 @@ namespace Dash.Engine
     {
         public SourceCodeDocument Parse(string sourceCode)
         {
-            var document = JsonDocument.Parse(sourceCode);
+            try
+            {
+                var document = JsonDocument.Parse(sourceCode);
 
-            var configuration = ParseConfiguration(document);
-            var modelNode = ParseModel(document);
+                var configuration = ParseConfiguration(document);
+                var modelNode = ParseModel(document);
 
-            return new SourceCodeDocument(configuration, modelNode);
+                return new SourceCodeDocument(configuration, modelNode);
+            }
+            catch (JsonException exception)
+            {
+                throw new ParserException($"JSON error: {exception.Message}");
+            }
         }
 
         private Configuration ParseConfiguration(JsonDocument document)
@@ -92,18 +102,52 @@ namespace Dash.Engine
             }
         }
 
+        private void TryTraverseSeed(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator entityObjectProperties)
+        {
+            foreach (var item in entityObjectProperties.Where(e => e.Name.IsSame("@@Seed")))
+            {
+                if (item.Value.TryGetProperty("FromCsv", out var csvElement))
+                {
+                    if (csvElement.ValueKind != JsonValueKind.Object)
+                    {
+                        throw new ParserException("FromCsv should be an object");
+                    }
+
+                    var uri = new Uri(csvElement.GetProperty("Uri").GetString());
+
+                    var firstLineIsHeader = false;
+                    if (csvElement.TryGetProperty("FirstLineIsHeader", out var value))
+                    {
+                        firstLineIsHeader = value.GetBoolean();
+                    }
+
+                    var rawText = csvElement.GetProperty("MapHeaders").GetRawText();
+                    var mapHeaders = JsonSerializer.Deserialize<IDictionary<string, string>>(rawText);
+
+                    string? delimiter = null;
+                    if (csvElement.TryGetProperty("Delimiter", out var delimiterJsonElement))
+                    {
+                        delimiter = delimiterJsonElement.GetString();
+                    }
+
+                    entityDeclarationNode.AddCsvSeedDeclarationNode(uri, firstLineIsHeader, delimiter, mapHeaders);
+                    continue;
+                }
+
+                throw new ParserException("Missing 'FromCsv' or 'FromData' property inside @@Seed");
+            }
+        }
+
         private void TraverseModelEntities(ModelNode modelNode, JsonProperty entityObject)
         {
-            if (entityObject.Value.ValueKind == JsonValueKind.Object)
+            if (entityObject.Value.ValueKind == JsonValueKind.Object && !entityObject.Name.StartsWith("@@"))
             {
-                if (!entityObject.Name.StartsWith("@@"))
-                {
-                    var entityDeclarationNode = modelNode.AddEntityDeclarationNode(entityObject.Name);
+                var entityDeclarationNode = modelNode.AddEntityDeclarationNode(entityObject.Name);
 
-                    var entityObjectProperties = entityObject.Value.EnumerateObject();
-                    TraverseAttributes(entityDeclarationNode, entityObjectProperties);
-                    TraverseRelationshipProperties(entityDeclarationNode, entityObjectProperties);
-                }
+                var entityObjectProperties = entityObject.Value.EnumerateObject();
+                TraverseAttributes(entityDeclarationNode, entityObjectProperties);
+                TraverseRelationshipProperties(entityDeclarationNode, entityObjectProperties);
+                TryTraverseSeed(entityDeclarationNode, entityObjectProperties);
             }
         }
 

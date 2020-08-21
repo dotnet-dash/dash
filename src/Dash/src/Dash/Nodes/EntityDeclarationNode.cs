@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 
 namespace Dash.Nodes
@@ -28,9 +30,11 @@ namespace Dash.Nodes
 
         public IList<HasAndBelongsToManyDeclarationNode> HasAndBelongsToMany { get; } = new List<HasAndBelongsToManyDeclarationNode>();
 
-        public override void Accept(INodeVisitor visitor)
+        public IList<AstNode> ChildNodes { get; } = new List<AstNode>();
+
+        public override async Task Accept(INodeVisitor visitor)
         {
-            visitor.Visit(this);
+            await visitor.Visit(this);
         }
 
         public void AddAttributeDeclaration(string attributeName, string attributeDataType)
@@ -55,6 +59,11 @@ namespace Dash.Nodes
         {
             var has = new HasReferenceDeclarationNode(this, name, referencedEntity);
             Has.Add(has);
+        }
+
+        public void AddCsvSeedDeclarationNode(Uri uri, bool firstLineIsHeader, string? delimiter, IDictionary<string, string> mapHeaders)
+        {
+            ChildNodes.Add(new CsvSeedDeclarationNode(this, uri, firstLineIsHeader, delimiter, mapHeaders));
         }
     }
 }

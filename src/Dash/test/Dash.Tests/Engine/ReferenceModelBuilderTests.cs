@@ -1,8 +1,10 @@
 ﻿using Dash.Engine;
+using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine
@@ -15,7 +17,7 @@ namespace Dash.Tests.Engine
         public ReferenceModelBuilderTests()
         {
             _modelRepository = new DefaultModelRepository();
-            _sut = new ReferenceModelBuilder(_modelRepository, new EntityReferenceValueParser());
+            _sut = new ReferenceModelBuilder(_modelRepository, new EntityReferenceValueParser(), Substitute.For<IConsole>());
         }
 
         //[Fact]

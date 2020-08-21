@@ -11,11 +11,9 @@ namespace Dash.Engine.Visitors
         private const string BaseEntityName = "Base";
         private const string BaseEntityIdAttributeName = "Id";
         private const string BaseEntityIdAttributeDataType = "Int";
-        private readonly IConsole _console;
 
-        public SetInheritanceVisitor(IConsole console)
+        public SetInheritanceVisitor(IConsole console) : base(console)
         {
-            _console = console;
         }
 
         public override Task Visit(ModelNode node)
@@ -30,7 +28,7 @@ namespace Dash.Engine.Visitors
         {
             if (!node.InheritanceDeclarationNodes.Any() && !node.Name.IsSame(BaseEntityName))
             {
-                _console.Trace($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
+                Console.Trace($"No custom inheritance defined for '{node.Name}', setting inheritance to '{BaseEntityName}'");
                 node.AddInheritanceDeclaration(BaseEntityName);
             }
 
@@ -42,7 +40,7 @@ namespace Dash.Engine.Visitors
             var baseEntity = node.EntityDeclarations.SingleOrDefault(e => e.Name.IsSame(BaseEntityName));
             if (baseEntity == null)
             {
-                _console.Trace($"No entity '{BaseEntityName}' declared. Adding '{BaseEntityName}'");
+                Console.Trace($"No entity '{BaseEntityName}' declared. Adding '{BaseEntityName}'");
                 baseEntity = node.AddEntityDeclarationNode(BaseEntityName);
             }
 
@@ -54,7 +52,7 @@ namespace Dash.Engine.Visitors
             var idAttribute = baseEntity.AttributeDeclarations.FirstOrDefault(e => e.AttributeName.IsSame(BaseEntityIdAttributeName));
             if (idAttribute == null)
             {
-                _console.Trace($"No attribute '{BaseEntityIdAttributeName}' declared. Adding '{BaseEntityIdAttributeName}'");
+                Console.Trace($"No attribute '{BaseEntityIdAttributeName}' declared. Adding '{BaseEntityIdAttributeName}'");
                 baseEntity.InsertAttributeDeclaration(0, BaseEntityIdAttributeName, BaseEntityIdAttributeDataType);
             }
         }

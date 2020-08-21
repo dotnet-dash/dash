@@ -29,7 +29,7 @@ namespace Dash.Engine
             {
                 if (alreadyProcessed.ToString().Contains(constraints[0]))
                 {
-                    throw new InvalidDataTypeConstraintException("Constraints cannot be defined more than once");
+                    throw new InvalidDataTypeConstraintException($"Constraints cannot be defined more than once");
                 }
 
                 alreadyProcessed.Append(constraints[0]);
@@ -50,7 +50,10 @@ namespace Dash.Engine
                         break;
 
                     case '(':
-                        ParseDefaultValue(result, constraints, out constraints);
+                        if (!ParseDefaultValue(result, constraints, out constraints))
+                        {
+                            throw new InvalidDataTypeException(constraints);
+                        }
                         break;
 
                     default:
@@ -80,12 +83,15 @@ namespace Dash.Engine
             }
         }
 
-        private void ParseDefaultValue(DataTypeParserResult result, string value, out string remaining)
+        private bool ParseDefaultValue(DataTypeParserResult result, string value, out string remaining)
         {
             if (TryFindMatch(@"^(\(=='(.+)'\))", value, out var parsedValue, out remaining))
             {
                 result.DefaultValue = parsedValue![4..^2];
+                return true;
             }
+
+            return false;
         }
 
         private bool TryFindMatch(string pattern, string value, out string? foundValue, out string remaining)

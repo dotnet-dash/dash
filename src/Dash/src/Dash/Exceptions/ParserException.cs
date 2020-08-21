@@ -10,6 +10,10 @@ namespace Dash.Exceptions
         {
         }
 
+        public ParserException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+
         private ParserException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }

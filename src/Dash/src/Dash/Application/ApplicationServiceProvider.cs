@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Abstractions;
+using System.Net.Http;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
@@ -28,6 +29,7 @@ namespace Dash.Application
             services.AddSingleton<IModelRepository, DefaultModelRepository>();
             services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
             services.AddSingleton<IConsole, DefaultConsole>();
+            services.AddHttpClient();
             RegisterTemplateProviders(services);
             RegisterValueParsers(services);
             RegisterNodeVisitors(services);
@@ -55,6 +57,8 @@ namespace Dash.Application
             services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
             services.AddSingleton<INodeVisitor, DefaultModelBuilder>();
             services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
+            services.AddSingleton<INodeVisitor, UriResourceDownload>();
+            services.AddSingleton<INodeVisitor, ModelSeedBuilder>();
 
             services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
         }

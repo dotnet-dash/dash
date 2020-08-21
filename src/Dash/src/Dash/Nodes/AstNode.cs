@@ -1,9 +1,10 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
 
 namespace Dash.Nodes
 {
     public abstract class AstNode
     {
-        public abstract void Accept(INodeVisitor visitor);
+        public abstract Task Accept(INodeVisitor visitor);
     }
 }

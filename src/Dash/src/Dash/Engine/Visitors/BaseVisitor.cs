@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -7,20 +8,30 @@ namespace Dash.Engine.Visitors
 {
     public abstract class BaseVisitor : INodeVisitor
     {
-        public virtual Task Visit(ModelNode node)
+        protected readonly IConsole Console;
+
+        protected BaseVisitor(IConsole console)
         {
-            node.EntityDeclarations.Accept(this);
-            return Task.CompletedTask;
+            Console = console;
         }
 
-        public virtual Task Visit(EntityDeclarationNode node)
+        public virtual async Task Visit(ModelNode node)
         {
-            node.AttributeDeclarations.Accept(this);
-            node.InheritanceDeclarationNodes.Accept(this);
-            node.Has.Accept(this);
-            node.HasMany.Accept(this);
-            node.HasAndBelongsToMany.Accept(this);
-            return Task.CompletedTask;
+            await node.EntityDeclarations.Accept(this);
+        }
+
+        public virtual async Task Visit(EntityDeclarationNode node)
+        {
+            Console.Trace($"{GetType().Name} visiting attributes of {node.Name}");
+            await node.AttributeDeclarations.Accept(this);
+            await node.InheritanceDeclarationNodes.Accept(this);
+            await node.Has.Accept(this);
+            await node.HasMany.Accept(this);
+            await node.HasAndBelongsToMany.Accept(this);
+
+            var childNodesCount = node.ChildNodes.Count;
+            Console.Trace($"{GetType().Name} visiting {childNodesCount} child node(s) of {node.Name}");
+            await node.ChildNodes.Accept(this);
         }
 
         public virtual Task Visit(AttributeDeclarationNode node)
@@ -48,9 +59,9 @@ namespace Dash.Engine.Visitors
             return Task.CompletedTask;
         }
 
-        public virtual Task Visit(CsvSeedDeclarationNode node)
+        public virtual async Task Visit(CsvSeedDeclarationNode node)
         {
-            return Task.CompletedTask;
+            await node.UriNode.Accept(this);
         }
 
         public virtual Task Visit(UriNode node)

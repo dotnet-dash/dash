@@ -21,7 +21,8 @@ namespace Dash.Engine.Visitors
         public DefaultSemanticAnalyzer(
             IDataTypeParser dataTypeParser,
             ISymbolCollector symbolCollector,
-            IReservedSymbolProvider reservedSymbolProvider)
+            IReservedSymbolProvider reservedSymbolProvider,
+            IConsole console) : base(console)
         {
             _dataTypeParser = dataTypeParser;
             _symbolCollector = symbolCollector;
@@ -91,6 +92,19 @@ namespace Dash.Engine.Visitors
             if (node.InheritedEntity.IsSame(node.Parent.Name))
             {
                 _errors.Add($"Self-inheritance not allowed: '{node.Parent.Name}'");
+            }
+
+            return base.Visit(node);
+        }
+
+        public override Task Visit(CsvSeedDeclarationNode node)
+        {
+            foreach (var pair in node.MapHeaders)
+            {
+                if (!node.Parent.AttributeDeclarations.Any(e => e.AttributeName.IsSame(pair.Value)))
+                {
+                    _errors.Add($"Trying to map header '{pair.Key}' to unknown Entity Attribute '{pair.Value}'");
+                }
             }
 
             return base.Visit(node);

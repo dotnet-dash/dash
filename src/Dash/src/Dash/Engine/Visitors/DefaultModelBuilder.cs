@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
@@ -19,7 +18,8 @@ namespace Dash.Engine.Visitors
         public DefaultModelBuilder(
             IDataTypeParser dataTypeParser,
             IEnumerable<ILanguageProvider> languageProviders,
-            IModelRepository modelRepository)
+            IModelRepository modelRepository,
+            IConsole console) : base(console)
         {
             _dataTypeParser = dataTypeParser;
             _modelRepository = modelRepository;

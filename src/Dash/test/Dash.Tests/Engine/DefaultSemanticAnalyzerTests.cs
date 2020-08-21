@@ -126,7 +126,8 @@ namespace Dash.Tests.Engine
             var sut = new DefaultSemanticAnalyzer(
                 Substitute.For<IDataTypeParser>(),
                 symbolCollector,
-                Substitute.For<IReservedSymbolProvider>());
+                Substitute.For<IReservedSymbolProvider>(),
+                Substitute.For<IConsole>());
 
             var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("User");
@@ -152,7 +153,8 @@ namespace Dash.Tests.Engine
             var sut = new DefaultSemanticAnalyzer(
                 Substitute.For<IDataTypeParser>(),
                 symbolCollector,
-                Substitute.For<IReservedSymbolProvider>());
+                Substitute.For<IReservedSymbolProvider>(),
+                Substitute.For<IConsole>());
 
             var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("User");
@@ -178,7 +180,8 @@ namespace Dash.Tests.Engine
 
             var sut = new DefaultSemanticAnalyzer(parser,
                 Substitute.For<ISymbolCollector>(),
-                Substitute.For<IReservedSymbolProvider>());
+                Substitute.For<IReservedSymbolProvider>(),
+                Substitute.For<IConsole>());
 
             var entity = new EntityDeclarationNode(new ModelNode(), "Parent");
             var node = new AttributeDeclarationNode(entity, "Id", "Invalid");
@@ -204,7 +207,8 @@ namespace Dash.Tests.Engine
             var sut = new DefaultSemanticAnalyzer(
                 Substitute.For<IDataTypeParser>(),
                 symbolCollector,
-                Substitute.For<IReservedSymbolProvider>());
+                Substitute.For<IReservedSymbolProvider>(),
+                Substitute.For<IConsole>());
 
             var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("Account");
@@ -228,7 +232,8 @@ namespace Dash.Tests.Engine
             var sut = new DefaultSemanticAnalyzer(
                 Substitute.For<IDataTypeParser>(),
                 Substitute.For<ISymbolCollector>(),
-                reservedSymbolProvider);
+                reservedSymbolProvider,
+                Substitute.For<IConsole>());
 
             sut.Visit(new EntityDeclarationNode(new ModelNode(), "Account"));
 
@@ -244,7 +249,8 @@ namespace Dash.Tests.Engine
             return new DefaultSemanticAnalyzer(
                 Substitute.For<IDataTypeParser>(),
                 Substitute.For<ISymbolCollector>(),
-                Substitute.For<IReservedSymbolProvider>());
+                Substitute.For<IReservedSymbolProvider>(),
+                Substitute.For<IConsole>());
         }
     }
 }

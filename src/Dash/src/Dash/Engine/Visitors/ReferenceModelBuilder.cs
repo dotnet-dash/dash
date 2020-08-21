@@ -12,7 +12,8 @@ namespace Dash.Engine.Visitors
 
         public ReferenceModelBuilder(
             IModelRepository modelRepository,
-            IEntityReferenceValueParser entityReferenceValueParser)
+            IEntityReferenceValueParser entityReferenceValueParser,
+            IConsole console) : base(console)
         {
             _modelRepository = modelRepository;
             _entityReferenceValueParser = entityReferenceValueParser;

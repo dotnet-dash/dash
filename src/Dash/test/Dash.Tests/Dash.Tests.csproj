@@ -18,10 +18,14 @@
     <None Remove="Samples\HelloWorld.json" />
     <None Remove="Samples\Inheritance.json" />
     <None Remove="Samples\OverrideBaseId.json" />
+    <None Remove="Samples\Seed.json" />
     <None Remove="Samples\Smoketest1.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Samples\Seed.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\HasNullable.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

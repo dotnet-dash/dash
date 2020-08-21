@@ -43,9 +43,9 @@ namespace Dash.Tests.Application
             await sut.Run(new FileInfo("c:\\test.json"), false);
 
             // Assert
-            nodeVisitors[0].Received(1).Visit(modelNode);
-            nodeVisitors[1].Received(1).Visit(modelNode);
-            nodeVisitors[2].Received(1).Visit(modelNode);
+            await nodeVisitors[0].Received(1).Visit(modelNode);
+            await nodeVisitors[1].Received(1).Visit(modelNode);
+            await nodeVisitors[2].Received(1).Visit(modelNode);
             await generator.Received(1).Generate(sourceCodeDocument);
         }
 
@@ -86,8 +86,8 @@ namespace Dash.Tests.Application
             await sut.Run(new FileInfo("c:\\test.json"), false);
 
             // Assert
-            visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
-            visitors[1].DidNotReceive().Visit(Arg.Any<ModelNode>());
+            await visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
+            await visitors[1].DidNotReceive().Visit(Arg.Any<ModelNode>());
             await generator.DidNotReceive().Generate(Arg.Any<SourceCodeDocument>());
         }
     }

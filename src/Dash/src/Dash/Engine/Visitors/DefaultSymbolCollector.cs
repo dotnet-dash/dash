@@ -10,12 +10,10 @@ namespace Dash.Engine.Visitors
 {
     public class DefaultSymbolCollector : BaseVisitor, ISymbolCollector
     {
-        private readonly IConsole _console;
         private readonly Dictionary<string, HashSet<string>> _allEntities = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
 
-        public DefaultSymbolCollector(IConsole console)
+        public DefaultSymbolCollector(IConsole console) : base(console)
         {
-            _console = console;
         }
 
         public override Task Visit(ModelNode node)
@@ -28,7 +26,7 @@ namespace Dash.Engine.Visitors
         public override Task Visit(EntityDeclarationNode node)
         {
             _allEntities.TryAdd(node.Name, new HashSet<string>());
-            _console.Trace($"Adding symbol: {node.Name}");
+            Console.Trace($"Adding symbol: {node.Name}");
 
             return base.Visit(node);
         }

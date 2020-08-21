@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.LanguageProviders;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine
@@ -24,11 +26,12 @@ namespace Dash.Tests.Engine
                     new CSharpLanguageProvider(),
                     new SqlServerLanguageProvider()
                 },
-                _modelRepository);
+                _modelRepository,
+                Substitute.For<IConsole>());
         }
 
         [Fact]
-        public void Visit_ModelNode_EntityModelCreated()
+        public async Task Visit_ModelNode_EntityModelCreated()
         {
             // Arrange
             var modelNode = new ModelNode();
@@ -41,7 +44,7 @@ namespace Dash.Tests.Engine
             personNode.AddHasDeclaration("CountryOfResidence", "Country");
 
             // Act
-            _sut.Visit(modelNode);
+            await _sut.Visit(modelNode);
 
             // Assert
             _modelRepository.EntityModels.Should().SatisfyRespectively(
