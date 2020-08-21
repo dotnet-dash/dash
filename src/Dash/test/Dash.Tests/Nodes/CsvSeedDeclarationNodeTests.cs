@@ -6,13 +6,13 @@ using Xunit;
 
 namespace Dash.Tests.Nodes
 {
-    public class HasAndBelongsToManyDeclarationNodeTests
+    public class CsvSeedDeclarationNodeTests
     {
         [Fact]
-        public async Task Accept_Visitor_VisitorShouldHaveCalledVisit()
+        public async Task Accept_Visitor_SutShouldHaveCalledVisit()
         {
             // Arrange
-            var sut = new HasAndBelongsToManyDeclarationNode(new EntityDeclarationNode(new ModelNode(), "Parent"), "Child", "Person");
+            var sut = new CsvSeedDeclarationNode(default, default, default, default, default);
 
             var visitor = Substitute.For<INodeVisitor>();
 

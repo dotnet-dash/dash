@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Dash.Exceptions
 {
     [Serializable]
-    public sealed class ParserException : Exception
+    public class ParserException : Exception
     {
         public ParserException(string message) : base(message)
         {
@@ -14,7 +14,7 @@ namespace Dash.Exceptions
         {
         }
 
-        private ParserException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected ParserException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
