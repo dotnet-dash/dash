@@ -35,7 +35,7 @@ namespace Dash.Application
             _console = console;
         }
 
-        public async Task Run(FileInfo inputFile, bool verbose)
+        public async Task Run(FileInfo? inputFile)
         {
             if (inputFile == null)
             {

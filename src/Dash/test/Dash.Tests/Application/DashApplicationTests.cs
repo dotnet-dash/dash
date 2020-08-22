@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models.SourceCode;
+using Dash.Exceptions;
 using Dash.Nodes;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Dash.Tests.Application
@@ -40,13 +42,47 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("c:\\test.json"), false);
+            await sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
             await nodeVisitors[0].Received(1).Visit(modelNode);
             await nodeVisitors[1].Received(1).Visit(modelNode);
             await nodeVisitors[2].Received(1).Visit(modelNode);
             await generator.Received(1).Generate(sourceCodeDocument);
+        }
+
+        [Fact]
+        public async Task Run_FileDoesNotExist_ShouldOutputError()
+        {
+            // Arrange
+            var sourceCodeParser = Substitute.For<ISourceCodeParser>();
+            sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
+            var console = Substitute.For<IConsole>();
+            var sut = new DashApplication(new MockFileSystem(), sourceCodeParser, default, default, default, console);
+
+            // Act
+            await sut.Run(new FileInfo("c:\\file.json"));
+
+            // Assert
+            console.Received(1).Error("Could not find the model file 'c:\\file.json'.");
+        }
+
+        [Fact]
+        public async Task Run_ParseExceptionThrown_ShouldOutputException()
+        {
+            // Arrange
+            var fileSystem = new MockFileSystem();
+            fileSystem.AddFile("c:\\file.json", new MockFileData("{}"));
+            var sourceCodeParser = Substitute.For<ISourceCodeParser>();
+            sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
+            var console = Substitute.For<IConsole>();
+            var sut = new DashApplication(fileSystem, sourceCodeParser, default, default, default, console);
+
+            // Act
+            await sut.Run(new FileInfo("c:\\file.json"));
+
+            // Assert
+            console.Received(1).Error("Error while parsing the source code: Oops");
         }
 
         [Fact]
@@ -83,7 +119,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("c:\\test.json"), false);
+            await sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
             await visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
