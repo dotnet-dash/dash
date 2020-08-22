@@ -31,9 +31,9 @@ namespace Dash.Engine.Visitors
             using var reader = new StreamReader(_fileSystem.FileStream.Create(node.UriNode.LocalCopy!, FileMode.Open));
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-            csv.Configuration.MissingFieldFound = (strings, i, arg3) =>
+            csv.Configuration.MissingFieldFound = (headerNames, index, context) =>
             {
-                _errorRepository.Add(arg3.Field);
+                _errorRepository.Add(context.Field);
             };
             csv.Configuration.HasHeaderRecord = node.FirstLineIsHeader;
             csv.Configuration.Delimiter = node.Delimiter;
