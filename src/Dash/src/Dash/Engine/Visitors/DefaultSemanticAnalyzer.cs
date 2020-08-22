@@ -11,19 +11,19 @@ namespace Dash.Engine.Visitors
     public class DefaultSemanticAnalyzer : BaseVisitor, ISemanticAnalyzer
     {
         private readonly IDataTypeParser _dataTypeParser;
-        private readonly ISymbolCollector _symbolCollector;
+        private readonly ISymbolRepository _symbolRepository;
         private readonly IReservedSymbolProvider _reservedSymbolProvider;
         private readonly IErrorRepository _errorRepository;
 
         public DefaultSemanticAnalyzer(
             IDataTypeParser dataTypeParser,
-            ISymbolCollector symbolCollector,
+            ISymbolRepository symbolRepository,
             IReservedSymbolProvider reservedSymbolProvider,
             IConsole console,
             IErrorRepository errorRepository) : base(console)
         {
             _dataTypeParser = dataTypeParser;
-            _symbolCollector = symbolCollector;
+            _symbolRepository = symbolRepository;
             _reservedSymbolProvider = reservedSymbolProvider;
             _errorRepository = errorRepository;
         }
@@ -83,7 +83,7 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(InheritanceDeclarationNode node)
         {
-            if (!_symbolCollector.EntityExists(node.InheritedEntity))
+            if (!_symbolRepository.EntityExists(node.InheritedEntity))
             {
                 _errorRepository.Add($"Entity '{node.Parent.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
             }

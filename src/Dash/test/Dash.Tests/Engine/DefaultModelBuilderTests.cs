@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.LanguageProviders;
+using Dash.Engine.Models;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
@@ -13,7 +14,7 @@ namespace Dash.Tests.Engine
 {
     public class DefaultModelBuilderTests
     {
-        private readonly DefaultModelRepository _modelRepository;
+        private readonly IModelRepository _modelRepository;
         private readonly DefaultModelBuilder _sut;
 
         public DefaultModelBuilderTests()
@@ -36,12 +37,14 @@ namespace Dash.Tests.Engine
             // Arrange
             var modelNode = new ModelNode();
 
-            var countryNode = modelNode.AddEntityDeclarationNode("Country");
-            countryNode.AddAttributeDeclaration("Id", "Int");
+            modelNode
+                .AddEntityDeclarationNode("Country")
+                .AddAttributeDeclaration("Id", "Int");
 
-            var personNode = modelNode.AddEntityDeclarationNode("Person");
-            personNode.AddHasDeclaration("CountryOfBirth", "Country");
-            personNode.AddHasDeclaration("CountryOfResidence", "Country");
+            modelNode
+                .AddEntityDeclarationNode("Person")
+                .AddHasDeclaration("CountryOfBirth", "Country")
+                .AddHasDeclaration("CountryOfResidence", "Country");
 
             // Act
             await _sut.Visit(modelNode);
@@ -63,17 +66,18 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_EntityModelCreated()
+        public async Task Visit_EntityDeclarationNode_EntityModelCreated()
         {
             // Arrange
             var modelNode = new ModelNode();
-            var node = modelNode.AddEntityDeclarationNode("Account");
-            node.AddAttributeDeclaration("Surname", "Unicode");
-            node.AddAttributeDeclaration("Username", "String");
-            node.AddAttributeDeclaration("Nickname", "Unicode?");
+            var node = modelNode
+                .AddEntityDeclarationNode("Account")
+                .AddAttributeDeclaration("Surname", "Unicode")
+                .AddAttributeDeclaration("Username", "String")
+                .AddAttributeDeclaration("Nickname", "Unicode?");
 
             // Act
-            _sut.Visit(node);
+            await _sut.Visit(node);
 
             // Assert
             _modelRepository.EntityModels.Should().SatisfyRespectively(

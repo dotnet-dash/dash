@@ -6,6 +6,7 @@ using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
 using Dash.Engine.LanguageProviders;
+using Dash.Engine.Repositories;
 using Dash.Engine.TemplateProviders;
 using Dash.Engine.Visitors;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,17 +28,23 @@ namespace Dash.Application
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
             services.AddSingleton<IGenerator, DefaultGenerator>();
-            services.AddSingleton<IErrorRepository, ErrorRepository>();
-            services.AddSingleton<IModelRepository, DefaultModelRepository>();
             services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
             services.AddSingleton<IConsole, DefaultConsole>();
             services.AddHttpClient();
+            RegisterRepositories(services);
             RegisterTemplateProviders(services);
             RegisterValueParsers(services);
             RegisterNodeVisitors(services);
             RegisterLanguageProviders(services);
 
             return services.BuildServiceProvider(true);
+        }
+
+        private static void RegisterRepositories(ServiceCollection services)
+        {
+            services.AddSingleton<IModelRepository, DefaultModelRepository>();
+            services.AddSingleton<ISymbolRepository, DefaultSymbolRepository>();
+            services.AddSingleton<IErrorRepository, ErrorRepository>();
         }
 
         private static void RegisterTemplateProviders(IServiceCollection services)
@@ -61,8 +68,6 @@ namespace Dash.Application
             services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
             services.AddSingleton<INodeVisitor, UriResourceDownload>();
             services.AddSingleton<INodeVisitor, ModelSeedBuilder>();
-
-            services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
         }
 
         private static void RegisterLanguageProviders(IServiceCollection services)

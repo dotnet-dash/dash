@@ -16,7 +16,7 @@ namespace Dash.Nodes
             Name = name;
         }
 
-        public ModelNode Parent { get; set; }
+        public ModelNode Parent { get; }
 
         public string Name { get; }
 
@@ -37,10 +37,12 @@ namespace Dash.Nodes
             await visitor.Visit(this);
         }
 
-        public void AddAttributeDeclaration(string attributeName, string attributeDataType)
+        public EntityDeclarationNode AddAttributeDeclaration(string attributeName, string attributeDataType)
         {
             var attribute = new AttributeDeclarationNode(this, attributeName, attributeDataType);
             _attributeDeclarations.Add(attribute);
+
+            return this;
         }
 
         public void InsertAttributeDeclaration(int index, string attributeName, string attributeDataType)
@@ -49,21 +51,33 @@ namespace Dash.Nodes
             _attributeDeclarations.Insert(index, attribute);
         }
 
-        public void AddInheritanceDeclaration(string inheritedEntity)
+        public InheritanceDeclarationNode AddInheritanceDeclaration(string inheritedEntity)
         {
             var inheritance = new InheritanceDeclarationNode(this, inheritedEntity);
             _inheritanceDeclarations.Add(inheritance);
+
+            return inheritance;
         }
 
-        public void AddHasDeclaration(string name, string referencedEntity)
+        public EntityDeclarationNode AddHasDeclaration(string name, string referencedEntity)
         {
             var has = new HasReferenceDeclarationNode(this, name, referencedEntity);
             Has.Add(has);
+
+            return this;
         }
 
         public void AddCsvSeedDeclarationNode(Uri uri, bool firstLineIsHeader, string? delimiter, IDictionary<string, string> mapHeaders)
         {
             ChildNodes.Add(new CsvSeedDeclarationNode(this, uri, firstLineIsHeader, delimiter, mapHeaders));
+        }
+
+        public EntityDeclarationNode AddHasAndBelongsToManyDeclarationNode(string name, string referencedEntity)
+        {
+            var hasAndBelongsToManyDeclarationNode = new HasAndBelongsToManyDeclarationNode(this, name, referencedEntity);
+            HasAndBelongsToMany.Add(hasAndBelongsToManyDeclarationNode);
+
+            return this;
         }
     }
 }

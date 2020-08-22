@@ -1,31 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
-using Dash.Extensions;
 using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class DefaultSymbolCollector : BaseVisitor, ISymbolCollector
+    public class DefaultSymbolCollector : BaseVisitor
     {
-        private readonly Dictionary<string, HashSet<string>> _allEntities = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly ISymbolRepository _symbolRepository;
 
-        public DefaultSymbolCollector(IConsole console) : base(console)
+        public DefaultSymbolCollector(IConsole console, ISymbolRepository symbolRepository) : base(console)
         {
-        }
-
-        public override Task Visit(ModelNode node)
-        {
-            _allEntities.Clear();
-
-            return base.Visit(node);
+            _symbolRepository = symbolRepository;
         }
 
         public override Task Visit(EntityDeclarationNode node)
         {
-            _allEntities.TryAdd(node.Name, new HashSet<string>());
+            _symbolRepository.AddEntity(node.Name);
             Console.Trace($"Adding symbol: {node.Name}");
 
             return base.Visit(node);
@@ -33,30 +23,9 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(AttributeDeclarationNode node)
         {
-            if (_allEntities.TryGetValue(node.Parent.Name, out var attributeHashSet))
-            {
-                attributeHashSet.Add(node.AttributeName);
-            }
+            _symbolRepository.AddEntityAttribute(node.Parent.Name, node.AttributeName);
 
             return base.Visit(node);
-        }
-
-        public HashSet<string> GetEntityNames()
-        {
-            return _allEntities.Select(e => e.Key).ToHashSet();
-        }
-
-        public HashSet<string> GetAttributeNames(string entityName)
-        {
-            return _allEntities.TryGetValue(entityName, out var result)
-                ? result
-                : new HashSet<string>();
-        }
-
-        public bool EntityExists(string entityName)
-        {
-            var entity = GetEntityNames().FirstOrDefault(e => e.IsSame(entityName));
-            return entity != null;
         }
     }
 }

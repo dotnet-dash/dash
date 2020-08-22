@@ -7,8 +7,8 @@ namespace Dash.Tests.Engine
     public class DefaultReservedSymbolProviderTests
     {
         [Theory]
-        [InlineData("base", true)]
-        [InlineData("Base", true)]
+        [InlineData("base", false)]
+        [InlineData("Base", false)]
         [InlineData("object", true)]
         [InlineData("hello", false)]
         [InlineData("world", false)]

@@ -16,7 +16,7 @@ namespace Dash.Tests.Engine
     public class DefaultSemanticAnalyzerTests
     {
         private readonly IDataTypeParser _parser = Substitute.For<IDataTypeParser>();
-        private readonly ISymbolCollector _symbolCollector = Substitute.For<ISymbolCollector>();
+        private readonly ISymbolRepository _symbolRepository = Substitute.For<ISymbolRepository>();
         private readonly IReservedSymbolProvider _reservedSymbolProvider = Substitute.For<IReservedSymbolProvider>();
         private readonly ErrorRepository _errorRepository = new ErrorRepository();
         private readonly DefaultSemanticAnalyzer _sut;
@@ -25,7 +25,7 @@ namespace Dash.Tests.Engine
         {
             _sut = new DefaultSemanticAnalyzer(
                 _parser,
-                _symbolCollector,
+                _symbolRepository,
                 _reservedSymbolProvider,
                 Substitute.For<IConsole>(),
                 _errorRepository);
@@ -131,7 +131,7 @@ namespace Dash.Tests.Engine
         public async Task Visit_EntityDeclarationNode_InheritedEntityNotFound_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            _symbolCollector.EntityExists("User").Returns(false);
+            _symbolRepository.EntityExists("User").Returns(false);
 
             var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("User");
@@ -151,7 +151,7 @@ namespace Dash.Tests.Engine
         public async Task Visit_EntityDeclarationNode_MultipleInheritanceDeclaration_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            _symbolCollector.EntityExists(Arg.Any<string>()).Returns(true);
+            _symbolRepository.EntityExists(Arg.Any<string>()).Returns(true);
 
             var node = new EntityDeclarationNode(new ModelNode(), "FooBar");
             node.AddInheritanceDeclaration("Foo");
@@ -209,7 +209,7 @@ namespace Dash.Tests.Engine
         public async Task Visit_EntityDeclarationNode_SelfInheritance_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            _symbolCollector.EntityExists("Foo").Returns(true);
+            _symbolRepository.EntityExists("Foo").Returns(true);
 
             var node = new EntityDeclarationNode(new ModelNode(), "Foo");
             node.AddInheritanceDeclaration("Foo");

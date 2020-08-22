@@ -2,8 +2,12 @@
 
 namespace Dash.Engine.Abstractions
 {
-    public interface ISymbolCollector : INodeVisitor
+    public interface ISymbolRepository
     {
+        void AddEntity(string entityName);
+
+        void AddEntityAttribute(string entityName, string attributeName);
+
         HashSet<string> GetEntityNames();
 
         HashSet<string> GetAttributeNames(string entityName);

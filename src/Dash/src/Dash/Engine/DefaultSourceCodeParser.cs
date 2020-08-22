@@ -110,7 +110,7 @@ namespace Dash.Engine
                 {
                     if (csvElement.ValueKind != JsonValueKind.Object)
                     {
-                        throw new ParserException("FromCsv should be an object");
+                        throw new ParserException("The 'FromCsv' value must be an Object");
                     }
 
                     var uri = new Uri(csvElement.GetProperty("Uri").GetString());
