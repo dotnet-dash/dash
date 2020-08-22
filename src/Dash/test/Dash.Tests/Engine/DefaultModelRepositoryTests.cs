@@ -1,6 +1,7 @@
 ﻿using System;
 using Dash.Engine;
 using Dash.Engine.Models;
+using Dash.Engine.Repositories;
 using Dash.Exceptions;
 using FluentAssertions;
 using Xunit;

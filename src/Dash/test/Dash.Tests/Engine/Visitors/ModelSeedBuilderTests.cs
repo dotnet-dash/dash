@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
+using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
