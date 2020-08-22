@@ -6,9 +6,11 @@ namespace Dash.Engine
     {
         public EntityReferenceValueParserResult Parse(string entityReferenceValue)
         {
-            var result = new EntityReferenceValueParserResult();
+            var result = new EntityReferenceValueParserResult
+            {
+                IsNullable = entityReferenceValue.EndsWith("?")
+            };
 
-            result.IsNullable = entityReferenceValue.EndsWith("?");
             if (result.IsNullable)
             {
                 entityReferenceValue = entityReferenceValue[..^1];

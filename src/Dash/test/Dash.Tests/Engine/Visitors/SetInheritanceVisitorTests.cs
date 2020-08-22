@@ -15,7 +15,7 @@ namespace Dash.Tests.Engine.Visitors
             var sut = new SetInheritanceVisitor(NSubstitute.Substitute.For<IConsole>());
 
             var modelNode = new ModelNode();
-            _ = modelNode.AddEntityDeclarationNode("Order");
+            modelNode.AddEntityDeclarationNode("Order");
             var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
             orderLineNode.AddInheritanceDeclaration("SomeOtherBase");
 

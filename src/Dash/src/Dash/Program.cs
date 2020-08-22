@@ -9,7 +9,7 @@ namespace Dash
     {
         public static async Task Main(FileInfo? file, bool verbose = false)
         {
-            var applicationServiceProvider = new ApplicationServiceProvider();
+            IApplicationServiceProvider applicationServiceProvider = new ApplicationServiceProvider();
 
             var services = applicationServiceProvider.Create(verbose);
             using var scope = services.CreateScope();

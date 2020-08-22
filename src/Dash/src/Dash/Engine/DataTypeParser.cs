@@ -29,7 +29,7 @@ namespace Dash.Engine
             {
                 if (alreadyProcessed.ToString().Contains(constraints[0]))
                 {
-                    throw new InvalidDataTypeConstraintException($"Constraints cannot be defined more than once");
+                    throw new InvalidDataTypeConstraintException("Constraints cannot be defined more than once");
                 }
 
                 alreadyProcessed.Append(constraints[0]);

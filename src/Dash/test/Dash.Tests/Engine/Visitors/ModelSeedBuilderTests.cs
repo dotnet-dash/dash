@@ -38,9 +38,11 @@ namespace Dash.Tests.Engine.Visitors
                 errorRepository);
 
             var parent = new EntityDeclarationNode(new ModelNode(), "CurrencyCode");
-            var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            dictionary.Add("Code", "CurrencyCode");
-            dictionary.Add("Name", "CurrencyName");
+            var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"Code", "CurrencyCode"},
+                {"Name", "CurrencyName"}
+            };
             var node = new CsvSeedDeclarationNode(parent, new Uri("https://currencycode"), true, ";", dictionary);
             node.UriNode.LocalCopy = "c:\\currencies.csv";
 
