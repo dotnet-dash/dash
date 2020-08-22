@@ -1,4 +1,5 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
 using Dash.Nodes;
 using NSubstitute;
 using Xunit;
@@ -8,7 +9,7 @@ namespace Dash.Tests.Nodes
     public class HasAndBelongsToManyDeclarationNodeTests
     {
         [Fact]
-        public void Accept_Visitor_VisitorShouldHaveCalledVisit()
+        public async Task Accept_Visitor_VisitorShouldHaveCalledVisit()
         {
             // Arrange
             var sut = new HasAndBelongsToManyDeclarationNode(new EntityDeclarationNode(new ModelNode(), "Parent"), "Child", "Person");
@@ -16,10 +17,10 @@ namespace Dash.Tests.Nodes
             var visitor = Substitute.For<INodeVisitor>();
 
             // Act
-            sut.Accept(visitor);
+            await sut.Accept(visitor);
 
             // Assert
-            visitor.Received(1).Visit(sut);
+            await visitor.Received(1).Visit(sut);
         }
     }
 }

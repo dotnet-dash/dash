@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Nodes;
 
@@ -13,14 +14,14 @@ namespace Dash.Extensions
             return enumerable.Contains(value, StringComparer.OrdinalIgnoreCase);
         }
 
-        public static void Accept<T>(this IEnumerable<T> nodes, INodeVisitor visitor) where T : AstNode
+        public static async Task Accept<T>(this IEnumerable<T> nodes, INodeVisitor visitor) where T : AstNode
         {
             foreach (var entityDeclaration in nodes.ToList())
             {
-                entityDeclaration.Accept(visitor);
+                await entityDeclaration.Accept(visitor);
             }
         }
 
-        public static void Accept<T>(this IList<T> nodes, INodeVisitor visitor) where T : AstNode => Accept(nodes.AsEnumerable(), visitor);
+        public static Task Accept<T>(this IList<T> nodes, INodeVisitor visitor) where T : AstNode => Accept(nodes.AsEnumerable(), visitor);
     }
 }

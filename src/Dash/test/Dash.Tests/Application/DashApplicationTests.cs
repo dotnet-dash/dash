@@ -5,69 +5,100 @@ using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models.SourceCode;
+using Dash.Exceptions;
 using Dash.Nodes;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Dash.Tests.Application
 {
     public class DashApplicationTests
     {
+        private readonly MockFileSystem _mockFileSystem = new MockFileSystem();
+        private readonly DashApplication _sut;
+        private readonly ISourceCodeParser _sourceCodeParser = Substitute.For<ISourceCodeParser>();
+        private readonly IConsole _console = Substitute.For<IConsole>();
+        private readonly IList<INodeVisitor> _nodeVisitors = new List<INodeVisitor>();
+        private readonly IGenerator _generator = Substitute.For<IGenerator>();
+        private readonly IErrorRepository _errorRepository = Substitute.For<IErrorRepository>();
+
+        public DashApplicationTests()
+        {
+            _sut = new DashApplication(
+                _mockFileSystem,
+                _sourceCodeParser,
+                _nodeVisitors,
+                _errorRepository,
+                _generator,
+                _console);
+        }
+
         [Fact]
         public async Task Run_NoErrors_ShouldHaveCalledGenerate()
         {
             // Arrange
-            var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
+            _mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
             var modelNode = new ModelNode();
-
             var sourceCodeDocument = new SourceCodeDocument(new Configuration(), modelNode);
+            _sourceCodeParser.Parse("{}").Returns(sourceCodeDocument);
 
-            var sourceCodeParser = Substitute.For<ISourceCodeParser>();
-            sourceCodeParser.Parse("{}").Returns(sourceCodeDocument);
-
-            var nodeVisitors = new List<INodeVisitor> { Substitute.For<INodeVisitor>(), Substitute.For<INodeVisitor>(), Substitute.For<INodeVisitor>() };
-
-            var generator = Substitute.For<IGenerator>();
-
-            var sut = new DashApplication(
-                mockFileSystem,
-                sourceCodeParser,
-                nodeVisitors,
-                Substitute.For<IErrorRepository>(),
-                generator,
-                Substitute.For<IConsole>());
+            _nodeVisitors.Add(Substitute.For<INodeVisitor>());
+            _nodeVisitors.Add(Substitute.For<INodeVisitor>());
+            _nodeVisitors.Add(Substitute.For<INodeVisitor>());
 
             // Act
-            await sut.Run(new FileInfo("c:\\test.json"), false);
+            await _sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
-            nodeVisitors[0].Received(1).Visit(modelNode);
-            nodeVisitors[1].Received(1).Visit(modelNode);
-            nodeVisitors[2].Received(1).Visit(modelNode);
-            await generator.Received(1).Generate(sourceCodeDocument);
+            await _nodeVisitors[0].Received(1).Visit(modelNode);
+            await _nodeVisitors[1].Received(1).Visit(modelNode);
+            await _nodeVisitors[2].Received(1).Visit(modelNode);
+            await _generator.Received(1).Generate(sourceCodeDocument);
+        }
+
+        [Fact]
+        public async Task Run_FileDoesNotExist_ShouldOutputError()
+        {
+            // Arrange
+            var sourceCodeParser = Substitute.For<ISourceCodeParser>();
+            sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
+
+            // Act
+            await _sut.Run(new FileInfo("c:\\file.json"));
+
+            // Assert
+            _console.Received(1).Error("Could not find the model file 'c:\\file.json'.");
+        }
+
+        [Fact]
+        public async Task Run_ParseExceptionThrown_ShouldOutputException()
+        {
+            // Arrange
+            _mockFileSystem.AddFile("c:\\file.json", new MockFileData("{}"));
+            _sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
+
+            // Act
+            await _sut.Run(new FileInfo("c:\\file.json"));
+
+            // Assert
+            _console.Received(1).Error("Error while parsing the source code: Oops");
         }
 
         [Fact]
         public async Task Run_Error_ShouldStopAfterFirstVisitor()
         {
             // Arrange
-            var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
+            _mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
-            var sourceCodeParser = Substitute.For<ISourceCodeParser>();
-            sourceCodeParser.Parse("{}").Returns(new SourceCodeDocument(new Configuration(), new ModelNode()));
+            _sourceCodeParser.Parse("{}").Returns(new SourceCodeDocument(new Configuration(), new ModelNode()));
 
-            var visitors = new List<INodeVisitor>()
-            {
-                Substitute.For<INodeVisitor>(),
-                Substitute.For<INodeVisitor>(),
-            };
+            _nodeVisitors.Add(Substitute.For<INodeVisitor>());
+            _nodeVisitors.Add(Substitute.For<INodeVisitor>());
 
-            var errorRepository = Substitute.For<IErrorRepository>();
-            errorRepository.HasErrors().Returns(true);
-            errorRepository.GetErrors().Returns(new List<string>
+            _errorRepository.HasErrors().Returns(true);
+            _errorRepository.GetErrors().Returns(new List<string>
             {
                 "An error"
             });
@@ -75,19 +106,19 @@ namespace Dash.Tests.Application
             var generator = Substitute.For<IGenerator>();
 
             var sut = new DashApplication(
-                mockFileSystem,
-                sourceCodeParser,
-                visitors,
-                errorRepository,
+                _mockFileSystem,
+                _sourceCodeParser,
+                _nodeVisitors,
+                _errorRepository,
                 generator,
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("c:\\test.json"), false);
+            await sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
-            visitors[0].Received(1).Visit(Arg.Any<ModelNode>());
-            visitors[1].DidNotReceive().Visit(Arg.Any<ModelNode>());
+            await _nodeVisitors[0].Received(1).Visit(Arg.Any<ModelNode>());
+            await _nodeVisitors[1].DidNotReceive().Visit(Arg.Any<ModelNode>());
             await generator.DidNotReceive().Generate(Arg.Any<SourceCodeDocument>());
         }
     }

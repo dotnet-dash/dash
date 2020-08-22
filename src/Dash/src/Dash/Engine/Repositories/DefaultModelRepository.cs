@@ -32,7 +32,7 @@ namespace Dash.Engine
             _entityModels.Add(entityModel);
         }
 
-        public EntityModel Get(string entityName)
+        public virtual EntityModel Get(string entityName)
         {
             if (!TryGet(entityName, out var entity))
             {

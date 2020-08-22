@@ -1,4 +1,6 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
+using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
@@ -9,100 +11,63 @@ namespace Dash.Tests.Engine
 {
     public class DefaultSymbolCollectorTests
     {
+        private readonly ISymbolRepository _symbolRepository = new DefaultSymbolRepository();
+        private readonly DefaultSymbolCollector _sut;
+
+        public DefaultSymbolCollectorTests()
+        {
+            _sut = new DefaultSymbolCollector(Substitute.For<IConsole>(), _symbolRepository);
+        }
+
         [Fact]
         public void GetEntityNames_NoVisits_ShouldReturnEmptyCollection()
         {
-            // Arrange
-            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
-
             // Act
-            var result = sut.GetEntityNames();
+            var result = _symbolRepository.GetEntityNames();
 
             // Assert
             result.Count.Should().Be(0);
         }
 
-
         [Fact]
-        public void GetEntityNames_EntityDeclarationNodeVisited_ShouldReturnEntityNames()
+        public async Task Visit_EntityDeclarationNode_ShouldAddSymbolsToRepository()
         {
             // Arrange
-            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
-
             var modelNode = new ModelNode();
 
-            sut.Visit(new EntityDeclarationNode(modelNode, "Account"));
-            sut.Visit(new EntityDeclarationNode(modelNode, "Order"));
-            sut.Visit(new EntityDeclarationNode(modelNode, "OrderLine"));
-
             // Act
-            var result = sut.GetEntityNames();
+            await _sut.Visit(new EntityDeclarationNode(modelNode, "Foo"));
 
             // Assert
-            result.Should().SatisfyRespectively(
-                first => first.Should().Be("Account"),
-                second => second.Should().Be("Order"),
-                third => third.Should().Be("OrderLine")
-            );
+            _symbolRepository
+                .GetEntityNames()
+                .Should().SatisfyRespectively(first => first.Should().Be("Foo"));
         }
 
         [Fact]
-        public void GetAttributeNames_EntityNameNotFound_ShouldReturnEmptyList()
+        public async Task Visit_ModelNode_ShouldAddAllSymbolsToRepository()
         {
             // Arrange
-            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
-
-            // Act
-            var result = sut.GetAttributeNames("Order");
-
-            // Assert
-            result.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void GetAttributeNames_EntityNameFound_ShouldReturnEntityAttributeNames()
-        {
-            // Arrange
-            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
-
             var modelNode = new ModelNode();
-            var orderNode = modelNode.AddEntityDeclarationNode("Order");
-            orderNode.AddAttributeDeclaration("Description", "String");
+            modelNode
+                .AddEntityDeclarationNode("Order")
+                .AddAttributeDeclaration("Description", "String");
 
-            var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
-            orderLineNode.AddAttributeDeclaration("Quantity", "Int");
-
-            sut.Visit(modelNode);
-
-            // Act
-            var result = sut.GetAttributeNames("Order");
-
-            // Assert
-            result.Should().SatisfyRespectively(
-                first => first.Should().Be("Description"));
-        }
-
-        [Theory]
-        [InlineData("Account", true)]
-        [InlineData("Order", true)]
-        [InlineData("OrderLine", true)]
-        [InlineData("Accounts", false)]
-        public void EntityExists_GivenEntityName_ShouldReturnExpectedResult(string entityName, bool expectedResult)
-        {
-            // Arrange
-            var sut = new DefaultSymbolCollector(Substitute.For<IConsole>());
-
-            var modelNode = new ModelNode();
-
-            sut.Visit(new EntityDeclarationNode(modelNode, "Account"));
-            sut.Visit(new EntityDeclarationNode(modelNode, "Order"));
-            sut.Visit(new EntityDeclarationNode(modelNode, "OrderLine"));
+            modelNode
+                .AddEntityDeclarationNode("OrderLine")
+                .AddAttributeDeclaration("Quantity", "Int");
 
             // Act
-            var result = sut.EntityExists(entityName);
+            await _sut.Visit(modelNode);
 
             // Assert
-            result.Should().Be(expectedResult);
+            _symbolRepository
+                .GetAttributeNames("Order")
+                .Should().SatisfyRespectively(first => first.Should().Be("Description"));
+
+            _symbolRepository
+                .GetAttributeNames("OrderLine")
+                .Should().SatisfyRespectively(first => first.Should().Be("Quantity"));
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
-        public void Get_EntityNameDoesNotExist_ShouldThrowInvalidOperatio()
+        public void Get_EntityNameDoesNotExist_ShouldThrowInvalidOperation()
         {
             // Arrange
             var sut = new DefaultModelRepository();

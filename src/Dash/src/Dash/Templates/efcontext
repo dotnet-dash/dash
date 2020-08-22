@@ -17,7 +17,15 @@ namespace Nnn // {{ Namespace }}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-        {{#each Entities}}
+        {{#each Entities AS Entity}}{{#tnls}}
+        {{#if SeedData}}
+            modelBuilder.Entity<{{ Entity.Name }}>().HasData
+            ({{#tnls}}
+        {{#each SeedData}}
+                new {{ Entity.Name }} {{{#each .}} {{Key}} = "{{Value}}",{{/each}}},{{#tnls}}
+        {{/each}}
+            );
+        {{/if}}
         {{#each CodeAttributes}}
             // {{ Name }}
             // {{#if DefaultValue }}

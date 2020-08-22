@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 
 namespace Dash.Nodes
@@ -7,9 +8,9 @@ namespace Dash.Nodes
     {
         public IList<EntityDeclarationNode> EntityDeclarations { get; } = new List<EntityDeclarationNode>();
 
-        public override void Accept(INodeVisitor visitor)
+        public override async Task Accept(INodeVisitor visitor)
         {
-            visitor.Visit(this);
+            await visitor.Visit(this);
         }
 
         public EntityDeclarationNode AddEntityDeclarationNode(string name)

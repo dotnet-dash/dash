@@ -8,7 +8,6 @@ namespace Dash.Engine
     {
         private readonly HashSet<string> _reservedKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "base",
             "object"
         };
 

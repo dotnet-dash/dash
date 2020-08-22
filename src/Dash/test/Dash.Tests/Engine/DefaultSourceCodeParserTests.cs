@@ -1,15 +1,17 @@
+using System.Collections.Generic;
 using System.IO;
 using Dash.Engine;
+using Dash.Nodes;
 using FluentAssertions;
 using Xunit;
 
 namespace Dash.Tests.Engine
 {
-    public class JsonParserTests
+    public class DefaultSourceCodeParserTests
     {
         private readonly DefaultSourceCodeParser _sut;
 
-        public JsonParserTests()
+        public DefaultSourceCodeParserTests()
         {
             _sut = new DefaultSourceCodeParser();
         }
@@ -226,6 +228,32 @@ namespace Dash.Tests.Engine
                     second.HasMany.Should().BeEmpty();
                     second.HasAndBelongsToMany.Should().BeEmpty();
                 });
+        }
+
+        [Fact]
+        public void Parse_Seed_ShouldHaveParsedTree()
+        {
+            // Act
+            var result = _sut.Parse(File.ReadAllText("Samples/Seed.json"));
+
+            // Assert
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Name.Should().Be("Currency");
+                    first.ChildNodes.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            var node = a.Should().BeOfType<CsvSeedDeclarationNode>().Subject;
+                            node.UriNode.Uri.Should().Be("https://currencycode");
+                            node.FirstLineIsHeader.Should().BeTrue();
+                            node.MapHeaders.Should().Contain(
+                                new KeyValuePair<string, string>("code", "CurrencyCode"),
+                                new KeyValuePair<string, string>("name", "CurrencyName"));
+                        }
+                    );
+                }
+            );
         }
     }
 }

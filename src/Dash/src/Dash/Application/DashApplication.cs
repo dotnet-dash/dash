@@ -5,6 +5,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
+using Dash.Engine.Models.SourceCode;
+using Dash.Exceptions;
 
 namespace Dash.Application
 {
@@ -33,7 +35,7 @@ namespace Dash.Application
             _console = console;
         }
 
-        public async Task Run(FileInfo inputFile, bool verbose)
+        public async Task Run(FileInfo? inputFile)
         {
             if (inputFile == null)
             {
@@ -50,15 +52,28 @@ namespace Dash.Application
             var fileStream = _fileSystem.File.OpenText(inputFile.FullName);
             var sourceCode = await fileStream.ReadToEndAsync();
 
-            var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
+            try
+            {
+                var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
+                await RunVisitors(sourceCodeDocument);
+            }
+            catch (ParserException exception)
+            {
+                _console.Error($"Error while parsing the source code: {exception.Message}");
+            }
+        }
 
+        private async Task RunVisitors(SourceCodeDocument sourceCodeDocument)
+        {
             foreach (var visitor in _nodeVisitors)
             {
                 _console.Trace($"Running {visitor.GetType()}");
-                visitor.Visit(sourceCodeDocument.ModelNode);
+                await visitor.Visit(sourceCodeDocument.ModelNode);
 
                 if (_errorRepository.HasErrors())
                 {
+                    _console.Error("Error(s) found:");
+
                     var errors = string.Join(Environment.NewLine, _errorRepository.GetErrors().Select(e => e));
                     _console.Error(errors);
 
