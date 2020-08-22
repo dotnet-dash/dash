@@ -4,6 +4,7 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dash.Common.Abstractions;
 using Dash.Engine.Abstractions;
 using Dash.Nodes;
 
@@ -14,14 +15,21 @@ namespace Dash.Engine.Visitors
         private readonly IFileSystem _fileSystem;
         private readonly IErrorRepository _errorRepository;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IClock _clock;
 
         private readonly string[] _supportedSchemes = {"http", "https"};
 
-        public UriResourceDownload(IFileSystem fileSystem, IConsole console, IErrorRepository errorRepository, IHttpClientFactory httpClientFactory) : base(console)
+        public UriResourceDownload(
+            IFileSystem fileSystem,
+            IConsole console,
+            IErrorRepository errorRepository,
+            IHttpClientFactory httpClientFactory,
+            IClock clock) : base(console)
         {
             _fileSystem = fileSystem;
             _errorRepository = errorRepository;
             _httpClientFactory = httpClientFactory;
+            _clock = clock;
         }
 
         public override async Task Visit(UriNode node)
@@ -39,7 +47,7 @@ namespace Dash.Engine.Visitors
                     var fileName = httpResponseMessage.Content.Headers.ContentDisposition?.FileName
                                    ?? Path.GetFileName(node.Uri.LocalPath);
 
-                    var temporaryFileName = string.Join("_", fileName, DateTime.UtcNow.Ticks);
+                    var temporaryFileName = string.Join("_", _clock.UtcNow.Ticks, fileName);
 
                     node.LocalCopy = GetTempPath(temporaryFileName);
 
@@ -48,8 +56,12 @@ namespace Dash.Engine.Visitors
                 }
                 else
                 {
-                    _errorRepository.Add($"Error while downloading {node.Uri}");
+                    _errorRepository.Add($"Error while downloading '{node.Uri}'. Status code == {httpResponseMessage.StatusCode}");
                 }
+            }
+            else
+            {
+                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in '{node.Uri}'");
             }
 
             await base.Visit(node);

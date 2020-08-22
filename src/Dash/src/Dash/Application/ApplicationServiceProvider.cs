@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO.Abstractions;
+using Dash.Common;
+using Dash.Common.Abstractions;
 using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
@@ -20,6 +22,7 @@ namespace Dash.Application
                 options.Verbose = verbose;
             });
 
+            services.AddSingleton<IClock, Clock>();
             services.AddSingleton<DashApplication>();
             services.AddSingleton<IFileSystem, FileSystem>();
             services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
@@ -37,18 +40,18 @@ namespace Dash.Application
             return services.BuildServiceProvider(true);
         }
 
-        private static void RegisterTemplateProviders(ServiceCollection services)
+        private static void RegisterTemplateProviders(IServiceCollection services)
         {
             services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
         }
 
-        private static void RegisterValueParsers(ServiceCollection services)
+        private static void RegisterValueParsers(IServiceCollection services)
         {
             services.AddSingleton<IDataTypeParser, DataTypeParser>();
             services.AddSingleton<IEntityReferenceValueParser, EntityReferenceValueParser>();
         }
 
-        private static void RegisterNodeVisitors(ServiceCollection services)
+        private static void RegisterNodeVisitors(IServiceCollection services)
         {
             services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
             services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
@@ -62,7 +65,7 @@ namespace Dash.Application
             services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
         }
 
-        private static void RegisterLanguageProviders(ServiceCollection services)
+        private static void RegisterLanguageProviders(IServiceCollection services)
         {
             services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
             services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
