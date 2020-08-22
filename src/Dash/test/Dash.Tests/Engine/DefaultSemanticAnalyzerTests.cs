@@ -1,48 +1,65 @@
-﻿using Dash.Engine.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dash.Engine;
+using Dash.Engine.Abstractions;
 using Dash.Engine.Visitors;
 using Dash.Exceptions;
 using Dash.Nodes;
 using FluentAssertions;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Dash.Tests.Engine
 {
     public class DefaultSemanticAnalyzerTests
     {
+        private readonly IDataTypeParser _parser = Substitute.For<IDataTypeParser>();
+        private readonly ISymbolCollector _symbolCollector = Substitute.For<ISymbolCollector>();
+        private readonly IReservedSymbolProvider _reservedSymbolProvider = Substitute.For<IReservedSymbolProvider>();
+        private readonly ErrorRepository _errorRepository = new ErrorRepository();
+        private readonly DefaultSemanticAnalyzer _sut;
+
+        public DefaultSemanticAnalyzerTests()
+        {
+            _sut = new DefaultSemanticAnalyzer(
+                _parser,
+                _symbolCollector,
+                _reservedSymbolProvider,
+                Substitute.For<IConsole>(),
+                _errorRepository);
+        }
+
         [Fact]
-        public void Visit_ModelNode_ShouldHaveVisitedEntityDeclarationNodes()
+        public async Task Visit_ModelNode_ShouldHaveVisitedEntityDeclarationNodes()
         {
             // Arrange
-            var sut = CreateDefaultSut();
-
             var modelNode = new ModelNode();
             modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>(modelNode, "Account"));
             modelNode.EntityDeclarations.Add(Substitute.For<EntityDeclarationNode>(modelNode, "Person"));
 
             // Act
-            sut.Visit(modelNode);
+            await _sut.Visit(modelNode);
 
             // Assert
-            modelNode.EntityDeclarations[0].Received(1).Accept(sut);
-            modelNode.EntityDeclarations[1].Received(1).Accept(sut);
+            await modelNode.EntityDeclarations[0].Received(1).Accept(_sut);
+            await modelNode.EntityDeclarations[1].Received(1).Accept(_sut);
         }
 
         [Fact]
-        public void Visit_ModelNode_ContainsDuplicateEntityName_ShouldResultInError()
+        public async Task Visit_ModelNode_ContainsDuplicateEntityName_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var sut = CreateDefaultSut();
-
             var modelNode = new ModelNode();
             modelNode.AddEntityDeclarationNode("Account");
             modelNode.AddEntityDeclarationNode("Account");
 
             // Act
-            sut.Visit(modelNode);
+            await _sut.Visit(modelNode);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
                     first.Should().Be("Model contains duplicate declarations for entity 'Account'");
@@ -53,18 +70,16 @@ namespace Dash.Tests.Engine
         [InlineData(null)]
         [InlineData("")]
         [InlineData("  ")]
-        public void Visit_EntityDeclarationNode_WithNullOrWhitespaceName_ShouldResultInError(string name)
+        public async Task Visit_EntityDeclarationNode_WithNullOrWhitespaceName_ShouldHaveUpdatedErrorRepository(string name)
         {
             // Arrange
-            var sut = CreateDefaultSut();
-
             var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), name);
 
             // Act
-            sut.Visit(entityDeclarationNode);
+            await _sut.Visit(entityDeclarationNode);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
                     first.Should().Be("Entity name cannot be null, empty or contain only white-spaces");
@@ -77,18 +92,16 @@ namespace Dash.Tests.Engine
         [InlineData("%%")]
         [InlineData("1ab")]
         [InlineData("ab1$")]
-        public void Visit_EntityDeclarationNode_WithNonAllowedCharacters_ShouldResultInError(string name)
+        public async Task Visit_EntityDeclarationNode_WithNonAllowedCharacters_ShouldHaveUpdatedErrorRepository(string name)
         {
             // Arrange
-            var sut = CreateDefaultSut();
-
             var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), name);
 
             // Act
-            sut.Visit(entityDeclarationNode);
+            await _sut.Visit(entityDeclarationNode);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
                     first.Should().Be($"'{name}' is an invalid name. You can only use alphanumeric characters, and it cannot start with a number");
@@ -96,20 +109,18 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_ContainsDuplicateAttributeNames_ShouldResultInError()
+        public async Task Visit_EntityDeclarationNode_ContainsDuplicateAttributeNames_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var sut = CreateDefaultSut();
-
             var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), "Account");
             entityDeclarationNode.AddAttributeDeclaration("Id", "Int");
             entityDeclarationNode.AddAttributeDeclaration("Id", "Guid");
 
             // Act
-            sut.Visit(entityDeclarationNode);
+            await _sut.Visit(entityDeclarationNode);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
                     first.Should().Be("Entity 'Account' contains duplicate declarations for attribute 'Id'");
@@ -117,26 +128,19 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_InheritedEntityNotFound_ShouldResultInError()
+        public async Task Visit_EntityDeclarationNode_InheritedEntityNotFound_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var symbolCollector = Substitute.For<ISymbolCollector>();
-            symbolCollector.EntityExists("User").Returns(false);
-
-            var sut = new DefaultSemanticAnalyzer(
-                Substitute.For<IDataTypeParser>(),
-                symbolCollector,
-                Substitute.For<IReservedSymbolProvider>(),
-                Substitute.For<IConsole>());
+            _symbolCollector.EntityExists("User").Returns(false);
 
             var node = new EntityDeclarationNode(new ModelNode(), "Account");
             node.AddInheritanceDeclaration("User");
 
             // Act
-            sut.Visit(node);
+            await _sut.Visit(node);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
                     first.Should().Be("Entity 'Account' wants to inherit unknown entity 'User'");
@@ -144,113 +148,112 @@ namespace Dash.Tests.Engine
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_MultipleInheritanceDeclaration_ShouldResultInError()
+        public async Task Visit_EntityDeclarationNode_MultipleInheritanceDeclaration_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var symbolCollector = Substitute.For<ISymbolCollector>();
-            symbolCollector.EntityExists(Arg.Any<string>()).Returns(true);
+            _symbolCollector.EntityExists(Arg.Any<string>()).Returns(true);
 
-            var sut = new DefaultSemanticAnalyzer(
-                Substitute.For<IDataTypeParser>(),
-                symbolCollector,
-                Substitute.For<IReservedSymbolProvider>(),
-                Substitute.For<IConsole>());
-
-            var node = new EntityDeclarationNode(new ModelNode(), "Account");
-            node.AddInheritanceDeclaration("User");
-            node.AddInheritanceDeclaration("Person");
+            var node = new EntityDeclarationNode(new ModelNode(), "FooBar");
+            node.AddInheritanceDeclaration("Foo");
+            node.AddInheritanceDeclaration("Bar");
 
             // Act
-            sut.Visit(node);
+            await _sut.Visit(node);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
             first =>
             {
-                first.Should().Be("Multiple inheritance declaration found for 'Account'");
+                first.Should().Be("Multiple inheritance declaration found for 'FooBar'");
             });
         }
 
         [Fact]
-        public void Visit_AttributeDeclarationNode_ThrowsInvalidDataTypeException_ShouldResultInError()
+        public async Task Visit_AttributeDeclarationNode_ThrowsInvalidDataTypeException_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var parser = Substitute.For<IDataTypeParser>();
-            parser.Parse("Invalid").Returns(x => throw new InvalidDataTypeException("Invalid"));
+            _parser.Parse("Invalid").Throws(e => new InvalidDataTypeException("Invalid"));
 
-            var sut = new DefaultSemanticAnalyzer(parser,
-                Substitute.For<ISymbolCollector>(),
-                Substitute.For<IReservedSymbolProvider>(),
-                Substitute.For<IConsole>());
-
-            var entity = new EntityDeclarationNode(new ModelNode(), "Parent");
+            var entity = new EntityDeclarationNode(new ModelNode(), "Foo");
             var node = new AttributeDeclarationNode(entity, "Id", "Invalid");
 
             // Act
-            sut.Visit(node);
+            await _sut.Visit(node);
 
             // Assert
-            sut.Errors.Should().SatisfyRespectively(
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first => first.Should().Be("The specified datatype 'Invalid' is invalid"));
+        }
+
+        [Fact]
+        public async Task Visit_AttributeDeclarationNode_ThrowsInvalidDataTypeConstraintException_ShouldHaveUpdatedErrorRepository()
+        {
+            // Arrange
+            _parser.Parse("Invalid").Throws(e => new InvalidDataTypeConstraintException("Invalid data type"));
+
+            var entity = new EntityDeclarationNode(new ModelNode(), "Foo");
+            var node = new AttributeDeclarationNode(entity, "Id", "Invalid");
+
+            // Act
+            await _sut.Visit(node);
+
+            // Assert
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
                 first =>
                 {
-                    first.Should().Be("The specified datatype 'Invalid' is invalid");
+                    first.Should().Be("Invalid data type");
                 });
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_SelfInheritance_ShouldResultInError()
+        public async Task Visit_EntityDeclarationNode_SelfInheritance_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var symbolCollector = Substitute.For<ISymbolCollector>();
-            symbolCollector.EntityExists("Account").Returns(true);
+            _symbolCollector.EntityExists("Foo").Returns(true);
 
-            var sut = new DefaultSemanticAnalyzer(
-                Substitute.For<IDataTypeParser>(),
-                symbolCollector,
-                Substitute.For<IReservedSymbolProvider>(),
-                Substitute.For<IConsole>());
+            var node = new EntityDeclarationNode(new ModelNode(), "Foo");
+            node.AddInheritanceDeclaration("Foo");
 
-            var node = new EntityDeclarationNode(new ModelNode(), "Account");
-            node.AddInheritanceDeclaration("Account");
+            await _sut.Visit(node);
 
-            sut.Visit(node);
-
-            sut.Errors.Should().SatisfyRespectively(
-                first =>
-                {
-                    first.Should().Be("Self-inheritance not allowed: 'Account'");
-                });
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first => first.Should().Be("Self-inheritance not allowed: 'Foo'"));
         }
 
         [Fact]
-        public void Visit_EntityDeclarationNode_ReservedEntityNameUsed_ShouldResultInError()
+        public async Task Visit_EntityDeclarationNode_ReservedEntityNameUsed_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange
-            var reservedSymbolProvider = Substitute.For<IReservedSymbolProvider>();
-            reservedSymbolProvider.IsReservedEntityName("Account").Returns(true);
+            _reservedSymbolProvider.IsReservedEntityName("Foo").Returns(true);
 
-            var sut = new DefaultSemanticAnalyzer(
-                Substitute.For<IDataTypeParser>(),
-                Substitute.For<ISymbolCollector>(),
-                reservedSymbolProvider,
-                Substitute.For<IConsole>());
+            // Act
+            await _sut.Visit(new EntityDeclarationNode(new ModelNode(), "Foo"));
 
-            sut.Visit(new EntityDeclarationNode(new ModelNode(), "Account"));
-
-            sut.Errors.Should().SatisfyRespectively(
-                first =>
-                {
-                    first.Should().Be("'Account' is a reserved name and cannot be used as an entity name.");
-                });
+            // Assert
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first => first.Should().Be("'Foo' is a reserved name and cannot be used as an entity name."));
         }
 
-        private static DefaultSemanticAnalyzer CreateDefaultSut()
+        [Fact]
+        public async Task Visit_CsvSeedDeclarationNode_HeaderNameIsNotAnAttribute_ShouldHaveUpdatedErrorRepository()
         {
-            return new DefaultSemanticAnalyzer(
-                Substitute.For<IDataTypeParser>(),
-                Substitute.For<ISymbolCollector>(),
-                Substitute.For<IReservedSymbolProvider>(),
-                Substitute.For<IConsole>());
+            // Arrange
+            var node = new CsvSeedDeclarationNode(
+                new EntityDeclarationNode(new ModelNode(), "Foo"),
+                new Uri("https://unittest"),
+                false,
+                null,
+                new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    { "CsvHeader", "NonExistingAttribute" }
+                });
+
+            // Act
+            await _sut.Visit(node);
+
+            // Assert
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first => first.Should().Be("Trying to map header 'CsvHeader' to unknown Entity Attribute 'NonExistingAttribute'"));
         }
     }
 }

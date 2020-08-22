@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
 using Dash.Nodes;
 using NSubstitute;
@@ -12,7 +14,8 @@ namespace Dash.Tests.Nodes
         public async Task Accept_Visitor_SutShouldHaveCalledVisit()
         {
             // Arrange
-            var sut = new CsvSeedDeclarationNode(default, default, default, default, default);
+            var node = new EntityDeclarationNode(new ModelNode(), "Foo");
+            var sut = new CsvSeedDeclarationNode(node, new Uri("https://foo"), false, null, new Dictionary<string, string>());
 
             var visitor = Substitute.For<INodeVisitor>();
 

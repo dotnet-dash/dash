@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
@@ -14,19 +13,19 @@ namespace Dash.Engine.Visitors
         private readonly IDataTypeParser _dataTypeParser;
         private readonly ISymbolCollector _symbolCollector;
         private readonly IReservedSymbolProvider _reservedSymbolProvider;
-        private readonly List<string> _errors = new List<string>();
-
-        public IEnumerable<string> Errors => _errors;
+        private readonly IErrorRepository _errorRepository;
 
         public DefaultSemanticAnalyzer(
             IDataTypeParser dataTypeParser,
             ISymbolCollector symbolCollector,
             IReservedSymbolProvider reservedSymbolProvider,
-            IConsole console) : base(console)
+            IConsole console,
+            IErrorRepository errorRepository) : base(console)
         {
             _dataTypeParser = dataTypeParser;
             _symbolCollector = symbolCollector;
             _reservedSymbolProvider = reservedSymbolProvider;
+            _errorRepository = errorRepository;
         }
 
         public override Task Visit(ModelNode node)
@@ -40,25 +39,25 @@ namespace Dash.Engine.Visitors
         {
             if (string.IsNullOrWhiteSpace(node.Name))
             {
-                _errors.Add("Entity name cannot be null, empty or contain only white-spaces");
+                _errorRepository.Add("Entity name cannot be null, empty or contain only white-spaces");
                 return Task.CompletedTask;
             }
 
             if (!Regex.IsMatch(node.Name, "^([a-zA-Z]+[a-zA-Z0-9]*)$"))
             {
-                _errors.Add($"'{node.Name}' is an invalid name. You can only use alphanumeric characters, and it cannot start with a number");
+                _errorRepository.Add($"'{node.Name}' is an invalid name. You can only use alphanumeric characters, and it cannot start with a number");
             }
 
             if (_reservedSymbolProvider.IsReservedEntityName(node.Name))
             {
-                _errors.Add($"'{node.Name}' is a reserved name and cannot be used as an entity name.");
+                _errorRepository.Add($"'{node.Name}' is a reserved name and cannot be used as an entity name.");
             }
 
             ValidateDuplicateAttributeDeclarations(node);
 
             if (node.InheritanceDeclarationNodes.Count() > 1)
             {
-                _errors.Add($"Multiple inheritance declaration found for '{node.Name}'");
+                _errorRepository.Add($"Multiple inheritance declaration found for '{node.Name}'");
             }
 
             return base.Visit(node);
@@ -72,11 +71,11 @@ namespace Dash.Engine.Visitors
             }
             catch (InvalidDataTypeException exception)
             {
-                _errors.Add(exception.Message);
+                _errorRepository.Add(exception.Message);
             }
             catch (InvalidDataTypeConstraintException exception)
             {
-                _errors.Add(exception.Message);
+                _errorRepository.Add(exception.Message);
             }
 
             return base.Visit(node);
@@ -86,12 +85,12 @@ namespace Dash.Engine.Visitors
         {
             if (!_symbolCollector.EntityExists(node.InheritedEntity))
             {
-                _errors.Add($"Entity '{node.Parent.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
+                _errorRepository.Add($"Entity '{node.Parent.Name}' wants to inherit unknown entity '{node.InheritedEntity}'");
             }
 
             if (node.InheritedEntity.IsSame(node.Parent.Name))
             {
-                _errors.Add($"Self-inheritance not allowed: '{node.Parent.Name}'");
+                _errorRepository.Add($"Self-inheritance not allowed: '{node.Parent.Name}'");
             }
 
             return base.Visit(node);
@@ -103,7 +102,7 @@ namespace Dash.Engine.Visitors
             {
                 if (!node.Parent.AttributeDeclarations.Any(e => e.AttributeName.IsSame(pair.Value)))
                 {
-                    _errors.Add($"Trying to map header '{pair.Key}' to unknown Entity Attribute '{pair.Value}'");
+                    _errorRepository.Add($"Trying to map header '{pair.Key}' to unknown Entity Attribute '{pair.Value}'");
                 }
             }
 
@@ -119,7 +118,7 @@ namespace Dash.Engine.Visitors
 
             foreach (var item in duplicateNames)
             {
-                _errors.Add($"Model contains duplicate declarations for entity '{item}'");
+                _errorRepository.Add($"Model contains duplicate declarations for entity '{item}'");
             }
         }
 
@@ -132,7 +131,7 @@ namespace Dash.Engine.Visitors
 
             foreach (var item in duplicateAttributeNames)
             {
-                _errors.Add($"Entity '{expression.Name}' contains duplicate declarations for attribute '{item}'");
+                _errorRepository.Add($"Entity '{expression.Name}' contains duplicate declarations for attribute '{item}'");
             }
         }
     }

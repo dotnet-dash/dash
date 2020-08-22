@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Net;
 using System.Net.Http;
@@ -22,7 +23,7 @@ namespace Dash.Tests.Engine.Visitors
         {
             // Arrange
             var errorRepository = new ErrorRepository();
-            var sut = new UriResourceDownload(default, default, errorRepository, default, default);
+            var sut = new UriResourceDownload(Substitute.For<IFileSystem>(), Substitute.For<IConsole>(), errorRepository, Substitute.For<IHttpClientFactory>(), Substitute.For<IClock>());
 
             // Act
             await sut.Visit(new UriNode(new Uri("ftp://ftp.unittest.test")));
@@ -47,7 +48,7 @@ namespace Dash.Tests.Engine.Visitors
 
             var errorRepository = new ErrorRepository();
 
-            var sut = new UriResourceDownload(default, Substitute.For<IConsole>(), errorRepository, factory, default);
+            var sut = new UriResourceDownload(Substitute.For<IFileSystem>(), Substitute.For<IConsole>(), errorRepository, factory, Substitute.For<IClock>());
 
             // Act
             await sut.Visit(new UriNode(new Uri("https://www.unittest.test")));
