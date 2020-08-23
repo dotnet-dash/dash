@@ -1,5 +1,5 @@
 ﻿using System;
-using Dash.Common;
+using Dash.Common.Default;
 using FluentAssertions;
 using Xunit;
 

@@ -1,79 +1,23 @@
 ﻿using System;
-using System.IO.Abstractions;
-using Dash.Common;
-using Dash.Common.Abstractions;
-using Dash.Engine;
-using Dash.Engine.Abstractions;
-using Dash.Engine.Generator;
-using Dash.Engine.LanguageProviders;
-using Dash.Engine.Repositories;
-using Dash.Engine.TemplateProviders;
-using Dash.Engine.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
 {
     public class ApplicationServiceProvider : IApplicationServiceProvider
     {
-        public IServiceProvider Create(bool verbose)
+        public IServiceProvider Create(bool verbose, string? outputDir)
         {
             var services = new ServiceCollection();
-            services.Configure<DashOptions>(options =>
-            {
-                options.Verbose = verbose;
-            });
 
-            services.AddSingleton<IClock, Clock>();
-            services.AddSingleton<DashApplication>();
-            services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
-            services.AddSingleton<IGenerator, DefaultGenerator>();
-            services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
-            services.AddSingleton<IConsole, DefaultConsole>();
-            services.AddHttpClient();
-            RegisterRepositories(services);
-            RegisterTemplateProviders(services);
-            RegisterValueParsers(services);
-            RegisterNodeVisitors(services);
-            RegisterLanguageProviders(services);
+            ApplicationServices.Add(services, verbose, outputDir);
+            CommonServices.Add(services);
+            RepositoryServices.Add(services);
+            SourceCodeServices.Add(services);
+            NodeVisitorServices.Add(services);
+            LanguageProviderServices.Add(services);
+            GeneratorServices.Add(services);
 
             return services.BuildServiceProvider(true);
-        }
-
-        private static void RegisterRepositories(ServiceCollection services)
-        {
-            services.AddSingleton<IModelRepository, DefaultModelRepository>();
-            services.AddSingleton<ISymbolRepository, DefaultSymbolRepository>();
-            services.AddSingleton<IErrorRepository, ErrorRepository>();
-        }
-
-        private static void RegisterTemplateProviders(IServiceCollection services)
-        {
-            services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
-        }
-
-        private static void RegisterValueParsers(IServiceCollection services)
-        {
-            services.AddSingleton<IDataTypeParser, DataTypeParser>();
-            services.AddSingleton<IEntityReferenceValueParser, EntityReferenceValueParser>();
-        }
-
-        private static void RegisterNodeVisitors(IServiceCollection services)
-        {
-            services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
-            services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
-            services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
-            services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
-            services.AddSingleton<INodeVisitor, DefaultModelBuilder>();
-            services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
-            services.AddSingleton<INodeVisitor, UriResourceDownload>();
-            services.AddSingleton<INodeVisitor, ModelSeedBuilder>();
-        }
-
-        private static void RegisterLanguageProviders(IServiceCollection services)
-        {
-            services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
-            services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
         }
     }
 }

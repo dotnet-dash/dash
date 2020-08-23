@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text;
 using System.Threading.Tasks;
+using Dash.Common;
 using Dash.Engine;
-using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
+using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine.Visitors
@@ -32,10 +34,14 @@ namespace Dash.Tests.Engine.Visitors
 
             var errorRepository = new ErrorRepository();
 
+            var uriResourceRepository = NSubstitute.Substitute.For<IUriResourceRepository>();
+            uriResourceRepository.Get(new Uri("https://currencycode")).Returns("c:\\currencies.csv");
+
             var sut = new ModelSeedBuilder(NSubstitute.Substitute.For<IConsole>(),
                 mockFileSystem,
                 modelRepository,
-                errorRepository);
+                errorRepository,
+                uriResourceRepository);
 
             var parent = new EntityDeclarationNode(new ModelNode(), "CurrencyCode");
             var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -44,7 +50,6 @@ namespace Dash.Tests.Engine.Visitors
                 {"Name", "CurrencyName"}
             };
             var node = new CsvSeedDeclarationNode(parent, new Uri("https://currencycode"), true, ";", dictionary);
-            node.UriNode.LocalCopy = "c:\\currencies.csv";
 
             // Act
             await sut.Visit(node);

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Common;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;

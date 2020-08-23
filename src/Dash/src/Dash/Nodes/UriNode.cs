@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Engine;
 
 namespace Dash.Nodes
 {
@@ -8,12 +8,13 @@ namespace Dash.Nodes
     {
         public Uri Uri { get; }
 
-        public UriNode(Uri uri)
+        public UriNode(Uri uri, bool uriMustExist)
         {
             Uri = uri;
+            UriMustExist = uriMustExist;
         }
 
-        public string? LocalCopy { get; set; }
+        public bool UriMustExist { get; }
 
         public override async Task Accept(INodeVisitor visitor)
         {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Common;
 using Dash.Extensions;
 using Dash.Nodes;
 
@@ -12,6 +12,25 @@ namespace Dash.Engine.Visitors
         protected BaseVisitor(IConsole console)
         {
             Console = console;
+        }
+
+        public async Task Visit(SourceCodeNode node)
+        {
+            await node.ConfigurationNode.Accept(this);
+            await node.ModelNode.Accept(this);
+        }
+
+        public async Task Visit(ConfigurationNode node)
+        {
+            await node.Templates.Accept(this);
+        }
+
+        public async Task Visit(TemplateNode node)
+        {
+            if (node.TemplateUriNode != null)
+            {
+                await node.TemplateUriNode.Accept(this);
+            }
         }
 
         public virtual async Task Visit(ModelNode node)

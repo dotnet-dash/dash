@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dash.Engine.TemplateProviders;
+using Dash.Engine.Providers;
 using Dash.Exceptions;
 using FluentAssertions;
 using Xunit;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Engine;
 using Dash.Nodes;
 
 namespace Dash.Extensions

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Engine;
 
 namespace Dash.Nodes
 {
@@ -16,7 +16,7 @@ namespace Dash.Nodes
         public CsvSeedDeclarationNode(EntityDeclarationNode parent, Uri uri, bool firstLineIsHeader, string? delimiter, IDictionary<string, string> mapHeaders)
         {
             Parent = parent;
-            UriNode = new UriNode(uri);
+            UriNode = new UriNode(uri, true);
             FirstLineIsHeader = firstLineIsHeader;
             Delimiter = delimiter ?? ",";
             MapHeaders = mapHeaders;

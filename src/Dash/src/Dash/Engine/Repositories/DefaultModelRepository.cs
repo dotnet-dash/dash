@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
 using Dash.Exceptions;
 using Dash.Extensions;
 
-namespace Dash.Engine
+namespace Dash.Engine.Repositories
 {
     public class DefaultModelRepository : IModelRepository
     {

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Dash.Engine.Abstractions;
 
-namespace Dash.Engine
+namespace Dash.Engine.Repositories
 {
     public class ErrorRepository : IErrorRepository
     {
