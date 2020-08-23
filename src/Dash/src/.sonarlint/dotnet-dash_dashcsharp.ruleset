@@ -5,7 +5,7 @@
     <Rule Id="S1006" Action="Warning" />
     <Rule Id="S101" Action="Info" />
     <Rule Id="S103" Action="None" />
-    <Rule Id="S104" Action="None" />
+    <Rule Id="S104" Action="Warning" />
     <Rule Id="S1048" Action="Warning" />
     <Rule Id="S105" Action="None" />
     <Rule Id="S106" Action="None" />
@@ -59,7 +59,7 @@
     <Rule Id="S1309" Action="None" />
     <Rule Id="S131" Action="None" />
     <Rule Id="S134" Action="None" />
-    <Rule Id="S138" Action="None" />
+    <Rule Id="S138" Action="Warning" />
     <Rule Id="S1449" Action="None" />
     <Rule Id="S1450" Action="Info" />
     <Rule Id="S1451" Action="None" />

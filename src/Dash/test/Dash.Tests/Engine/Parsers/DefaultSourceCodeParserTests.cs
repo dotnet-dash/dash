@@ -1,11 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Dash.Engine.Parsers;
+using Dash.Exceptions;
 using Dash.Nodes;
 using FluentAssertions;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Engine.Parsers
 {
     public class DefaultSourceCodeParserTests
     {
@@ -24,6 +26,16 @@ namespace Dash.Tests.Engine
 
             // Assert
             result.ModelNode.EntityDeclarations.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void Parse_InvalidJson_ShouldThrowParserException()
+        {
+            // Act
+            Action act = () => _sut.Parse("{");
+
+            // Assert
+            act.Should().Throw<ParserException>().And.Message.Should().StartWith("JSON error:");
         }
 
         [Fact]

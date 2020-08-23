@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Dash.Common.Abstractions;
@@ -13,50 +12,51 @@ namespace Dash.Engine.Repositories
     {
         private readonly IConsole _console;
         private readonly IFileSystem _fileSystem;
-        private readonly IClock _clock;
+        private readonly ISessionService _sessionService;
         private readonly IEmbeddedTemplateProvider _embeddedTemplateProvider;
         private readonly IDictionary<Uri, string> _resources = new Dictionary<Uri, string>();
 
         public UriResourceRepository(
             IConsole console,
             IFileSystem fileSystem,
-            IClock clock,
+            ISessionService sessionService,
             IEmbeddedTemplateProvider embeddedTemplateProvider)
         {
             _console = console;
             _fileSystem = fileSystem;
-            _clock = clock;
+            _sessionService = sessionService;
             _embeddedTemplateProvider = embeddedTemplateProvider;
         }
 
-        public async Task Add(Uri uriResource)
+        public async Task Add(Uri uri)
         {
-            var result = await Exists(uriResource);
+            var result = await Exists(uri);
             if (result)
             {
                 return;
             }
 
-            var value = uriResource.Scheme.IsSame("dash")
-                ? uriResource.Host
-                : uriResource.AbsolutePath;
-
-            _resources.Add(uriResource, value);
+            _resources.Add(uri, uri.ToString());
         }
 
-        public async Task Add(Uri uriResource, string fileName, byte[] contents)
+        public async Task Add(Uri uri, string fileName, byte[] contents)
         {
-            var temporaryFile = GetTempPath(fileName);
+            var temporaryFile = _sessionService.GetTempPath(fileName);
 
             await _fileSystem.File.WriteAllBytesAsync(temporaryFile, contents);
-            _console.Trace($"Resource '{uriResource}' saved to '{temporaryFile}'");
+            _console.Trace($"Resource '{uri}' saved to '{temporaryFile}'");
 
-            _resources.Add(uriResource, temporaryFile);
+            _resources.Add(uri, temporaryFile);
         }
 
         public Task<string> Get(Uri uriResource)
         {
-            return Task.FromResult(_resources[uriResource]);
+            if (_resources.TryGetValue(uriResource, out string? value))
+            {
+                return Task.FromResult(value!);
+            }
+
+            throw new InvalidOperationException($"Uri '{uriResource}' not in repository");
         }
 
         public Task<bool> Exists(Uri uriResource)
@@ -64,28 +64,21 @@ namespace Dash.Engine.Repositories
             return Task.FromResult(_resources.TryGetValue(uriResource, out _));
         }
 
-        public Task<string> GetContents(Uri uriResource)
+        public async Task<string> GetContents(Uri uriResource)
         {
-            var fileName = _resources[uriResource];
+            var fileName = await Get(uriResource);
 
             if (uriResource.Scheme.IsSame("dash"))
             {
-                return _embeddedTemplateProvider.GetTemplate(fileName);
+                return await _embeddedTemplateProvider.GetTemplate(fileName);
             }
 
-            return _fileSystem.File.ReadAllTextAsync(fileName);
+            return await _fileSystem.File.ReadAllTextAsync(fileName);
         }
 
-        private string GetTempPath(string fileName)
+        public Task<int> Count()
         {
-            var tempDash = Path.Combine(_fileSystem.Path.GetTempPath(), "dash", _clock.UtcNow.Ticks.ToString());
-
-            if (!_fileSystem.Directory.Exists(tempDash))
-            {
-                _fileSystem.Directory.CreateDirectory(tempDash);
-            }
-
-            return Path.Combine(tempDash, fileName);
+            return Task.FromResult(_resources.Count);
         }
     }
 }

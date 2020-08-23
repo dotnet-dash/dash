@@ -20,6 +20,15 @@
   </Settings>
   <Rules>
     <Rule>
+      <Key>S104</Key>
+      <Parameters>
+        <Parameter>
+          <Key>maximumFileLocThreshold</Key>
+          <Value>1000</Value>
+        </Parameter>
+      </Parameters>
+    </Rule>
+    <Rule>
       <Key>S107</Key>
       <Parameters>
         <Parameter>
@@ -42,7 +51,16 @@
       <Parameters>
         <Parameter>
           <Key>max</Key>
-          <Value>30</Value>
+          <Value>15</Value>
+        </Parameter>
+      </Parameters>
+    </Rule>
+    <Rule>
+      <Key>S138</Key>
+      <Parameters>
+        <Parameter>
+          <Key>max</Key>
+          <Value>40</Value>
         </Parameter>
       </Parameters>
     </Rule>
