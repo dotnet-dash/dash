@@ -14,7 +14,7 @@ namespace Dash.Tests.Application
             var sut = new ApplicationServiceProvider();
 
             // Act
-            var result = sut.Create(true);
+            var result = sut.Create(true, null);
 
             // Assert
             var service = result.GetRequiredService(typeof(DashApplication));

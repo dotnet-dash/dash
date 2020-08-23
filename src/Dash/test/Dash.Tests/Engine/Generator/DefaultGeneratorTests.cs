@@ -29,7 +29,8 @@ namespace Dash.Tests.Engine.Generator
                 uriResourceRepository,
                 fileSystem,
                 modelRepository,
-                Substitute.For<IConsole>());
+                Substitute.For<IConsole>(),
+                Substitute.For<ISessionService>());
 
             var configuration = new ConfigurationNode()
                 .AddTemplateNode("dash://poco", @"c:\temp\")

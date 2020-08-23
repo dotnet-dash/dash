@@ -1,32 +1,23 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dash.Engine;
+using Dash.Extensions;
 
 namespace Dash.Nodes
 {
     public class TemplateNode : AstNode
     {
-        public Uri? Template { get; set; }
+        public string? Template { get; set; } = string.Empty;
 
-        public Uri Output { get; set; } = new Uri("file:///relative");
+        public string Output { get; set; } = ".";
 
         public UriNode? TemplateUriNode
         {
             get
             {
-                if (Template == null)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    return new UriNode(Template, true);
-                }
-                catch (UriFormatException)
-                {
-                    return null;
-                }
+                var uri = Template?.ToUri();
+                return uri == null
+                    ? null
+                    : new UriNode(uri, true);
             }
         }
 
@@ -34,14 +25,10 @@ namespace Dash.Nodes
         {
             get
             {
-                try
-                {
-                    return new UriNode(Output, false);
-                }
-                catch (UriFormatException)
-                {
-                    return null;
-                }
+                var uri = Output.ToUri();
+                return uri == null
+                    ? null
+                    : new UriNode(uri, false);
             }
         }
 

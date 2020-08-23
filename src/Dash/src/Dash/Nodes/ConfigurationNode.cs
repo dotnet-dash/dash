@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dash.Engine;
+using Dash.Extensions;
 
 namespace Dash.Nodes
 {
@@ -19,12 +20,12 @@ namespace Dash.Nodes
         {
             var node = new TemplateNode
             {
-                Template = new Uri(template),
+                Template = template
             };
 
             if (output != null)
             {
-                node.Output = new Uri(output);
+                node.Output = output!;
             }
 
             Templates.Add(node);

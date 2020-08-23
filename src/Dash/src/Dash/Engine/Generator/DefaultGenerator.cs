@@ -2,6 +2,7 @@
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Dash.Common;
+using Dash.Extensions;
 using Dash.Nodes;
 
 namespace Dash.Engine.Generator
@@ -11,25 +12,28 @@ namespace Dash.Engine.Generator
         private readonly IFileSystem _fileSystem;
         private readonly IModelRepository _modelRepository;
         private readonly IConsole _console;
+        private readonly ISessionService _sessionService;
         private readonly IUriResourceRepository _uriResourceRepository;
 
         public DefaultGenerator(
             IUriResourceRepository uriResourceRepository,
             IFileSystem fileSystem,
             IModelRepository modelRepository,
-            IConsole console)
+            IConsole console,
+            ISessionService sessionService)
         {
             _uriResourceRepository = uriResourceRepository;
             _fileSystem = fileSystem;
             _modelRepository = modelRepository;
             _console = console;
+            _sessionService = sessionService;
         }
 
         public async Task Generate(SourceCodeNode model)
         {
             foreach (var templateNode in model.ConfigurationNode.Templates)
             {
-                var templateContent = await _uriResourceRepository.GetContents(templateNode.Template!);
+                var templateContent = await _uriResourceRepository.GetContents(templateNode.TemplateUriNode!.Uri);
                 var options = new Morestachio.ParserOptions(templateContent);
                 var template = Morestachio.Parser.ParseWithOptions(options);
 
@@ -41,14 +45,15 @@ namespace Dash.Engine.Generator
                     }
                 );
 
-                var absolutePath = templateNode.OutputUriNode!.Uri.AbsolutePath;
-                if (!_fileSystem.Directory.Exists(absolutePath))
+                string directory = templateNode.OutputUriNode!.Uri.ToPath(_sessionService);
+
+                if (!_fileSystem.Directory.Exists(directory))
                 {
-                    _console.Trace($"Directory {absolutePath} does not exist. Creating....");
-                    _fileSystem.Directory.CreateDirectory(absolutePath);
+                    _console.Trace($"Directory {directory} does not exist. Creating...");
+                    _fileSystem.Directory.CreateDirectory(directory);
                 }
 
-                var path = Path.Combine(absolutePath, $"{templateNode.Template!.Host}.generated.cs");
+                var path = Path.Combine(directory, $"{templateNode.TemplateUriNode!.Uri.Host}.generated.cs");
                 _console.Info($"Generating file {path}");
 
                 await _fileSystem.File.WriteAllTextAsync(path, output);

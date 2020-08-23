@@ -1,6 +1,5 @@
 ﻿using Dash.Extensions;
 using FluentAssertions;
-using System;
 using Xunit;
 
 namespace Dash.Tests.Extensions
@@ -54,15 +53,17 @@ namespace Dash.Tests.Extensions
         }
 
         [Theory]
-        [InlineData("https://www.foo.com")]
-        [InlineData("file://localhost")]
-        public void ToUri_ValidUri_ShouldReturnUri(string validUri)
+        [InlineData("https://www.foo.com", "https://www.foo.com/")]
+        [InlineData("file://localhost", "file://localhost/")]
+        [InlineData("./", "./")]
+        [InlineData("../", "../")]
+        public void ToUri_ValidUri_ShouldReturnUri(string validUri, string expectedUri)
         {
             // Act
             var result = validUri.ToUri();
 
             // Assert
-            result.Should().Be(new Uri(validUri));
+            result.Should().NotBeNull().And.Subject.ToString().Should().Be(expectedUri);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Dash.Extensions
         {
             try
             {
-                return new Uri(s);
+                return new Uri(s, s.StartsWith(".") ? UriKind.Relative : UriKind.Absolute);
             }
             catch (UriFormatException)
             {

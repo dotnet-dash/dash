@@ -5,11 +5,11 @@ namespace Dash.Application
 {
     public class ApplicationServiceProvider : IApplicationServiceProvider
     {
-        public IServiceProvider Create(bool verbose)
+        public IServiceProvider Create(bool verbose, string? outputDir)
         {
             var services = new ServiceCollection();
 
-            ApplicationServices.Add(services, verbose);
+            ApplicationServices.Add(services, verbose, outputDir);
             CommonServices.Add(services);
             RepositoryServices.Add(services);
             SourceCodeServices.Add(services);

@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using System.IO.Abstractions;
+using Dash.Application;
+using Microsoft.Extensions.Options;
 
 namespace Dash.Common.Default
 {
@@ -7,11 +9,13 @@ namespace Dash.Common.Default
     {
         private readonly IFileSystem _fileSystem;
         private readonly IClock _clock;
+        private readonly DashOptions _options;
 
-        public SessionService(IFileSystem fileSystem, IClock clock)
+        public SessionService(IFileSystem fileSystem, IClock clock, IOptions<DashOptions> options)
         {
             _fileSystem = fileSystem;
             _clock = clock;
+            _options = options.Value;
         }
 
         public string GetTempPath(string fileName)
@@ -24,6 +28,11 @@ namespace Dash.Common.Default
             }
 
             return Path.Combine(tempDash, fileName);
+        }
+
+        public string GetWorkingDirectory()
+        {
+            return _options.OutputDirectory ?? _fileSystem.Directory.GetCurrentDirectory();
         }
     }
 }

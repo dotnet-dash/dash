@@ -57,7 +57,7 @@ namespace Dash.Tests.Engine.Parsers
                 second =>
                 {
                     second.Template.Should().Be("file:///relative/MyTemplates/Poco");
-                    second.Output.Should().Be("file:///relative");
+                    second.Output.Should().Be(".");
                 }
             );
         }

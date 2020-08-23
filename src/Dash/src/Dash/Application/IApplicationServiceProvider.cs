@@ -4,6 +4,6 @@ namespace Dash.Application
 {
     public interface IApplicationServiceProvider
     {
-        IServiceProvider Create(bool verbose);
+        IServiceProvider Create(bool verbose, string? outputDir);
     }
 }
