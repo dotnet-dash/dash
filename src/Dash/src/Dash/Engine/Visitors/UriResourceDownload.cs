@@ -22,22 +22,20 @@ namespace Dash.Engine.Visitors
 
         public override async Task Visit(UriNode node)
         {
-            if (await _uriResourceRepository.Exists(node.Uri))
+            if (!await _uriResourceRepository.Exists(node.Uri))
             {
-                return;
-            }
-
-            if (node.Uri.Scheme.IsSame("https") || node.Uri.Scheme.IsSame("http"))
-            {
-                var downloadResult = await _downloadHttpResource.Download(node.Uri);
-                if (downloadResult.Success)
+                if (node.Uri.Scheme.IsSame("https") || node.Uri.Scheme.IsSame("http"))
                 {
-                    await _uriResourceRepository.Add(node.Uri, downloadResult.FileName!, downloadResult.Content!);
+                    var downloadResult = await _downloadHttpResource.Download(node.Uri);
+                    if (downloadResult.Success)
+                    {
+                        await _uriResourceRepository.Add(node.Uri, downloadResult.FileName!, downloadResult.Content!);
+                    }
                 }
-            }
-            else
-            {
-                await _uriResourceRepository.Add(node.Uri);
+                else
+                {
+                    await _uriResourceRepository.Add(node.Uri);
+                }
             }
 
             await base.Visit(node);

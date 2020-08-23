@@ -1,91 +1,113 @@
-﻿//using System;
-//using System.IO.Abstractions;
-//using System.IO.Abstractions.TestingHelpers;
-//using System.Net;
-//using System.Net.Http;
-//using System.Threading.Tasks;
-//using Dash.Common.Abstractions;
-//using Dash.Engine;
-//using Dash.Engine.Abstractions;
-//using Dash.Engine.Repositories;
-//using Dash.Engine.Visitors;
-//using Dash.Nodes;
-//using FluentAssertions;
-//using NSubstitute;
-//using RichardSzalay.MockHttp;
-//using Xunit;
+﻿using System;
+using System.Threading.Tasks;
+using Dash.Common.Abstractions;
+using Dash.Engine.Abstractions;
+using Dash.Engine.Visitors;
+using Dash.Nodes;
+using NSubstitute;
+using Xunit;
 
-//namespace Dash.Tests.Engine.Visitors
-//{
-//    public class UriResourceDownloadTests
-//    {
-//        [Fact]
-//        public async Task Visit_UriNodeWithUnsupportedScheme_ShouldAddErrorToErrorRepository()
-//        {
-//            // Arrange
-//            var errorRepository = new ErrorRepository();
-//            var sut = new UriResourceDownload(Substitute.For<IFileSystem>(), Substitute.For<IConsole>(), errorRepository, Substitute.For<IHttpClientFactory>(), Substitute.For<IClock>());
+namespace Dash.Tests.Engine.Visitors
+{
+    public class UriResourceDownloadTests
+    {
+        private readonly UriResourceDownload _sut;
+        private readonly IUriResourceRepository _uriResourceRepository = Substitute.For<IUriResourceRepository>();
+        private readonly IDownloadHttpResource _downloadHttpResource = Substitute.For<IDownloadHttpResource>();
 
-//            // Act
-//            await sut.Visit(new UriNode(new Uri("ftp://ftp.unittest.test")));
+        public UriResourceDownloadTests()
+        {
+            _sut = new UriResourceDownload(Substitute.For<IConsole>(),
+                _uriResourceRepository,
+                _downloadHttpResource);
+        }
 
-//            // Assert
-//            errorRepository.GetErrors().Should().SatisfyRespectively(
-//                first => first.Should().Be("Unsupported scheme 'ftp' found in 'ftp://ftp.unittest.test/'")
-//            );
-//        }
+        [Fact]
+        public async Task Visit_UriNode_ResourceAlreadyExists_ShouldNotCallRepository()
+        {
+            // Arrange
+            _uriResourceRepository.Exists(new Uri("file://localhost/foo/bar.csv")).Returns(true);
 
-//        [Fact]
-//        public async Task Visit_UriNodeDownloadError_ShouldAddErrorToErrorRepository()
-//        {
-//            // Arrange
-//            var mockHttpMessageHandler = new MockHttpMessageHandler();
-//            mockHttpMessageHandler
-//                .Expect(HttpMethod.Get, "https://www.unittest.test")
-//                .Respond(HttpStatusCode.InternalServerError);
+            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
 
-//            var factory = Substitute.For<IHttpClientFactory>();
-//            factory.CreateClient().Returns(mockHttpMessageHandler.ToHttpClient());
+            // Act
+            await _sut.Visit(node);
 
-//            var errorRepository = new ErrorRepository();
+            // Assert
+            await _uriResourceRepository.Received(0).Add(Arg.Any<Uri>());
+            await _uriResourceRepository.Received(0).Add(Arg.Any<Uri>(), Arg.Any<string>(), Arg.Any<byte[]>());
+        }
 
-//            var sut = new UriResourceDownload(Substitute.For<IFileSystem>(), Substitute.For<IConsole>(), errorRepository, factory, Substitute.For<IClock>());
+        [Fact]
+        public async Task Visit_UriNode_HttpResourceNotFoundInRepository_ShouldDownload()
+        {
+            // Arrange
+            var node = new UriNode(new Uri("https://foo/bar.csv"), true);
 
-//            // Act
-//            await sut.Visit(new UriNode(new Uri("https://www.unittest.test")));
+            // Act
+            await _sut.Visit(node);
 
-//            // Assert
-//            errorRepository.GetErrors().Should().SatisfyRespectively(
-//                first => first.Should().Be("Error while downloading 'https://www.unittest.test/'. Status code == InternalServerError"));
-//        }
+            // Assert
+            await _downloadHttpResource.Received(1).Download(new Uri("https://foo/bar.csv"));
+        }
 
-//        [Fact]
-//        public async Task Visit_UriNodeDownloadSuccess_ShouldHaveSavedLocalCopy()
-//        {
-//            // Arrange
-//            var mockHttpMessageHandler = new MockHttpMessageHandler();
-//            mockHttpMessageHandler
-//                .Expect(HttpMethod.Get, "https://www.unittest/myfile.csv")
-//                .Respond(HttpStatusCode.OK, message => new StringContent("I'm a File"));
+        [Fact]
+        public async Task Visit_UriNode_IsFile_ShouldNotDownload()
+        {
+            // Arrange
+            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
 
-//            var factory = Substitute.For<IHttpClientFactory>();
-//            factory.CreateClient().Returns(mockHttpMessageHandler.ToHttpClient());
+            // Act
+            await _sut.Visit(node);
 
-//            var fileSystem = new MockFileSystem();
-//            var errorRepository = new ErrorRepository();
+            // Assert
+            await _downloadHttpResource.Received(0).Download(Arg.Any<Uri>());
+        }
 
-//            var clock = Substitute.For<IClock>();
-//            clock.UtcNow.Returns(new DateTime(2020, 1, 1, 15, 0, 0));
+        [Fact]
+        public async Task Visit_UriNode_IsFile_ShouldAddToRepository()
+        {
+            // Arrange
+            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
 
-//            var sut = new UriResourceDownload(fileSystem, Substitute.For<IConsole>(), errorRepository, factory, clock);
+            // Act
+            await _sut.Visit(node);
 
-//            var node = new UriNode(new Uri("https://www.unittest/myfile.csv"));
+            // Assert
+            await _uriResourceRepository.Received(1).Add(new Uri("file://localhost/foo/bar.csv"));
+        }
 
-//            // Act
-//            await sut.Visit(node);
+        [Theory]
+        [InlineData("http://foo/bar.csv")]
+        [InlineData("https://foo/bar.csv")]
+        public async Task Visit_UriNode_HttpResourceDownloadSuccess_ShouldAddToRepository(string uri)
+        {
+            // Arrange
+            var content = new byte[] { };
+            _downloadHttpResource.Download(new Uri(uri)).Returns((true, "bar.csv", content));
 
-//            // Assert
-//            fileSystem.GetFile(node.LocalCopy).TextContents.Should().Be("I'm a File");
-//        }
-//    }
-//}
+            var node = new UriNode(new Uri(uri), true);
+
+            // Act
+            await _sut.Visit(node);
+
+            // Assert
+            await _uriResourceRepository.Received(1).Add(new Uri(uri), "bar.csv", content);
+        }
+
+        [Fact]
+        public async Task Visit_UriNode_HttpResourceDownloadFailure_ShouldNotAddToRepository()
+        {
+            // Arrange
+            _downloadHttpResource.Download(new Uri("https://foo/bar.csv")).Returns((false, null, null));
+
+            var node = new UriNode(new Uri("https://foo/bar.csv"), true);
+
+            // Act
+            await _sut.Visit(node);
+
+            // Assert
+            await _uriResourceRepository.Received(0).Add(Arg.Any<Uri>(), Arg.Any<string>(), Arg.Any<byte[]>());
+        }
+    }
+}
