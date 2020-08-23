@@ -44,7 +44,7 @@ steps:
   inputs:
     command: 'test'
     projects: '**/*Tests.csproj'
-    arguments: '/p:CollectCoverage=true /p:Threshold=90 /p:ThresholdType=branch /p:ThresholdStat=total /p:CoverletOutputFormat=OpenCover /p:CoverletOutput=./MyCoverage/'
+    arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=OpenCover /p:CoverletOutput=./MyCoverage/'
     publishTestResults: true
 
 - task: SonarCloudAnalyze@1
