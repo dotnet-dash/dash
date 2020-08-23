@@ -12,15 +12,15 @@ using NSubstitute;
 using RichardSzalay.MockHttp;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Common
 {
-    public class DownloadHttpResourceTests
+    public class HttpUriDownloaderTests
     {
         private readonly IHttpClientFactory _factory = Substitute.For<IHttpClientFactory>();
         private readonly IErrorRepository _errorRepository = new ErrorRepository();
         private readonly HttpUriDownloader _sut;
 
-        public DownloadHttpResourceTests()
+        public HttpUriDownloaderTests()
         {
             _sut = new HttpUriDownloader(Substitute.For<IConsole>(), _factory, _errorRepository);
         }

@@ -48,28 +48,28 @@ namespace Dash.Engine.Repositories
             _resources.Add(uri, temporaryFile);
         }
 
-        public Task<string> Get(Uri uriResource)
+        public Task<string> Get(Uri uri)
         {
-            if (_resources.TryGetValue(uriResource, out string? value))
+            if (_resources.TryGetValue(uri, out string? value))
             {
                 return Task.FromResult(value!);
             }
 
-            throw new InvalidOperationException($"Uri '{uriResource}' not in repository");
+            throw new InvalidOperationException($"Uri '{uri}' not in repository");
         }
 
-        public Task<bool> Exists(Uri uriResource)
+        public Task<bool> Exists(Uri uri)
         {
-            return Task.FromResult(_resources.TryGetValue(uriResource, out _));
+            return Task.FromResult(_resources.TryGetValue(uri, out _));
         }
 
-        public async Task<string> GetContents(Uri uriResource)
+        public async Task<string> GetContents(Uri uri)
         {
-            var fileName = await Get(uriResource);
+            var fileName = await Get(uri);
 
-            if (uriResource.Scheme.IsSame("dash"))
+            if (uri.Scheme.IsSame("dash"))
             {
-                return await _embeddedTemplateProvider.GetTemplate(fileName);
+                return await _embeddedTemplateProvider.GetTemplate(uri.Host);
             }
 
             return await _fileSystem.File.ReadAllTextAsync(fileName);

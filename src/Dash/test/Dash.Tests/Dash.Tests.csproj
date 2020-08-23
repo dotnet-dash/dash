@@ -84,8 +84,4 @@
     <ProjectReference Include="..\..\src\Dash\Dash.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Engine\Parsers\" />
-  </ItemGroup>
-
 </Project>

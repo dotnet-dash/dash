@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Dash.Exceptions;
 
-namespace Dash.Engine.TemplateProviders
+namespace Dash.Engine.Providers
 {
     public class EmbeddedTemplateProvider : IEmbeddedTemplateProvider
     {

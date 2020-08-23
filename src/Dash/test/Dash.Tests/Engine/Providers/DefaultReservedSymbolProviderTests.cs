@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Engine.Providers
 {
     public class DefaultReservedSymbolProviderTests
     {

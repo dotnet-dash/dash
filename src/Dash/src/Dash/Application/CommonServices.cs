@@ -2,7 +2,7 @@
 using Dash.Common;
 using Dash.Common.Default;
 using Dash.Engine;
-using Dash.Engine.TemplateProviders;
+using Dash.Engine.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application

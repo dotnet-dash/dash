@@ -9,11 +9,11 @@ namespace Dash.Engine
 
         Task Add(Uri uri, string fileName, byte[] contents);
 
-        Task<string> Get(Uri uriResource);
+        Task<string> Get(Uri uri);
 
-        Task<bool> Exists(Uri uriResource);
+        Task<bool> Exists(Uri uri);
 
-        Task<string> GetContents(Uri uriResource);
+        Task<string> GetContents(Uri uri);
 
         Task<int> Count();
     }

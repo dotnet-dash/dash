@@ -4,7 +4,7 @@ using Dash.Exceptions;
 using FluentAssertions;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Engine.Parsers
 {
     public class DataTypeParserTests
     {

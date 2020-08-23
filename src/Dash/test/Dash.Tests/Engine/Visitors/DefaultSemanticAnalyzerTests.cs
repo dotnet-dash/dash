@@ -12,7 +12,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Engine.Visitors
 {
     public class DefaultSemanticAnalyzerTests
     {
