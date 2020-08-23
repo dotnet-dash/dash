@@ -1,9 +1,9 @@
-﻿using Dash.Engine.Models.SourceCode;
+﻿using Dash.Nodes;
 
 namespace Dash.Engine.Abstractions
 {
     public interface ISourceCodeParser
     {
-        SourceCodeDocument Parse(string sourceCode);
+        SourceCodeNode Parse(string sourceCode);
     }
 }

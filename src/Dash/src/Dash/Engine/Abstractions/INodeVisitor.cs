@@ -5,6 +5,9 @@ namespace Dash.Engine.Abstractions
 {
     public interface INodeVisitor
     {
+        Task Visit(SourceCodeNode node);
+        Task Visit(ConfigurationNode node);
+        Task Visit(TemplateNode node);
         Task Visit(ModelNode node);
         Task Visit(EntityDeclarationNode node);
         Task Visit(AttributeDeclarationNode node);

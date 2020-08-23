@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RuleSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="SonarQube - dash Sonar way" Description="This rule set was automatically generated from SonarQube https://sonarcloud.io/profiles/show?key=AXPUYvveTD5WjPccHYNJ" ToolsVersion="14.0">
+<RuleSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="SonarQube - dash Dash C#" Description="This rule set was automatically generated from SonarQube https://sonarcloud.io/profiles/show?key=AXQYYdOD6vYBoXKjbj7_" ToolsVersion="14.0">
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
     <Rule Id="S100" Action="None" />
     <Rule Id="S1006" Action="Warning" />
@@ -42,7 +42,7 @@
     <Rule Id="S1186" Action="Warning" />
     <Rule Id="S1192" Action="None" />
     <Rule Id="S1199" Action="Info" />
-    <Rule Id="S1200" Action="None" />
+    <Rule Id="S1200" Action="Warning" />
     <Rule Id="S1206" Action="Info" />
     <Rule Id="S121" Action="None" />
     <Rule Id="S1210" Action="Info" />

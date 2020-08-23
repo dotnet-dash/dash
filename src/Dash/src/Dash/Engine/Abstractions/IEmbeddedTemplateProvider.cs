@@ -2,7 +2,7 @@
 
 namespace Dash.Engine.Abstractions
 {
-    public interface ITemplateProvider
+    public interface IEmbeddedTemplateProvider
     {
         Task<string> GetTemplate(string templateName);
     }

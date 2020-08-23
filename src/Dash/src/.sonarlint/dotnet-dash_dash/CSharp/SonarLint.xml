@@ -38,6 +38,15 @@
       </Parameters>
     </Rule>
     <Rule>
+      <Key>S1200</Key>
+      <Parameters>
+        <Parameter>
+          <Key>max</Key>
+          <Value>30</Value>
+        </Parameter>
+      </Parameters>
+    </Rule>
+    <Rule>
       <Key>S1479</Key>
       <Parameters>
         <Parameter>

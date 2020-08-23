@@ -6,21 +6,26 @@ using Dash.Exceptions;
 
 namespace Dash.Engine.TemplateProviders
 {
-    public class EmbeddedTemplateProvider : ITemplateProvider
+    public class EmbeddedTemplateProvider : IEmbeddedTemplateProvider
     {
         public Task<string> GetTemplate(string templateName)
         {
-            using var stream = Assembly
-                .GetAssembly(typeof(EmbeddedTemplateProvider))!
-                .GetManifestResourceStream("Dash.Templates." + templateName.ToLower());
-
-            if (stream == null)
+            if (!TryGetStream(templateName, out var stream))
             {
                 throw new EmbeddedTemplateNotFoundException(templateName);
             }
 
-            TextReader tr = new StreamReader(stream);
+            TextReader tr = new StreamReader(stream!);
             return tr.ReadToEndAsync();
+        }
+
+        private static bool TryGetStream(string templateName, out Stream? stream)
+        {
+            stream = Assembly
+                    .GetAssembly(typeof(EmbeddedTemplateProvider))!
+                    .GetManifestResourceStream("Dash.Templates." + templateName.ToLower());
+
+            return stream != null;
         }
     }
 }

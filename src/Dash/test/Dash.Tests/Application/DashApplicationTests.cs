@@ -4,7 +4,6 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Engine.Abstractions;
-using Dash.Engine.Models.SourceCode;
 using Dash.Exceptions;
 using Dash.Nodes;
 using NSubstitute;
@@ -40,9 +39,8 @@ namespace Dash.Tests.Application
             // Arrange
             _mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
-            var modelNode = new ModelNode();
-            var sourceCodeDocument = new SourceCodeDocument(new Configuration(), modelNode);
-            _sourceCodeParser.Parse("{}").Returns(sourceCodeDocument);
+            var sourceCodeNode = new SourceCodeNode(new ConfigurationNode(), new ModelNode());
+            _sourceCodeParser.Parse("{}").Returns(sourceCodeNode);
 
             _nodeVisitors.Add(Substitute.For<INodeVisitor>());
             _nodeVisitors.Add(Substitute.For<INodeVisitor>());
@@ -52,10 +50,10 @@ namespace Dash.Tests.Application
             await _sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
-            await _nodeVisitors[0].Received(1).Visit(modelNode);
-            await _nodeVisitors[1].Received(1).Visit(modelNode);
-            await _nodeVisitors[2].Received(1).Visit(modelNode);
-            await _generator.Received(1).Generate(sourceCodeDocument);
+            await _nodeVisitors[0].Received(1).Visit(sourceCodeNode);
+            await _nodeVisitors[1].Received(1).Visit(sourceCodeNode);
+            await _nodeVisitors[2].Received(1).Visit(sourceCodeNode);
+            await _generator.Received(1).Generate(sourceCodeNode);
         }
 
         [Fact]
@@ -92,7 +90,7 @@ namespace Dash.Tests.Application
             // Arrange
             _mockFileSystem.AddFile("c:\\test.json", new MockFileData("{}"));
 
-            _sourceCodeParser.Parse("{}").Returns(new SourceCodeDocument(new Configuration(), new ModelNode()));
+            _sourceCodeParser.Parse("{}").Returns(new SourceCodeNode(new ConfigurationNode(), new ModelNode()));
 
             _nodeVisitors.Add(Substitute.For<INodeVisitor>());
             _nodeVisitors.Add(Substitute.For<INodeVisitor>());
@@ -117,9 +115,9 @@ namespace Dash.Tests.Application
             await sut.Run(new FileInfo("c:\\test.json"));
 
             // Assert
-            await _nodeVisitors[0].Received(1).Visit(Arg.Any<ModelNode>());
-            await _nodeVisitors[1].DidNotReceive().Visit(Arg.Any<ModelNode>());
-            await generator.DidNotReceive().Generate(Arg.Any<SourceCodeDocument>());
+            await _nodeVisitors[0].Received(1).Visit(Arg.Any<SourceCodeNode>());
+            await _nodeVisitors[1].DidNotReceive().Visit(Arg.Any<SourceCodeNode>());
+            await generator.DidNotReceive().Generate(Arg.Any<SourceCodeNode>());
         }
     }
 }

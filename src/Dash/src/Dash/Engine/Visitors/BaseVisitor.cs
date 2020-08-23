@@ -14,6 +14,25 @@ namespace Dash.Engine.Visitors
             Console = console;
         }
 
+        public async Task Visit(SourceCodeNode node)
+        {
+            await node.ConfigurationNode.Accept(this);
+            await node.ModelNode.Accept(this);
+        }
+
+        public async Task Visit(ConfigurationNode node)
+        {
+            await node.Templates.Accept(this);
+        }
+
+        public async Task Visit(TemplateNode node)
+        {
+            if (node.TemplateUriNode != null)
+            {
+                await node.TemplateUriNode.Accept(this);
+            }
+        }
+
         public virtual async Task Visit(ModelNode node)
         {
             await node.EntityDeclarations.Accept(this);

@@ -5,8 +5,8 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
-using Dash.Engine.Models.SourceCode;
 using Dash.Exceptions;
+using Dash.Nodes;
 
 namespace Dash.Application
 {
@@ -63,12 +63,12 @@ namespace Dash.Application
             }
         }
 
-        private async Task RunVisitors(SourceCodeDocument sourceCodeDocument)
+        private async Task RunVisitors(SourceCodeNode sourceCodeNode)
         {
             foreach (var visitor in _nodeVisitors)
             {
                 _console.Trace($"Running {visitor.GetType()}");
-                await visitor.Visit(sourceCodeDocument.ModelNode);
+                await visitor.Visit(sourceCodeNode);
 
                 if (_errorRepository.HasErrors())
                 {
@@ -81,7 +81,7 @@ namespace Dash.Application
                 }
             }
 
-            await _generator.Generate(sourceCodeDocument);
+            await _generator.Generate(sourceCodeNode);
         }
     }
 }

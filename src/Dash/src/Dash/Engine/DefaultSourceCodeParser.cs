@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Dash.Engine.Abstractions;
-using Dash.Engine.Models.SourceCode;
 using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -12,7 +11,7 @@ namespace Dash.Engine
 {
     public class DefaultSourceCodeParser : ISourceCodeParser
     {
-        public SourceCodeDocument Parse(string sourceCode)
+        public SourceCodeNode Parse(string sourceCode)
         {
             try
             {
@@ -21,7 +20,7 @@ namespace Dash.Engine
                 var configuration = ParseConfiguration(document);
                 var modelNode = ParseModel(document);
 
-                return new SourceCodeDocument(configuration, modelNode);
+                return new SourceCodeNode(configuration, modelNode);
             }
             catch (JsonException exception)
             {
@@ -29,15 +28,15 @@ namespace Dash.Engine
             }
         }
 
-        private Configuration ParseConfiguration(JsonDocument document)
+        private ConfigurationNode ParseConfiguration(JsonDocument document)
         {
             if (!document.RootElement.TryGetProperty("Configuration", out var configurationProperty))
             {
-                return new Configuration();
+                return new ConfigurationNode();
             }
 
             var configurationSourceCode = configurationProperty.GetRawText();
-            return JsonSerializer.Deserialize<Configuration>(configurationSourceCode);
+            return JsonSerializer.Deserialize<ConfigurationNode>(configurationSourceCode);
         }
 
         private ModelNode ParseModel(JsonDocument document)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dash.Engine.Abstractions;
@@ -104,6 +105,32 @@ namespace Dash.Engine.Visitors
                 {
                     _errorRepository.Add($"Trying to map header '{pair.Key}' to unknown Entity Attribute '{pair.Value}'");
                 }
+            }
+
+            return base.Visit(node);
+        }
+
+
+        public override Task Visit(UriNode node)
+        {
+            string scheme;
+
+            try
+            {
+                scheme = node.Uri.Scheme;
+            }
+            catch (InvalidOperationException)
+            {
+                _errorRepository.Add($"No scheme defined for Uri '{node.Uri}'. Supported schemes: file, http(s), dash");
+                return Task.CompletedTask;
+            }
+
+            if (!scheme.IsSame("file") &&
+                !scheme.IsSame("https") &&
+                !scheme.IsSame("http") &&
+                !scheme.IsSame("dash"))
+            {
+                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in Uri {node.Uri}");
             }
 
             return base.Visit(node);
