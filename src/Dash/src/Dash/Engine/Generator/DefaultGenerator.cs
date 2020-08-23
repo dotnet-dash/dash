@@ -29,7 +29,7 @@ namespace Dash.Engine.Generator
         {
             foreach (var templateNode in model.ConfigurationNode.Templates)
             {
-                var templateContent = await _uriResourceRepository.GetContents(templateNode.Template);
+                var templateContent = await _uriResourceRepository.GetContents(templateNode.Template!);
                 var options = new Morestachio.ParserOptions(templateContent);
                 var template = Morestachio.Parser.ParseWithOptions(options);
 
@@ -48,7 +48,7 @@ namespace Dash.Engine.Generator
                     _fileSystem.Directory.CreateDirectory(absolutePath);
                 }
 
-                var path = Path.Combine(absolutePath, $"{templateNode.Template.Host}.generated.cs");
+                var path = Path.Combine(absolutePath, $"{templateNode.Template!.Host}.generated.cs");
                 _console.Info($"Generating file {path}");
 
                 await _fileSystem.File.WriteAllTextAsync(path, output);

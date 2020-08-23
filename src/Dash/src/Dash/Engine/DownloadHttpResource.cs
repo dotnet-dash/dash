@@ -2,8 +2,9 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dash.Engine.Abstractions;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public class DownloadHttpResource : IDownloadHttpResource
     {

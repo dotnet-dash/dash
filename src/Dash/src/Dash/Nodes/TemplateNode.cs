@@ -6,7 +6,7 @@ namespace Dash.Nodes
 {
     public class TemplateNode : AstNode
     {
-        public Uri Template { get; set; } = new Uri("file:///relative");
+        public Uri? Template { get; set; }
 
         public Uri Output { get; set; } = new Uri("file:///relative");
 
@@ -34,11 +34,6 @@ namespace Dash.Nodes
         {
             get
             {
-                if (Output == null)
-                {
-                    return null;
-                }
-
                 try
                 {
                     return new UriNode(Output, false);

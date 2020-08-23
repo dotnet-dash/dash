@@ -1,4 +1,5 @@
 ﻿using System;
+using Dash.Engine;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Generator;
 using Dash.Engine.TemplateProviders;
