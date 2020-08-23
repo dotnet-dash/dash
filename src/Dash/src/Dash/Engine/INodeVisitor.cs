@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dash.Nodes;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public interface INodeVisitor
     {

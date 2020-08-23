@@ -1,4 +1,4 @@
-﻿namespace Dash.Common.Abstractions
+﻿namespace Dash.Common
 {
     public interface IConsole
     {

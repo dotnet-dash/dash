@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Dash.Common.Abstractions;
-using Dash.Engine.Abstractions;
+using Dash.Common;
 using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -110,7 +109,6 @@ namespace Dash.Engine.Visitors
 
             return base.Visit(node);
         }
-
 
         public override Task Visit(UriNode node)
         {

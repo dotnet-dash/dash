@@ -1,4 +1,4 @@
-﻿using Dash.Engine.Abstractions;
+﻿using Dash.Engine.Parsers.Result;
 
 namespace Dash.Engine.Parsers
 {

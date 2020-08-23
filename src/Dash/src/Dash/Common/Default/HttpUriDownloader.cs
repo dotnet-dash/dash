@@ -2,18 +2,17 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dash.Common.Abstractions;
-using Dash.Engine.Abstractions;
+using Dash.Engine;
 
-namespace Dash.Engine
+namespace Dash.Common.Default
 {
-    public class DownloadHttpResource : IDownloadHttpResource
+    public class HttpUriDownloader : IHttpUriDownloader
     {
         private readonly IConsole _console;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IErrorRepository _errorRepository;
 
-        public DownloadHttpResource(IConsole console,
+        public HttpUriDownloader(IConsole console,
             IHttpClientFactory httpClientFactory,
             IErrorRepository errorRepository)
         {

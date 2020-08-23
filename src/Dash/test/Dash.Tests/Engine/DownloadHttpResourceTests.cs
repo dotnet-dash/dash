@@ -3,9 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Dash.Common.Abstractions;
+using Dash.Common;
+using Dash.Common.Default;
 using Dash.Engine;
-using Dash.Engine.Abstractions;
 using Dash.Engine.Repositories;
 using FluentAssertions;
 using NSubstitute;
@@ -18,11 +18,11 @@ namespace Dash.Tests.Engine
     {
         private readonly IHttpClientFactory _factory = Substitute.For<IHttpClientFactory>();
         private readonly IErrorRepository _errorRepository = new ErrorRepository();
-        private readonly DownloadHttpResource _sut;
+        private readonly HttpUriDownloader _sut;
 
         public DownloadHttpResourceTests()
         {
-            _sut = new DownloadHttpResource(Substitute.For<IConsole>(), _factory, _errorRepository);
+            _sut = new HttpUriDownloader(Substitute.For<IConsole>(), _factory, _errorRepository);
         }
 
         [Theory]

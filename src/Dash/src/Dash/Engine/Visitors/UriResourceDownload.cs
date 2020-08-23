@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Dash.Common.Abstractions;
-using Dash.Engine.Abstractions;
+using Dash.Common;
 using Dash.Extensions;
 using Dash.Nodes;
 
@@ -9,15 +8,15 @@ namespace Dash.Engine.Visitors
     public class UriResourceDownload : BaseVisitor
     {
         private readonly IUriResourceRepository _uriResourceRepository;
-        private readonly IDownloadHttpResource _downloadHttpResource;
+        private readonly IHttpUriDownloader _httpUriDownloader;
 
         public UriResourceDownload(
             IConsole console,
             IUriResourceRepository uriResourceRepository,
-            IDownloadHttpResource downloadHttpResource) : base(console)
+            IHttpUriDownloader httpUriDownloader) : base(console)
         {
             _uriResourceRepository = uriResourceRepository;
-            _downloadHttpResource = downloadHttpResource;
+            _httpUriDownloader = httpUriDownloader;
         }
 
         public override async Task Visit(UriNode node)
@@ -26,7 +25,7 @@ namespace Dash.Engine.Visitors
             {
                 if (node.Uri.Scheme.IsSame("https") || node.Uri.Scheme.IsSame("http"))
                 {
-                    var downloadResult = await _downloadHttpResource.Download(node.Uri);
+                    var downloadResult = await _httpUriDownloader.Download(node.Uri);
                     if (downloadResult.Success)
                     {
                         await _uriResourceRepository.Add(node.Uri, downloadResult.FileName!, downloadResult.Content!);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public interface IUriResourceRepository
     {

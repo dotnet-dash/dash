@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dash.Common.Abstractions
+namespace Dash.Common
 {
     public interface IClock
     {

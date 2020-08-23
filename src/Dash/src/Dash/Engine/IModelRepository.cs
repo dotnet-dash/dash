@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Dash.Engine.Models;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public interface IModelRepository
     {

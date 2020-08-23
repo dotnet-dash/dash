@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dash.Engine.Abstractions;
 
-namespace Dash.Engine
+namespace Dash.Engine.Providers
 {
     public class DefaultReservedSymbolProvider : IReservedSymbolProvider
     {

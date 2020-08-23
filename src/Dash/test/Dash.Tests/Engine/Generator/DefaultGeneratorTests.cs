@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
-using Dash.Common.Abstractions;
-using Dash.Engine.Abstractions;
+using Dash.Common;
+using Dash.Engine;
 using Dash.Engine.Generator;
 using Dash.Nodes;
 using FluentAssertions;

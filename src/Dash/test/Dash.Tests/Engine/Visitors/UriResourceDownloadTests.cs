@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dash.Common.Abstractions;
-using Dash.Engine.Abstractions;
+using Dash.Common;
+using Dash.Engine;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using NSubstitute;
@@ -13,13 +13,13 @@ namespace Dash.Tests.Engine.Visitors
     {
         private readonly UriResourceDownload _sut;
         private readonly IUriResourceRepository _uriResourceRepository = Substitute.For<IUriResourceRepository>();
-        private readonly IDownloadHttpResource _downloadHttpResource = Substitute.For<IDownloadHttpResource>();
+        private readonly IHttpUriDownloader _httpUriDownloader = Substitute.For<IHttpUriDownloader>();
 
         public UriResourceDownloadTests()
         {
             _sut = new UriResourceDownload(Substitute.For<IConsole>(),
                 _uriResourceRepository,
-                _downloadHttpResource);
+                _httpUriDownloader);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace Dash.Tests.Engine.Visitors
             await _sut.Visit(node);
 
             // Assert
-            await _downloadHttpResource.Received(1).Download(new Uri("https://foo/bar.csv"));
+            await _httpUriDownloader.Received(1).Download(new Uri("https://foo/bar.csv"));
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace Dash.Tests.Engine.Visitors
             await _sut.Visit(node);
 
             // Assert
-            await _downloadHttpResource.Received(0).Download(Arg.Any<Uri>());
+            await _httpUriDownloader.Received(0).Download(Arg.Any<Uri>());
         }
 
         [Fact]
@@ -84,7 +84,7 @@ namespace Dash.Tests.Engine.Visitors
         {
             // Arrange
             var content = new byte[] { };
-            _downloadHttpResource.Download(new Uri(uri)).Returns((true, "bar.csv", content));
+            _httpUriDownloader.Download(new Uri(uri)).Returns((true, "bar.csv", content));
 
             var node = new UriNode(new Uri(uri), true);
 
@@ -99,7 +99,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_HttpResourceDownloadFailure_ShouldNotAddToRepository()
         {
             // Arrange
-            _downloadHttpResource.Download(new Uri("https://foo/bar.csv")).Returns((false, null, null));
+            _httpUriDownloader.Download(new Uri("https://foo/bar.csv")).Returns((false, null, null));
 
             var node = new UriNode(new Uri("https://foo/bar.csv"), true);
 

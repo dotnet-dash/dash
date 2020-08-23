@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Dash.Common.Abstractions;
+using Dash.Common;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;

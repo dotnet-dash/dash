@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using System.IO.Abstractions;
-using Dash.Common.Abstractions;
 
-namespace Dash.Common
+namespace Dash.Common.Default
 {
     public class SessionService : ISessionService
     {

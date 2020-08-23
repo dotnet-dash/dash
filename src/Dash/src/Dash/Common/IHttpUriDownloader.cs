@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Common
 {
-    public interface IDownloadHttpResource
+    public interface IHttpUriDownloader
     {
         Task<(bool Success, string? FileName, byte[]? Content)> Download(Uri uri);
     }

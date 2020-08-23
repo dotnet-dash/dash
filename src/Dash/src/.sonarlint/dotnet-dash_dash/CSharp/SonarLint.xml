@@ -51,7 +51,7 @@
       <Parameters>
         <Parameter>
           <Key>max</Key>
-          <Value>15</Value>
+          <Value>19</Value>
         </Parameter>
       </Parameters>
     </Rule>

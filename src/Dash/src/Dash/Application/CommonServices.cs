@@ -1,8 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Dash.Common;
-using Dash.Common.Abstractions;
+using Dash.Common.Default;
 using Dash.Engine;
-using Dash.Engine.Abstractions;
 using Dash.Engine.TemplateProviders;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +18,7 @@ namespace Dash.Application
             services.AddHttpClient();
 
             services.AddSingleton<IEmbeddedTemplateProvider, EmbeddedTemplateProvider>();
-            services.AddSingleton<IDownloadHttpResource, DownloadHttpResource>();
+            services.AddSingleton<IHttpUriDownloader, HttpUriDownloader>();
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using Dash.Application;
-using Dash.Common.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Common
+namespace Dash.Common.Default
 {
     public class DefaultConsole : IConsole
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Engine;
 using Dash.Nodes;
 using NSubstitute;
 using Xunit;

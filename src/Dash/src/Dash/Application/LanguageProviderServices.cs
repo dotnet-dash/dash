@@ -1,4 +1,4 @@
-﻿using Dash.Engine.Abstractions;
+﻿using Dash.Engine;
 using Dash.Engine.LanguageProviders;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public interface IErrorRepository
     {

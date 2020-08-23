@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
-using Dash.Engine.Abstractions;
+using Dash.Engine.Parsers.Result;
 using Dash.Exceptions;
 
 namespace Dash.Engine.Parsers

@@ -1,6 +1,7 @@
 ﻿using Dash.Engine.Parsers;
+using Dash.Engine.Parsers.Result;
 
-namespace Dash.Engine.Abstractions
+namespace Dash.Engine
 {
     public interface IDataTypeParser
     {

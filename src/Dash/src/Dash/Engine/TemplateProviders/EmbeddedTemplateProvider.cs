@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 
 namespace Dash.Engine.TemplateProviders

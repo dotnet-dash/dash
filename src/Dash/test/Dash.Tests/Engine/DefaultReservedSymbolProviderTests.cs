@@ -1,4 +1,4 @@
-﻿using Dash.Engine;
+﻿using Dash.Engine.Providers;
 using FluentAssertions;
 using Xunit;
 

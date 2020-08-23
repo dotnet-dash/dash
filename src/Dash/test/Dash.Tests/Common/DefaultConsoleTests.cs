@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Dash.Application;
-using Dash.Common;
+using Dash.Common.Default;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Xunit;

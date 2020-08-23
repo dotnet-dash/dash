@@ -1,4 +1,4 @@
-﻿namespace Dash.Engine.Abstractions
+﻿namespace Dash.Engine
 {
     public interface ISupportedDataTypesProvider
     {

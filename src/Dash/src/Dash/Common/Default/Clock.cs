@@ -1,7 +1,6 @@
 ﻿using System;
-using Dash.Common.Abstractions;
 
-namespace Dash.Common
+namespace Dash.Common.Default
 {
     public class Clock : IClock
     {
