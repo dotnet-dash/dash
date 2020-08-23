@@ -8,7 +8,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Engine.Repositories
 {
     public class DefaultSymbolCollectorTests
     {
