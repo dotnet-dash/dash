@@ -1,5 +1,6 @@
 ﻿using System;
 using Dash.Engine;
+using Dash.Engine.Parsers;
 using Dash.Exceptions;
 using FluentAssertions;
 using Xunit;

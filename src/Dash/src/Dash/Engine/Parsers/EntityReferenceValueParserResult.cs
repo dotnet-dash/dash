@@ -1,4 +1,4 @@
-﻿namespace Dash.Engine
+﻿namespace Dash.Engine.Parsers
 {
     public class EntityReferenceValueParserResult
     {

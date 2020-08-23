@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text;
 using System.Threading.Tasks;
+using Dash.Common.Abstractions;
 using Dash.Engine.Abstractions;
 using Dash.Engine.Models;
 using Dash.Engine.Repositories;

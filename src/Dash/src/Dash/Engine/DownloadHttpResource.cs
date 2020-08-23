@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dash.Common.Abstractions;
 using Dash.Engine.Abstractions;
 
 namespace Dash.Engine

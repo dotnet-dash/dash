@@ -1,4 +1,6 @@
-﻿namespace Dash.Engine.Abstractions
+﻿using Dash.Engine.Parsers;
+
+namespace Dash.Engine.Abstractions
 {
     public interface IDataTypeParser
     {

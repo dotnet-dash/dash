@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Dash.Engine;
+using Dash.Engine.Parsers;
 using Dash.Nodes;
 using FluentAssertions;
 using Xunit;

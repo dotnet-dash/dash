@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Dash.Common.Abstractions;
 using Dash.Engine.Abstractions;
 using Dash.Exceptions;
 using Dash.Extensions;

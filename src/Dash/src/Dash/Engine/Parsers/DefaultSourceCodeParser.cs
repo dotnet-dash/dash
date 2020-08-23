@@ -7,7 +7,7 @@ using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
-namespace Dash.Engine
+namespace Dash.Engine.Parsers
 {
     public class DefaultSourceCodeParser : ISourceCodeParser
     {

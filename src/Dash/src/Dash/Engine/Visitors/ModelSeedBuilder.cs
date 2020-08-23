@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using CsvHelper;
+using Dash.Common.Abstractions;
 using Dash.Engine.Abstractions;
 using Dash.Nodes;
 

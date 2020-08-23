@@ -1,6 +1,6 @@
 ﻿using Dash.Engine.Abstractions;
 
-namespace Dash.Engine
+namespace Dash.Engine.Parsers
 {
     public class EntityReferenceValueParser : IEntityReferenceValueParser
     {
