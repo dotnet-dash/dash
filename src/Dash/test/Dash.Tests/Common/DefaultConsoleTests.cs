@@ -2,12 +2,11 @@
 using System.IO;
 using Dash.Application;
 using Dash.Common;
-using Dash.Engine;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace Dash.Tests.Engine
+namespace Dash.Tests.Common
 {
     public class DefaultConsoleTests
     {
