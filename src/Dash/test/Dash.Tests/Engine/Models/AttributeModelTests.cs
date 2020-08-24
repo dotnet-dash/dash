@@ -1,4 +1,7 @@
-﻿using Dash.Engine.Models;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using Dash.Engine.Models;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Xunit;
