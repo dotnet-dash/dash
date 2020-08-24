@@ -28,5 +28,16 @@ namespace Dash.Extensions
                 return null;
             }
         }
+
+        public static string NormalizeSlashes(this string s)
+        {
+            var path = s.Replace('\\', '/');
+            if (path.EndsWith('/'))
+            {
+                path = path.TrimEnd('/') + '/';
+            }
+
+            return path;
+        }
     }
 }

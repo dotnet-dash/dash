@@ -8,11 +8,11 @@ namespace Dash.Application
 {
     public class ApplicationServiceProvider : IApplicationServiceProvider
     {
-        public IServiceProvider Create(bool verbose, string? outputDir)
+        public IServiceProvider Create(bool verbose, string workingDir)
         {
             var services = new ServiceCollection();
 
-            ApplicationServices.Add(services, verbose, outputDir);
+            ApplicationServices.Add(services, verbose, workingDir);
             CommonServices.Add(services);
             RepositoryServices.Add(services);
             SourceCodeServices.Add(services);

@@ -4,11 +4,13 @@
 using System;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
+using Dash.Application;
 using Dash.Common;
 using Dash.Engine;
 using Dash.Engine.Generator;
 using Dash.Nodes;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
@@ -33,7 +35,7 @@ namespace Dash.Tests.Engine.Generator
                 fileSystem,
                 modelRepository,
                 Substitute.For<IConsole>(),
-                Substitute.For<ISessionService>());
+                new OptionsWrapper<DashOptions>(new DashOptions()));
 
             var configuration = new ConfigurationNode()
                 .AddTemplateNode("dash://poco", @"c:\temp\")

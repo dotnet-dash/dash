@@ -10,16 +10,17 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyName>dotnet-dash</AssemblyName>
     <Authors>Huy Hoang</Authors>
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
