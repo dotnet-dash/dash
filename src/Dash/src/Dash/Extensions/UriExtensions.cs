@@ -3,20 +3,20 @@
 
 using System;
 using System.IO;
-using Dash.Common;
+using Dash.Application;
 
 namespace Dash.Extensions
 {
     public static class UriExtensions
     {
-        public static string ToPath(this Uri uri, ISessionService sessionService)
+        public static string ToPath(this Uri uri, DashOptions options)
         {
             if (uri.IsAbsoluteUri)
             {
                 return uri.AbsolutePath;
             }
 
-            return Path.Combine(sessionService.GetWorkingDirectory(), uri.ToString());
+            return Path.Combine(options.WorkingDirectory, uri.ToString()).NormalizeSlashes();
         }
     }
 }

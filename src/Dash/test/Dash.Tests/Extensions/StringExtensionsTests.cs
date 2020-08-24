@@ -68,5 +68,31 @@ namespace Dash.Tests.Extensions
             // Assert
             result.Should().NotBeNull().And.Subject.ToString().Should().Be(expectedUri);
         }
+
+        [Theory]
+        [InlineData("", "")]
+        [InlineData(" ", " ")]
+        [InlineData("/foo/", "/foo/")]
+        public void NormalizeSlashes_GivenTheory_ShouldReturnExpectedResults(string input, string expectedResult)
+        {
+            // Act
+            var result = input.NormalizeSlashes();
+
+            // Assert
+            result.Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public void NormalizeSlashes_EndsWithMultipleSlashes_ShouldReduceToOneSlash()
+        {
+            // Arrange
+            var input = @"//foo//bar\\//\\//";
+
+            // Act
+            var result = input.NormalizeSlashes();
+
+            // Assert
+            result.Should().Be("//foo//bar/");
+        }
     }
 }

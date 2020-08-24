@@ -7,6 +7,6 @@ namespace Dash.Application
     {
         public bool Verbose { get; set; }
 
-        public string? OutputDirectory { get; set; }
+        public string WorkingDirectory { get; set; } = ".";
     }
 }

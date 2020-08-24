@@ -4,9 +4,11 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using Dash.Application;
 using Dash.Common;
 using Dash.Extensions;
 using Dash.Nodes;
+using Microsoft.Extensions.Options;
 
 namespace Dash.Engine.Generator
 {
@@ -15,21 +17,21 @@ namespace Dash.Engine.Generator
         private readonly IFileSystem _fileSystem;
         private readonly IModelRepository _modelRepository;
         private readonly IConsole _console;
-        private readonly ISessionService _sessionService;
         private readonly IUriResourceRepository _uriResourceRepository;
+        private readonly DashOptions _options;
 
         public DefaultGenerator(
             IUriResourceRepository uriResourceRepository,
             IFileSystem fileSystem,
             IModelRepository modelRepository,
             IConsole console,
-            ISessionService sessionService)
+            IOptions<DashOptions> options)
         {
             _uriResourceRepository = uriResourceRepository;
             _fileSystem = fileSystem;
             _modelRepository = modelRepository;
             _console = console;
-            _sessionService = sessionService;
+            _options = options.Value;
         }
 
         public async Task Generate(SourceCodeNode model)
@@ -48,7 +50,7 @@ namespace Dash.Engine.Generator
                     }
                 );
 
-                string directory = templateNode.OutputUriNode!.Uri.ToPath(_sessionService);
+                string directory = templateNode.OutputUriNode!.Uri.ToPath(_options);
 
                 if (!_fileSystem.Directory.Exists(directory))
                 {
@@ -56,7 +58,7 @@ namespace Dash.Engine.Generator
                     _fileSystem.Directory.CreateDirectory(directory);
                 }
 
-                var path = Path.Combine(directory, $"{templateNode.TemplateUriNode!.Uri.Host}.generated.cs");
+                var path = Path.Combine(directory, $"{templateNode.TemplateUriNode!.Uri.Host}.generated.cs").NormalizeSlashes();
                 _console.Info($"Generating file {path}");
 
                 await _fileSystem.File.WriteAllTextAsync(path, output);

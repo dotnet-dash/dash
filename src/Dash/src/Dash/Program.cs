@@ -10,11 +10,15 @@ namespace Dash
 {
     public static class Program
     {
-        public static async Task Main(FileInfo? file, string? outputDir = null, bool verbose = false)
+        /// <summary></summary>
+        /// <param name="file">The Dash model file.</param>
+        /// <param name="workingDir">Used as the base path for relative paths defined inside your Model file</param>
+        /// <param name="verbose">Show verbose output</param>
+        public static async Task Main(FileInfo? file, string workingDir = ".", bool verbose = false)
         {
             IApplicationServiceProvider applicationServiceProvider = new ApplicationServiceProvider();
 
-            var services = applicationServiceProvider.Create(verbose, outputDir);
+            var services = applicationServiceProvider.Create(verbose, workingDir);
             using var scope = services.CreateScope();
             var app = scope.ServiceProvider.GetRequiredService<DashApplication>();
             await app.Run(file);

@@ -2,10 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
-using Dash.Common;
+using Dash.Application;
 using Dash.Extensions;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Extensions
@@ -16,13 +15,15 @@ namespace Dash.Tests.Extensions
         public void ToPath_RelativeUri_ShouldConvert()
         {
             // Arrange
-            var sessionService = Substitute.For<ISessionService>();
-            sessionService.GetWorkingDirectory().Returns("c:/temp/");
+            var options = new DashOptions
+            {
+                WorkingDirectory = "c:/temp"
+            };
 
             var uri = new Uri("../", UriKind.Relative);
 
             // Act
-            var result = uri.ToPath(sessionService);
+            var result = uri.ToPath(options);
 
             // Assert
             result.Should().Be("c:/temp/../");
@@ -37,7 +38,7 @@ namespace Dash.Tests.Extensions
             var uri = new Uri(absoluteUri, UriKind.Absolute);
 
             // Act
-            var result = uri.ToPath(Substitute.For<ISessionService>());
+            var result = uri.ToPath(new DashOptions());
 
             // Assert
             result.Should().Be(expectedPath);
