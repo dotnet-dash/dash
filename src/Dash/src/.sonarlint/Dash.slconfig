@@ -1,0 +1,15 @@
+{
+  "ServerUri": "https://sonarcloud.io/",
+  "Organization": {
+    "Key": "dotnet-dash",
+    "Name": "dotnet-dash"
+  },
+  "ProjectKey": "dotnet-dash_dash",
+  "ProjectName": "dash",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AXQYYdOD6vYBoXKjbj7_",
+      "ProfileTimestamp": "2020-08-23T17:17:55Z"
+    }
+  }
+}

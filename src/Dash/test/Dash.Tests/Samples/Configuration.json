@@ -6,12 +6,11 @@
         "DefaultNamespace": "MyApplication",
         "Templates": [
             {
-                "Template": "./MyTemplate/EfContext",
-                "Output": "./Ef"
+                "Template": "file:///relative/MyTemplate/EfContext",
+                "Output": "file:///relative/ef"
             },
             {
-                "Template": "./MyTemplates/Poco",
-                "Output": "./Poco"
+                "Template": "file:///relative/MyTemplates/Poco"
             }
         ]
     },

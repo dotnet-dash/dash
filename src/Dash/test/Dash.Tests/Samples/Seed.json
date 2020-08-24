@@ -1,0 +1,18 @@
+﻿{
+    "Model": {
+        "Currency": {
+            "CurrencyCode": "String[3]",
+            "CurrencyName": "Unicode",
+            "@@Seed": {
+                "FromCsv": {
+                    "Uri": "https://currencycode",
+                    "FirstLineIsHeader": true,
+                    "MapHeaders": {
+                        "code": "CurrencyCode",
+                        "name": "CurrencyName"
+                    }
+                }
+            }
+        }
+    }
+}

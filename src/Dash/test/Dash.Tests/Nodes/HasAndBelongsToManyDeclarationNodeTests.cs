@@ -1,4 +1,8 @@
-﻿using Dash.Engine.Abstractions;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System.Threading.Tasks;
+using Dash.Engine;
 using Dash.Nodes;
 using NSubstitute;
 using Xunit;
@@ -8,7 +12,7 @@ namespace Dash.Tests.Nodes
     public class HasAndBelongsToManyDeclarationNodeTests
     {
         [Fact]
-        public void Accept_Visitor_VisitorShouldHaveCalledVisit()
+        public async Task Accept_Visitor_VisitorShouldHaveCalledVisit()
         {
             // Arrange
             var sut = new HasAndBelongsToManyDeclarationNode(new EntityDeclarationNode(new ModelNode(), "Parent"), "Child", "Person");
@@ -16,10 +20,10 @@ namespace Dash.Tests.Nodes
             var visitor = Substitute.For<INodeVisitor>();
 
             // Act
-            sut.Accept(visitor);
+            await sut.Accept(visitor);
 
             // Assert
-            visitor.Received(1).Visit(sut);
+            await visitor.Received(1).Visit(sut);
         }
     }
 }

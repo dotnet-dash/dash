@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +21,14 @@
     <None Remove="Samples\HelloWorld.json" />
     <None Remove="Samples\Inheritance.json" />
     <None Remove="Samples\OverrideBaseId.json" />
+    <None Remove="Samples\Seed.json" />
     <None Remove="Samples\Smoketest1.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Samples\Seed.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\HasNullable.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -65,7 +72,9 @@
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
+    <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
     <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.1.1" />
+    <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />

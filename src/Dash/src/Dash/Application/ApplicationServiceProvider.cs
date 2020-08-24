@@ -1,68 +1,26 @@
-﻿using System;
-using System.IO.Abstractions;
-using Dash.Engine;
-using Dash.Engine.Abstractions;
-using Dash.Engine.Generator;
-using Dash.Engine.LanguageProviders;
-using Dash.Engine.TemplateProviders;
-using Dash.Engine.Visitors;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
 {
     public class ApplicationServiceProvider : IApplicationServiceProvider
     {
-        public IServiceProvider Create(bool verbose)
+        public IServiceProvider Create(bool verbose, string workingDir)
         {
             var services = new ServiceCollection();
-            services.Configure<DashOptions>(options =>
-            {
-                options.Verbose = verbose;
-            });
 
-            services.AddSingleton<DashApplication>();
-            services.AddSingleton<IFileSystem, FileSystem>();
-            services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
-            services.AddSingleton<IGenerator, DefaultGenerator>();
-            services.AddSingleton<IErrorRepository, ErrorRepository>();
-            services.AddSingleton<IModelRepository, DefaultModelRepository>();
-            services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
-            services.AddSingleton<IConsole, DefaultConsole>();
-            RegisterTemplateProviders(services);
-            RegisterValueParsers(services);
-            RegisterNodeVisitors(services);
-            RegisterLanguageProviders(services);
+            ApplicationServices.Add(services, verbose, workingDir);
+            CommonServices.Add(services);
+            RepositoryServices.Add(services);
+            SourceCodeServices.Add(services);
+            NodeVisitorServices.Add(services);
+            LanguageProviderServices.Add(services);
+            GeneratorServices.Add(services);
 
             return services.BuildServiceProvider(true);
-        }
-
-        private static void RegisterTemplateProviders(ServiceCollection services)
-        {
-            services.AddSingleton<ITemplateProvider, EmbeddedTemplateProvider>();
-        }
-
-        private static void RegisterValueParsers(ServiceCollection services)
-        {
-            services.AddSingleton<IDataTypeParser, DataTypeParser>();
-            services.AddSingleton<IEntityReferenceValueParser, EntityReferenceValueParser>();
-        }
-
-        private static void RegisterNodeVisitors(ServiceCollection services)
-        {
-            services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
-            services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
-            services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
-            services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
-            services.AddSingleton<INodeVisitor, DefaultModelBuilder>();
-            services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
-
-            services.AddSingleton<ISymbolCollector, DefaultSymbolCollector>();
-        }
-
-        private static void RegisterLanguageProviders(ServiceCollection services)
-        {
-            services.AddSingleton<ILanguageProvider, CSharpLanguageProvider>();
-            services.AddSingleton<ILanguageProvider, SqlServerLanguageProvider>();
         }
     }
 }

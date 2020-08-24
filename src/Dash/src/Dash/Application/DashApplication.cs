@@ -1,10 +1,16 @@
-﻿using System;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Engine.Abstractions;
+using Dash.Common;
+using Dash.Engine;
+using Dash.Exceptions;
+using Dash.Nodes;
 
 namespace Dash.Application
 {
@@ -33,7 +39,7 @@ namespace Dash.Application
             _console = console;
         }
 
-        public async Task Run(FileInfo inputFile, bool verbose)
+        public async Task Run(FileInfo? inputFile)
         {
             if (inputFile == null)
             {
@@ -50,15 +56,28 @@ namespace Dash.Application
             var fileStream = _fileSystem.File.OpenText(inputFile.FullName);
             var sourceCode = await fileStream.ReadToEndAsync();
 
-            var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
+            try
+            {
+                var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
+                await RunVisitors(sourceCodeDocument);
+            }
+            catch (ParserException exception)
+            {
+                _console.Error($"Error while parsing the source code: {exception.Message}");
+            }
+        }
 
+        private async Task RunVisitors(SourceCodeNode sourceCodeNode)
+        {
             foreach (var visitor in _nodeVisitors)
             {
                 _console.Trace($"Running {visitor.GetType()}");
-                visitor.Visit(sourceCodeDocument.ModelNode);
+                await visitor.Visit(sourceCodeNode);
 
                 if (_errorRepository.HasErrors())
                 {
+                    _console.Error("Error(s) found:");
+
                     var errors = string.Join(Environment.NewLine, _errorRepository.GetErrors().Select(e => e));
                     _console.Error(errors);
 
@@ -66,7 +85,7 @@ namespace Dash.Application
                 }
             }
 
-            await _generator.Generate(sourceCodeDocument);
+            await _generator.Generate(sourceCodeNode);
         }
     }
 }

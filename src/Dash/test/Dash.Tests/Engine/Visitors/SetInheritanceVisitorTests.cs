@@ -1,4 +1,8 @@
-﻿using Dash.Engine.Abstractions;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System.Threading.Tasks;
+using Dash.Common;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
@@ -9,18 +13,17 @@ namespace Dash.Tests.Engine.Visitors
     public class SetInheritanceVisitorTests
     {
         [Fact]
-        public void Visit_ModelNode_ShouldHaveSetDefaultInheritanceIfNotDeclared()
+        public async Task Visit_ModelNode_ShouldHaveSetDefaultInheritanceIfNotDeclared()
         {
             // Arrange
             var sut = new SetInheritanceVisitor(NSubstitute.Substitute.For<IConsole>());
 
-            var modelNode = new ModelNode();
-            _ = modelNode.AddEntityDeclarationNode("Order");
-            var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
-            orderLineNode.AddInheritanceDeclaration("SomeOtherBase");
+            ModelNode modelNode = new ModelNode();
+            modelNode.AddEntityDeclarationNode("Order");
+            modelNode.AddEntityDeclarationNode("OrderLine").AddInheritanceDeclaration("SomeOtherBase");
 
             // Act
-            sut.Visit(modelNode);
+            await sut.Visit(modelNode);
 
             // Assert
             modelNode.EntityDeclarations.Should().SatisfyRespectively(

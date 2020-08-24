@@ -1,4 +1,8 @@
-﻿using Dash.Engine.Abstractions;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System.Threading.Tasks;
+using Dash.Common;
 using Dash.Extensions;
 using Dash.Nodes;
 
@@ -6,38 +10,84 @@ namespace Dash.Engine.Visitors
 {
     public abstract class BaseVisitor : INodeVisitor
     {
-        public virtual void Visit(ModelNode node)
+        protected readonly IConsole Console;
+
+        protected BaseVisitor(IConsole console)
         {
-            node.EntityDeclarations.Accept(this);
+            Console = console;
         }
 
-        public virtual void Visit(EntityDeclarationNode node)
+        public async Task Visit(SourceCodeNode node)
         {
-            node.AttributeDeclarations.Accept(this);
-            node.InheritanceDeclarationNodes.Accept(this);
-            node.Has.Accept(this);
-            node.HasMany.Accept(this);
-            node.HasAndBelongsToMany.Accept(this);
+            await node.ConfigurationNode.Accept(this);
+            await node.ModelNode.Accept(this);
         }
 
-        public virtual void Visit(AttributeDeclarationNode node)
+        public async Task Visit(ConfigurationNode node)
         {
+            await node.Templates.Accept(this);
         }
 
-        public virtual void Visit(HasReferenceDeclarationNode node)
+        public async Task Visit(TemplateNode node)
         {
+            if (node.TemplateUriNode != null)
+            {
+                await node.TemplateUriNode.Accept(this);
+            }
         }
 
-        public virtual void Visit(HasManyReferenceDeclarationNode node)
+        public virtual async Task Visit(ModelNode node)
         {
+            await node.EntityDeclarations.Accept(this);
         }
 
-        public virtual void Visit(HasAndBelongsToManyDeclarationNode node)
+        public virtual async Task Visit(EntityDeclarationNode node)
         {
+            Console.Trace($"{GetType().Name} visiting attributes of {node.Name}");
+            await node.AttributeDeclarations.Accept(this);
+            await node.InheritanceDeclarationNodes.Accept(this);
+            await node.Has.Accept(this);
+            await node.HasMany.Accept(this);
+            await node.HasAndBelongsToMany.Accept(this);
+
+            var childNodesCount = node.ChildNodes.Count;
+            Console.Trace($"{GetType().Name} visiting {childNodesCount} child node(s) of {node.Name}");
+            await node.ChildNodes.Accept(this);
         }
 
-        public virtual void Visit(InheritanceDeclarationNode node)
+        public virtual Task Visit(AttributeDeclarationNode node)
         {
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Visit(HasReferenceDeclarationNode node)
+        {
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Visit(HasManyReferenceDeclarationNode node)
+        {
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Visit(HasAndBelongsToManyDeclarationNode node)
+        {
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Visit(InheritanceDeclarationNode node)
+        {
+            return Task.CompletedTask;
+        }
+
+        public virtual async Task Visit(CsvSeedDeclarationNode node)
+        {
+            await node.UriNode.Accept(this);
+        }
+
+        public virtual Task Visit(UriNode node)
+        {
+            return Task.CompletedTask;
         }
     }
 }

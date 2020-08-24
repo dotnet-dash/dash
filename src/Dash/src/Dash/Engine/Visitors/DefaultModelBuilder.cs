@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using Dash.Engine.Abstractions;
+using System.Threading.Tasks;
+using Dash.Common;
 using Dash.Engine.Models;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -18,7 +21,8 @@ namespace Dash.Engine.Visitors
         public DefaultModelBuilder(
             IDataTypeParser dataTypeParser,
             IEnumerable<ILanguageProvider> languageProviders,
-            IModelRepository modelRepository)
+            IModelRepository modelRepository,
+            IConsole console) : base(console)
         {
             _dataTypeParser = dataTypeParser;
             _modelRepository = modelRepository;
@@ -26,14 +30,14 @@ namespace Dash.Engine.Visitors
             _databaseLanguageProvider = languageProviders.Single(e => e.Name.IsSame("SqlServer"));
         }
 
-        public override void Visit(EntityDeclarationNode node)
+        public override Task Visit(EntityDeclarationNode node)
         {
             var model = new EntityModel(node.Name);
             _modelRepository.Add(model);
-            base.Visit(node);
+            return base.Visit(node);
         }
 
-        public override void Visit(AttributeDeclarationNode node)
+        public override Task Visit(AttributeDeclarationNode node)
         {
             var result = _dataTypeParser.Parse(node.AttributeDataType);
 
@@ -46,7 +50,7 @@ namespace Dash.Engine.Visitors
                 entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable, result.DefaultValue));
             }
 
-            base.Visit(node);
+            return base.Visit(node);
         }
     }
 }

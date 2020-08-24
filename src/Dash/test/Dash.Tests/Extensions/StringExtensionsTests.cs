@@ -1,4 +1,7 @@
-﻿using Dash.Extensions;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using Dash.Extensions;
 using FluentAssertions;
 using Xunit;
 
@@ -18,6 +21,78 @@ namespace Dash.Tests.Extensions
 
             // Assert
             result.Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public void IsValidUri_UriIsValid_ShouldReturnTrue()
+        {
+            // Act
+            var result = "https://www.foo.bar".IsValidUri();
+
+            // Assert
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void IsValidUri_UriIsInvalid_ShouldReturnFalse()
+        {
+            // Act
+            var result = "foobar".IsValidUri();
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("invalid")]
+        public void ToUri_InvalidUri_ShouldReturnNull(string invalidUri)
+        {
+            // Act
+            var result = invalidUri.ToUri();
+
+            // Assert
+            result.Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData("https://www.foo.com", "https://www.foo.com/")]
+        [InlineData("file://localhost", "file://localhost/")]
+        [InlineData("./", "./")]
+        [InlineData("../", "../")]
+        public void ToUri_ValidUri_ShouldReturnUri(string validUri, string expectedUri)
+        {
+            // Act
+            var result = validUri.ToUri();
+
+            // Assert
+            result.Should().NotBeNull().And.Subject.ToString().Should().Be(expectedUri);
+        }
+
+        [Theory]
+        [InlineData("", "")]
+        [InlineData(" ", " ")]
+        [InlineData("/foo/", "/foo/")]
+        public void NormalizeSlashes_GivenTheory_ShouldReturnExpectedResults(string input, string expectedResult)
+        {
+            // Act
+            var result = input.NormalizeSlashes();
+
+            // Assert
+            result.Should().Be(expectedResult);
+        }
+
+        [Fact]
+        public void NormalizeSlashes_EndsWithMultipleSlashes_ShouldReduceToOneSlash()
+        {
+            // Arrange
+            var input = @"//foo//bar\\//\\//";
+
+            // Act
+            var result = input.NormalizeSlashes();
+
+            // Assert
+            result.Should().Be("//foo//bar/");
         }
     }
 }

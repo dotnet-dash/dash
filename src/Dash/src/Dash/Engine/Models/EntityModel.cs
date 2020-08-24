@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System.Collections.Generic;
 using System.Linq;
 using Dash.Extensions;
 
@@ -21,6 +24,8 @@ namespace Dash.Engine.Models
         public IList<ReferencedEntityModel> SingleReferences { get; } = new List<ReferencedEntityModel>();
 
         public IList<ReferencedEntityModel> CollectionReferences { get; } = new List<ReferencedEntityModel>();
+
+        public IList<IDictionary<string, string>> SeedData { get; } = new List<IDictionary<string, string>>();
 
         public void InheritAttributes(EntityModel superEntity)
         {
