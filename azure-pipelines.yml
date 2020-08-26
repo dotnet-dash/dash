@@ -55,6 +55,7 @@ steps:
     pollingTimeoutSec: '600'
 
 - task: NuGetCommand@2
+  displayName: 'Packing tool'
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj'
@@ -62,6 +63,7 @@ steps:
     toolPackage: true
 
 - task: PublishBuildArtifacts@1
+  displayName: 'Publishing artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
