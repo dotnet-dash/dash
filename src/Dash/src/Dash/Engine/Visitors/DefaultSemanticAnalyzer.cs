@@ -12,7 +12,7 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class DefaultSemanticAnalyzer : BaseVisitor, ISemanticAnalyzer
+    public class DefaultSemanticAnalyzer : BaseVisitor
     {
         private readonly IDataTypeParser _dataTypeParser;
         private readonly ISymbolRepository _symbolRepository;

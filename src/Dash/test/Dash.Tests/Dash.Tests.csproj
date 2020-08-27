@@ -13,6 +13,7 @@
     <None Remove="Samples\Configuration.json" />
     <None Remove="Samples\EmptyBaseDefined.json" />
     <None Remove="Samples\EmptyModel.json" />
+    <None Remove="Samples\Errors\MisconfigurationNoTemplateDefined.json" />
     <None Remove="Samples\ExtendBase.json" />
     <None Remove="Samples\Has.json" />
     <None Remove="Samples\HasAndBelongsToMany.json" />
@@ -23,6 +24,12 @@
     <None Remove="Samples\OverrideBaseId.json" />
     <None Remove="Samples\Seed.json" />
     <None Remove="Samples\Smoketest1.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Samples\Errors\MisconfigurationNoTemplateDefined.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

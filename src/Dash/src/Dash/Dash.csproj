@@ -4,13 +4,15 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.0.1-alpha</Version>
+    <Version>0.0.2-alpha</Version>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-dash</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <AssemblyName>dotnet-dash</AssemblyName>
     <Authors>Huy Hoang</Authors>
     <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
+    <Description>Dash is a Model-driven code generator.</Description>
+    <PackageReleaseNotes>Fixed a bug where missing the template node resulted in a Null Reference exception.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
