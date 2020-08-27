@@ -14,6 +14,7 @@ namespace Dash.Application
             services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
             services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
             services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
+            services.AddSingleton<INodeVisitor, ValidateConfigurationVisitor>();
             services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
             services.AddSingleton<INodeVisitor, IoAnalyzer>();
             services.AddSingleton<INodeVisitor, DefaultModelBuilder>();

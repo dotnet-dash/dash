@@ -1,0 +1,16 @@
+﻿{
+    "Configuration": {
+        "Templates": [
+            {
+                "Output": "."
+            }
+        ]
+    },
+
+    "Model": {
+        "Account": {
+            "Id": "Int",
+            "Email": "Email"
+        }
+    }
+}

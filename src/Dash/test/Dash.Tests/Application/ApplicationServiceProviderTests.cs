@@ -11,16 +11,17 @@ namespace Dash.Tests.Application
     public class ApplicationServiceProviderTests
     {
         [Fact]
-        public void Create_ResolveDashApplication_ShouldResolve()
+        public void CreateServiceCollection_ResolveDashApplication_ShouldResolve()
         {
             // Arrange
             var sut = new ApplicationServiceProvider();
 
             // Act
-            var result = sut.Create(true, ".");
+            var result = sut.CreateServiceCollection(true, ".");
 
             // Assert
-            var service = result.GetRequiredService(typeof(DashApplication));
+            var serviceProvider = result.BuildServiceProvider();
+            var service = serviceProvider.GetRequiredService(typeof(DashApplication));
             service.Should().NotBeNull();
         }
     }

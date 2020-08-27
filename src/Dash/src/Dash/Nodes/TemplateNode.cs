@@ -9,7 +9,7 @@ namespace Dash.Nodes
 {
     public class TemplateNode : AstNode
     {
-        public string? Template { get; set; } = string.Empty;
+        public string? Template { get; set; } = null;
 
         public string Output { get; set; } = ".";
 
