@@ -9,12 +9,12 @@ defining domain entities and its relationship with eachother using JSON.
 ## Installing Dash
 The following command installs the latest stable version of Dash:
 ~~~ cmd
-dotnet tool install -g dotnet-dash
+dotnet tool install --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.0.1-alpha
 ~~~
 
 The following command updates Dash to the latest stable version:
 ~~~ cmd
-dotnet tool update -g dotnet-dash
+dotnet tool update --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.0.1-alpha
 ~~~
 
 ## Introduction
@@ -82,7 +82,7 @@ To configure the generation output, we need to add a `Configuration` Object to o
     },
 
     "Model": {
-        ... the above Model ...
+        /* the above model */
     }
 }
 ~~~
