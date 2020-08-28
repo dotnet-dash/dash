@@ -21,6 +21,11 @@ namespace Dash.Engine.Providers
             return tr.ReadToEndAsync();
         }
 
+        public Task<bool> Exists(string templateName)
+        {
+            return Task.FromResult(TryGetStream(templateName, out _));
+        }
+
         private static bool TryGetStream(string templateName, out Stream? stream)
         {
             stream = Assembly

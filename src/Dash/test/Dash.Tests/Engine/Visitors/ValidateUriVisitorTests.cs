@@ -5,25 +5,28 @@ using System;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Common;
+using Dash.Engine;
 using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine.Visitors
 {
-    public class IoAnalyzerTests
+    public class ValidateUriVisitorTests
     {
         private readonly ErrorRepository _errorRepository = new ErrorRepository();
         private readonly MockFileSystem _mockFileSystem = new MockFileSystem();
-        private readonly IoAnalyzer _sut;
+        private readonly ValidateUriVisitor _sut;
 
-        public IoAnalyzerTests()
+        public ValidateUriVisitorTests()
         {
-            _sut = new IoAnalyzer(NSubstitute.Substitute.For<IConsole>(),
+            _sut = new ValidateUriVisitor(Substitute.For<IConsole>(),
                 _mockFileSystem,
-                _errorRepository);
+                _errorRepository,
+                Substitute.For<IEmbeddedTemplateProvider>());
         }
 
         [Fact]

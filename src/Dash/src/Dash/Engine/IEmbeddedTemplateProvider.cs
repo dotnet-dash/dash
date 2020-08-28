@@ -8,5 +8,7 @@ namespace Dash.Engine
     public interface IEmbeddedTemplateProvider
     {
         Task<string> GetTemplate(string templateName);
+
+        Task<bool> Exists(string templateName);
     }
 }

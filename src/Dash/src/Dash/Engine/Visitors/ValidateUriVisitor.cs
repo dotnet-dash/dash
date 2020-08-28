@@ -9,18 +9,24 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class IoAnalyzer : BaseVisitor
+    public class ValidateUriVisitor : BaseVisitor
     {
         private readonly IFileSystem _fileSystem;
         private readonly IErrorRepository _errorRepository;
+        private readonly IEmbeddedTemplateProvider _embeddedTemplateProvider;
 
-        public IoAnalyzer(IConsole console, IFileSystem fileSystem, IErrorRepository errorRepository) : base(console)
+        public ValidateUriVisitor(
+            IConsole console,
+            IFileSystem fileSystem,
+            IErrorRepository errorRepository,
+            IEmbeddedTemplateProvider embeddedTemplateProvider) : base(console)
         {
             _fileSystem = fileSystem;
             _errorRepository = errorRepository;
+            _embeddedTemplateProvider = embeddedTemplateProvider;
         }
 
-        public override Task Visit(UriNode node)
+        public override async Task Visit(UriNode node)
         {
             if (node.Uri.Scheme.IsSame("file") &&
                 node.UriMustExist &&
@@ -29,7 +35,14 @@ namespace Dash.Engine.Visitors
                 _errorRepository.Add($"File does not exist: '{node.Uri}'");
             }
 
-            return base.Visit(node);
+            if (node.Uri.Scheme.IsSame("dash") &&
+                node.UriMustExist &&
+                !(await _embeddedTemplateProvider.Exists(node.Uri.Host)))
+            {
+                _errorRepository.Add($"Dash template does not exist: {node.Uri}");
+            }
+
+            await base.Visit(node);
         }
     }
 }
