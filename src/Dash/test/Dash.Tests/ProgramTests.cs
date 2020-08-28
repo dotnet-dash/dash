@@ -58,6 +58,19 @@ namespace Dash.Tests
             _console.Received(1).Error("Configuration.Templates[0] object has no 'Template' property.");
         }
 
+        [Fact]
+        public async Task EmbeddedTemplateNotFound()
+        {
+            // Arrange
+            ArrangeFile("Errors/EmbeddedTemplateNotFound.json");
+
+            // Act
+            await _sut.Run("c:/temp/sut.json", ".", false);
+
+            // Assert
+            _console.Received(1).Error("Dash template does not exist: dash://unknown/");
+        }
+
         private void ArrangeFile(string fileName)
         {
             _mockFileSystem.AddFile("c:/temp/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
