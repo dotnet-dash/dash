@@ -54,13 +54,13 @@ namespace Dash.Tests.Engine.TemplateProviders
         }
 
         [Fact]
-        public async Task Exists_TemplateExists_ShouldReturnFalse()
+        public async Task Exists_TemplateExists_ShouldReturnTrue()
         {
             // Arrange
             var sut = new EmbeddedTemplateProvider();
 
             // Act
-            var result = await sut.Exists("efcore");
+            var result = await sut.Exists("efpoco");
 
             // Assert
             result.Should().BeTrue();
