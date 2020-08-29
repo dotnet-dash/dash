@@ -8,7 +8,9 @@ namespace Nnn // {{ Namespace }}
     public partial class CustomDbContext : DbContext // TODO: take model name
     {{{#tnls}}
         {{#each Entities}}
+        {{#if CodeGeneration}}
         public DbSet<{{ Name }}> {{ Name }} { get; set; }{{#tnls}}
+        {{/if}}
         {{/each}}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

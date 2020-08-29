@@ -33,6 +33,11 @@ namespace Dash.Nodes
             return this;
         }
 
+        public ConfigurationNode AddTemplateNode(string template)
+        {
+            return AddTemplateNode(template, null);
+        }
+
         public override async Task Accept(INodeVisitor visitor)
         {
             await visitor.Visit(this);
