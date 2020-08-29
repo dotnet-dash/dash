@@ -34,9 +34,6 @@
     <Content Include="Samples\Errors\MisconfigurationNoTemplateDefined.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Samples\Seed.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -81,6 +78,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
@@ -93,6 +91,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Dash\Dash.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Samples\ExpectedOutput\HelloWorld">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

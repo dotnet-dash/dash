@@ -7,6 +7,8 @@ using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Common;
+using FluentAssertions;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
@@ -71,9 +73,38 @@ namespace Dash.Tests
             _console.Received(1).Error("Dash template does not exist: dash://unknown/");
         }
 
+        [Fact]
+        public async Task HelloWorld()
+        {
+            // Arrange
+            ArrangeFile("HelloWorld.json");
+            var expectedOutput = GetExpectedFileOutput("HelloWorld");
+
+            // Act
+            await _sut.Run("c:/temp/sut.json", ".", false);
+
+            // Assert
+            var generatedCode = _mockFileSystem.File.ReadAllText("c:/efcontext.generated.cs");
+
+            AssertThatTreesAreEquivalent(generatedCode, expectedOutput);
+        }
+
         private void ArrangeFile(string fileName)
         {
             _mockFileSystem.AddFile("c:/temp/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
+        }
+
+        private string GetExpectedFileOutput(string fileName)
+        {
+            return File.ReadAllText($"Samples/ExpectedOutput/{fileName}");
+        }
+
+        private void AssertThatTreesAreEquivalent(string generatedCode, string expectedCode)
+        {
+            var producedTree = CSharpSyntaxTree.ParseText(generatedCode);
+            var expectedTree = CSharpSyntaxTree.ParseText(expectedCode);
+
+            producedTree.IsEquivalentTo(expectedTree).Should().BeTrue();
         }
     }
 }
