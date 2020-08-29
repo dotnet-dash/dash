@@ -34,9 +34,6 @@
     <Content Include="Samples\Errors\MisconfigurationNoTemplateDefined.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Samples\Seed.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
