@@ -34,7 +34,9 @@ namespace Dash.Engine.Parsers
         {
             if (!document.RootElement.TryGetProperty("Configuration", out var configurationProperty))
             {
-                return new ConfigurationNode();
+                return new ConfigurationNode()
+                    .AddTemplateNode("dash://efpoco", null)
+                    .AddTemplateNode("dash://efcontext", null);
             }
 
             var configurationSourceCode = configurationProperty.GetRawText();
