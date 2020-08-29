@@ -39,5 +39,31 @@ namespace Dash.Tests.Engine.TemplateProviders
             // Assert
             content.Length.Should().BeGreaterThan(0);
         }
+
+        [Fact]
+        public async Task Exists_TemplateDoesNotExist_ShouldReturnFalse()
+        {
+            // Arrange
+            var sut = new EmbeddedTemplateProvider();
+
+            // Act
+            var result = await sut.Exists("i do not exist");
+
+            // Assert
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Exists_TemplateExists_ShouldReturnTrue()
+        {
+            // Arrange
+            var sut = new EmbeddedTemplateProvider();
+
+            // Act
+            var result = await sut.Exists("efpoco");
+
+            // Assert
+            result.Should().BeTrue();
+        }
     }
 }

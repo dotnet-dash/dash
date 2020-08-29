@@ -23,7 +23,7 @@ steps:
     projectKey: 'dotnet-dash_dash'
     projectName: 'dash'
     extraProperties: |
-      # Additional properties that will be passed to the scanner, 
+      # Additional properties that will be passed to the scanner,
       # Put one key=value per line, example:
       sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
 - task: NuGetToolInstaller@1
@@ -53,3 +53,16 @@ steps:
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '600'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: 'off'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publishing artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'

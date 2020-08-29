@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
@@ -51,7 +50,7 @@ namespace Dash.Tests.Application
             _nodeVisitors.Add(Substitute.For<INodeVisitor>());
 
             // Act
-            await _sut.Run(new FileInfo("c:\\test.json"));
+            await _sut.Run("c:\\test.json");
 
             // Assert
             await _nodeVisitors[0].Received(1).Visit(sourceCodeNode);
@@ -68,7 +67,7 @@ namespace Dash.Tests.Application
             sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
 
             // Act
-            await _sut.Run(new FileInfo("c:\\file.json"));
+            await _sut.Run("c:\\file.json");
 
             // Assert
             _console.Received(1).Error("Could not find the model file 'c:\\file.json'.");
@@ -82,7 +81,7 @@ namespace Dash.Tests.Application
             _sourceCodeParser.Parse("{}").Throws(new ParserException("Oops"));
 
             // Act
-            await _sut.Run(new FileInfo("c:\\file.json"));
+            await _sut.Run("c:\\file.json");
 
             // Assert
             _console.Received(1).Error("Error while parsing the source code: Oops");
@@ -116,7 +115,7 @@ namespace Dash.Tests.Application
                 Substitute.For<IConsole>());
 
             // Act
-            await sut.Run(new FileInfo("c:\\test.json"));
+            await sut.Run("c:\\test.json");
 
             // Assert
             await _nodeVisitors[0].Received(1).Visit(Arg.Any<SourceCodeNode>());

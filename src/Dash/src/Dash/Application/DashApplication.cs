@@ -39,7 +39,7 @@ namespace Dash.Application
             _console = console;
         }
 
-        public async Task Run(FileInfo? inputFile)
+        public async Task Run(string? inputFile)
         {
             if (inputFile == null)
             {
@@ -47,13 +47,13 @@ namespace Dash.Application
                 return;
             }
 
-            if (!_fileSystem.File.Exists(inputFile.FullName))
+            if (!_fileSystem.File.Exists(inputFile))
             {
-                _console.Error($"Could not find the model file '{inputFile.FullName}'.");
+                _console.Error($"Could not find the model file '{inputFile}'.");
                 return;
             }
 
-            var fileStream = _fileSystem.File.OpenText(inputFile.FullName);
+            var fileStream = _fileSystem.File.OpenText(inputFile);
             var sourceCode = await fileStream.ReadToEndAsync();
 
             try
