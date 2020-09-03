@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +20,7 @@ namespace Dash.Application
         private readonly IEnumerable<INodeVisitor> _nodeVisitors;
         private readonly IErrorRepository _errorRepository;
         private readonly IGenerator _generator;
+        private readonly IEnumerable<IPostGenerator> _postGenerators;
         private readonly IConsole _console;
 
         public DashApplication(
@@ -29,6 +29,7 @@ namespace Dash.Application
             IEnumerable<INodeVisitor> nodeVisitors,
             IErrorRepository errorRepository,
             IGenerator generator,
+            IEnumerable<IPostGenerator> postGenerators,
             IConsole console)
         {
             _fileSystem = fileSystem;
@@ -36,6 +37,7 @@ namespace Dash.Application
             _nodeVisitors = nodeVisitors;
             _errorRepository = errorRepository;
             _generator = generator;
+            _postGenerators = postGenerators;
             _console = console;
         }
 
@@ -58,8 +60,8 @@ namespace Dash.Application
 
             try
             {
-                var sourceCodeDocument = _sourceCodeParser.Parse(sourceCode);
-                await RunVisitors(sourceCodeDocument);
+                var sourceCodeNode = _sourceCodeParser.Parse(sourceCode);
+                await RunVisitors(sourceCodeNode);
             }
             catch (ParserException exception)
             {
@@ -85,7 +87,17 @@ namespace Dash.Application
                 }
             }
 
+            await RunGenerators(sourceCodeNode);
+        }
+
+        private async Task RunGenerators(SourceCodeNode sourceCodeNode)
+        {
             await _generator.Generate(sourceCodeNode);
+
+            foreach (var postGenerator in _postGenerators)
+            {
+                await postGenerator.Run();
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Dash.Tests.Application
         private readonly IConsole _console = Substitute.For<IConsole>();
         private readonly IList<INodeVisitor> _nodeVisitors = new List<INodeVisitor>();
         private readonly IGenerator _generator = Substitute.For<IGenerator>();
+        private readonly IList<IPostGenerator> _postGenerators = new List<IPostGenerator>();
         private readonly IErrorRepository _errorRepository = Substitute.For<IErrorRepository>();
 
         public DashApplicationTests()
@@ -33,6 +34,7 @@ namespace Dash.Tests.Application
                 _nodeVisitors,
                 _errorRepository,
                 _generator,
+                _postGenerators,
                 _console);
         }
 
@@ -112,6 +114,7 @@ namespace Dash.Tests.Application
                 _nodeVisitors,
                 _errorRepository,
                 generator,
+                _postGenerators,
                 Substitute.For<IConsole>());
 
             // Act

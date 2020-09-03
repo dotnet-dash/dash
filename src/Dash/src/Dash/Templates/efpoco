@@ -6,27 +6,28 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nnn // {{ Namespace }}
-{{{#tnls}}
-{{#each Entities}}{{#tnls}}
+{
+{{#each Entities}}
 {{#if CodeGeneration}}
+    [ExcludeFromCodeCoverage]
     public partial class {{ Name }}
-    {{{#tnls}}
-{{#each CodeAttributes}}{{#tnls}}
+    {
+{{#each CodeAttributes}}
 {{#if Length}}
-        [StringLength({{ Length }})]{{#tnls}}
+        [StringLength({{ Length }})]
 {{/if}}{{#tnls}}
 {{#if DataTypeRegularExpression}}
-        [RegularExpression({{ DataTypeRegularExpression }})]{{#tnls}}
+        [RegularExpression({{ DataTypeRegularExpression }})]
 {{/if}}
-        public {{ DataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }{{#tnls}}
-{{/each}}{{#tnls}}
+        public {{ DataType }}{{#if IsNullable}}?{{/if}} {{ Name }} { get; set; }
+{{/each}}
 {{#each SingleReferences}}
-        public {{ EntityModel }}{{#if IsNullable}}?{{/if}} {{ ReferenceName }} { get; set; }{{#tnls}}
-{{/each}}{{#tnls}}
+        public {{ EntityModel }}{{#if IsNullable}}?{{/if}} {{ ReferenceName }} { get; set; }
+{{/each}}
 {{#each CollectionReferences}}
-        public ICollection<{{ EntityModel }}> {{ ReferenceName }} { get; set; }{{#tnls}}
+        public ICollection<{{ EntityModel }}> {{ ReferenceName }} { get; set; }
 {{/each}}
     }
-{{/if}}{{#tnls}}
-{{/each}}{{#tnls}}
+{{/if}}
+{{/each}}
 }

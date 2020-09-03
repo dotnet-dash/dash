@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Nnn // {{ Namespace }}
 {
     public partial class CustomDbContext : DbContext // TODO: take model name
-    {{{#tnls}}
+    {
         {{#each Entities}}
         {{#if CodeGeneration}}
-        public DbSet<{{ Name }}> {{ Name }} { get; set; }{{#tnls}}
+        public DbSet<{{ Name }}> {{ Name }} { get; set; }
         {{/if}}
         {{/each}}
 
@@ -19,20 +19,16 @@ namespace Nnn // {{ Namespace }}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-        {{#each Entities AS Entity}}{{#tnls}}
+        {{#each Entities AS Entity}}
         {{#if SeedData}}
             modelBuilder.Entity<{{ Entity.Name }}>().HasData
-            ({{#tnls}}
         {{#each SeedData}}
-                new {{ Entity.Name }} {{{#each .}} {{Key}} = "{{Value}}",{{/each}}},{{#tnls}}
+                new {{ Entity.Name }} {{{#each .}} {{Key}} = "{{Value}}",{{/each}}},
+
         {{/each}}
             );
         {{/if}}
         {{#each CodeAttributes}}
-            // {{ Name }}
-            // {{#if DefaultValue }}
-            // default value: {{ DefaultValue }}
-            // {{/if}}
         {{/each}}
         {{/each}}
         }
