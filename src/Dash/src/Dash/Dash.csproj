@@ -43,9 +43,9 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.7" />
-    <PackageReference Include="Morestachio" Version="4.2.0.376" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20371.2" />
-    <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20371.2" />
+    <PackageReference Include="Morestachio" Version="4.3.0.392" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20427.1" />
+    <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20427.1" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
   </ItemGroup>
 
