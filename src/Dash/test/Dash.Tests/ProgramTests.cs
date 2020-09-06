@@ -6,6 +6,7 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
+using Dash.Application.Default;
 using Dash.Common;
 using Dash.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -106,12 +107,12 @@ namespace Dash.Tests
 
         private Program ArrangeSut(DashOptions options)
         {
-            var startup = new ApplicationServiceProvider();
+            var startup = new Startup();
             var services = startup.CreateServiceCollection(options);
             services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
             services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
 
-            var mockedStartup = Substitute.For<IApplicationServiceProvider>();
+            var mockedStartup = Substitute.For<IStartup>();
             mockedStartup.CreateServiceCollection(options).Returns(services);
 
             return new Program(mockedStartup);

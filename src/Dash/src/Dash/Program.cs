@@ -3,13 +3,14 @@
 
 using System.Threading.Tasks;
 using Dash.Application;
+using Dash.Application.Default;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash
 {
     public class Program
     {
-        private readonly IApplicationServiceProvider _startup;
+        private readonly IStartup _startup;
 
         /// <summary></summary>
         /// <param name="file">The Dash model file.</param>
@@ -18,7 +19,7 @@ namespace Dash
         /// <param name="verbose">Show verbose output</param>
         public static async Task Main(string? file, string? projectFile, string workingDir = ".", bool verbose = false)
         {
-            var program = new Program(new ApplicationServiceProvider());
+            var program = new Program(new Startup());
 
             var dashOptions = new DashOptions
             {
@@ -31,7 +32,7 @@ namespace Dash
             await program.Run(dashOptions);
         }
 
-        public Program(IApplicationServiceProvider startup)
+        public Program(IStartup startup)
         {
             _startup = startup;
         }

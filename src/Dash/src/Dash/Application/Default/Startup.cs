@@ -3,9 +3,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dash.Application
+namespace Dash.Application.Default
 {
-    public class ApplicationServiceProvider : IApplicationServiceProvider
+    public class Startup : IStartup
     {
         public IServiceCollection CreateServiceCollection(DashOptions dashOptions)
         {
