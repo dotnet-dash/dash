@@ -13,6 +13,9 @@
     <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
     <Description>Dash is a Model-driven code generator.</Description>
     <PackageReleaseNotes>Bugfix: built-in template generated code of an internal Entity.</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/dotnet-dash</PackageProjectUrl>
+    <PackageIcon>packageicon.png</PackageIcon>
+    <Copyright>Huy Hoang</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,15 +41,26 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="editorconfig" Version="0.12.2" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.2.6" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.7.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="3.1.7" />
     <PackageReference Include="Morestachio" Version="4.3.0.392" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20427.1" />
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20427.1" />
     <PackageReference Include="System.IO.Abstractions" Version="12.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="packageicon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

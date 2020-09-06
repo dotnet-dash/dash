@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Dash.Nodes;
 
 namespace Dash.Application
 {
-    public interface IApplicationServiceProvider
+    public interface ISourceCodeProcessor
     {
-        IServiceCollection CreateServiceCollection(DashOptions dashOptions);
+        Task WalkTree(SourceCodeNode sourceCodeNode);
     }
 }

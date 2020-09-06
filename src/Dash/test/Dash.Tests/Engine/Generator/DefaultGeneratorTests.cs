@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Common;
@@ -35,7 +36,8 @@ namespace Dash.Tests.Engine.Generator
                 Substitute.For<IConsole>(),
                 buildOutputRepository,
                 templateTransformer,
-                new OptionsWrapper<DashOptions>(new DashOptions()));
+                new OptionsWrapper<DashOptions>(new DashOptions()),
+                new MockFileSystem());
 
             var configuration = new ConfigurationNode()
                 .AddTemplateNode("dash://foo", @"c:\foo\")
@@ -49,6 +51,41 @@ namespace Dash.Tests.Engine.Generator
             // Assert
             buildOutputRepository.Received(1).Add(@"c:/foo/foo.generated.cs", "foo template transformed");
             buildOutputRepository.Received(1).Add(@"c:/bar/sub/bar.generated.cs", "bar template transformed");
+        }
+
+        [Fact]
+        public async Task Generate_RelativePaths_ShouldWriteTo()
+        {
+            // Arrange
+            var uriResourceRepository = Substitute.For<IUriResourceRepository>();
+            uriResourceRepository.GetContents(new Uri("dash://foo")).Returns("foo template");
+            uriResourceRepository.GetContents(new Uri("dash://bar")).Returns("bar template");
+
+            var buildOutputRepository = Substitute.For<IBuildOutputRepository>();
+
+            var templateTransformer = Substitute.For<ITemplateTransformer>();
+            templateTransformer.Transform("foo template").Returns("foo template transformed");
+            templateTransformer.Transform("bar template").Returns("bar template transformed");
+
+            var sut = new DefaultGenerator(
+                uriResourceRepository,
+                Substitute.For<IConsole>(),
+                buildOutputRepository,
+                templateTransformer,
+                new OptionsWrapper<DashOptions>(new DashOptions()),
+                new MockFileSystem(null, @"c:\output"));
+
+            var configuration = new ConfigurationNode()
+                .AddTemplateNode("dash://foo", ".");
+
+            var sourceCodeDocument = new SourceCodeNode(configuration, new ModelNode());
+
+            // Act
+            await sut.Generate(sourceCodeDocument);
+
+            // Assert
+            buildOutputRepository.Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
+            buildOutputRepository.Received(1).Add(@"c:/output/foo.generated.cs", "foo template transformed");
         }
     }
 }

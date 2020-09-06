@@ -1,4 +1,7 @@
-﻿using Dash.Engine;
+﻿// Copyright (c) Huy Hoang. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using Dash.Engine;
 using FluentAssertions;
 using Xunit;
 
@@ -17,7 +20,7 @@ namespace Dash.Tests.Engine
             var sut = new BuildOutput(path, content);
 
             // Assert
-            sut.Path.Should().Be(path);
+            sut.Path.Should().Be(@"c:/temp/foo.cs");
             sut.GeneratedSourceCodeContent.Should().Be(content);
         }
 

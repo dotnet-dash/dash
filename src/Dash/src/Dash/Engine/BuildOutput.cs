@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Dash.Extensions;
+
 namespace Dash.Engine
 {
     public sealed class BuildOutput
     {
         public BuildOutput(string path, string generatedSourceCodeContent)
         {
-            Path = path;
+            Path = path.AbsolutePath();
             GeneratedSourceCodeContent = generatedSourceCodeContent;
         }
 
