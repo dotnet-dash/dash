@@ -13,8 +13,6 @@ namespace Dash.Nodes
 
         public string Output { get; set; } = ".";
 
-        public bool NormalizeOutput { get; set; } = true;
-
         public UriNode? TemplateUriNode
         {
             get
