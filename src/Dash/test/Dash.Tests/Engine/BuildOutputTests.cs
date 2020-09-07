@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Dash.Tests.Engine
 {
-    public class OutputItemTests
+    public class BuildOutputTests
     {
         [Fact]
         public void Ctor_PathContent_ShouldAssignToProperties()
@@ -69,10 +69,10 @@ namespace Dash.Tests.Engine
         {
             // Arrange
             var sut = new BuildOutput("c:/foo", "foo");
-            var outputItem = new BuildOutput("c:/foo", "foo");
+            var buildOutput = new BuildOutput("c:/foo", "foo");
 
             // Act
-            var result = sut.Equals((object) outputItem);
+            var result = sut.Equals((object) buildOutput);
 
             // Assert
             result.Should().BeTrue();
@@ -83,24 +83,24 @@ namespace Dash.Tests.Engine
         {
             // Arrange
             var sut = new BuildOutput("c:/foo", "foo");
-            var outputItem = new BuildOutput("c:/bar", "foo");
+            var buildOutput = new BuildOutput("c:/bar", "foo");
 
             // Act
-            var result = sut.Equals(outputItem);
+            var result = sut.Equals(buildOutput);
 
             // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
-        public void Equals_OutputItem_HasSamePath_ShouldReturnTrue()
+        public void Equals_BuildOutput_HasSamePath_ShouldReturnTrue()
         {
             // Arrange
             var sut = new BuildOutput("c:/foo", "foo");
-            var outputItem = new BuildOutput("c:/foo", "foo");
+            var buildOutput = new BuildOutput("c:/foo", "foo");
 
             // Act
-            var result = sut.Equals(outputItem);
+            var result = sut.Equals(buildOutput);
 
             // Assert
             result.Should().BeTrue();

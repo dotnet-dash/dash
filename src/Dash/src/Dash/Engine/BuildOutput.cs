@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System;
 using Dash.Extensions;
 
 namespace Dash.Engine
 {
-    public sealed class BuildOutput
+    public sealed class BuildOutput : IEquatable<BuildOutput>
     {
         public BuildOutput(string path, string generatedSourceCodeContent)
         {
@@ -17,9 +18,9 @@ namespace Dash.Engine
 
         public string GeneratedSourceCodeContent { get; }
 
-        public bool Equals(BuildOutput other)
+        public bool Equals(BuildOutput? other)
         {
-            return Path == other.Path;
+            return Path == other?.Path;
         }
 
         public override bool Equals(object? obj)
