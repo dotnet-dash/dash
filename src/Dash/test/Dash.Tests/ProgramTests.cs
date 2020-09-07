@@ -23,7 +23,8 @@ namespace Dash.Tests
 
         public ProgramTests()
         {
-            _mockFileSystem = new MockFileSystem(null, "c:/");
+            _mockFileSystem = new MockFileSystem(null, "c:/project/");
+            _mockFileSystem.AddFile("c:/project/project.csproj", new MockFileData(string.Empty));
             _console = Substitute.For<IConsole>();
         }
 
@@ -48,7 +49,8 @@ namespace Dash.Tests
             ArrangeFile("Errors/MisconfigurationNoTemplateDefined.json");
             var options = new DashOptions
             {
-                InputFile = "c:/temp/sut.json",
+                InputFile = "c:/project/sut.json",
+                ProjectFile = null,
                 WorkingDirectory = ".",
                 Verbose = false,
             };
@@ -69,7 +71,8 @@ namespace Dash.Tests
             ArrangeFile("Errors/EmbeddedTemplateNotFound.json");
             var options = new DashOptions
             {
-                InputFile = "c:/temp/sut.json",
+                InputFile = "c:/project/sut.json",
+                ProjectFile = null,
                 WorkingDirectory = ".",
                 Verbose = false,
             };
@@ -91,7 +94,7 @@ namespace Dash.Tests
             var expectedOutput = GetExpectedFileOutput("HelloWorld");
             var options = new DashOptions
             {
-                InputFile = "c:/temp/sut.json",
+                InputFile = "c:/project/sut.json",
             };
 
             var sut = ArrangeSut(options);
@@ -100,7 +103,7 @@ namespace Dash.Tests
             await sut.Run(options);
 
             // Assert
-            var generatedCode = _mockFileSystem.File.ReadAllText("c:/efcontext.generated.cs");
+            var generatedCode = _mockFileSystem.File.ReadAllText("c:/project/efcontext.generated.cs");
 
             generatedCode.Should().HaveSameTree(expectedOutput);
         }
@@ -119,7 +122,7 @@ namespace Dash.Tests
         }
         private void ArrangeFile(string fileName)
         {
-            _mockFileSystem.AddFile("c:/temp/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
+            _mockFileSystem.AddFile("c:/project/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
         }
 
         private string GetExpectedFileOutput(string fileName)

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Application.Default;
@@ -17,19 +18,17 @@ namespace Dash
         /// <param name="projectFile">The .csproj file. If unspecified, Dash will automatically try to find the .csproj.</param>
         /// <param name="workingDir">Used as the base path for relative paths defined inside your Model file</param>
         /// <param name="verbose">Show verbose output</param>
+        [ExcludeFromCodeCoverage]
         public static async Task Main(string? file, string? projectFile, string workingDir = ".", bool verbose = false)
         {
-            var program = new Program(new Startup());
-
-            var dashOptions = new DashOptions
-            {
-                InputFile = file,
-                ProjectFile = projectFile,
-                WorkingDirectory = workingDir,
-                Verbose = verbose,
-            };
-
-            await program.Run(dashOptions);
+            await new Program(new Startup())
+                .Run(new DashOptions
+                {
+                    InputFile = file,
+                    ProjectFile = projectFile,
+                    WorkingDirectory = workingDir,
+                    Verbose = verbose,
+                });
         }
 
         public Program(IStartup startup)
@@ -44,8 +43,7 @@ namespace Dash
                 .BuildServiceProvider();
 
             using var scope = services.CreateScope();
-            var app = scope.ServiceProvider.GetRequiredService<DashApplication>();
-            await app.Run();
+            await scope.ServiceProvider.GetRequiredService<DashApplication>().Run();
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Dash.Common;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Application.Default
+namespace Dash.Application.PreprocessingSteps
 {
-    public class DashOptionsValidator : IDashOptionsValidator
+    public class DashOptionsValidator : IPreprocessingStep
     {
         private readonly IConsole _console;
         private readonly IFileSystem _fileSystem;
@@ -21,7 +21,7 @@ namespace Dash.Application.Default
             _dashOptions = dashOptions.Value;
         }
 
-        public Task<bool> Validate()
+        public Task<bool> Process()
         {
             if (_dashOptions.InputFile == null)
             {

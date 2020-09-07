@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Dash.Application
 {
-    public interface IDashOptionsValidator
+    public interface IPreprocessingStep
     {
-        Task<bool> Validate();
+        Task<bool> Process();
     }
 }

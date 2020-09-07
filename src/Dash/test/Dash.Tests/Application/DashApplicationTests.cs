@@ -19,17 +19,17 @@ namespace Dash.Tests.Application
         private readonly MockFileSystem _mockFileSystem = new MockFileSystem();
         private readonly ISourceCodeParser _sourceCodeParser = Substitute.For<ISourceCodeParser>();
         private readonly IConsole _console = Substitute.For<IConsole>();
-        private readonly IDashOptionsValidator _dashOptionsValidator = Substitute.For<IDashOptionsValidator>();
+        private readonly IPreprocessingStep _dashOptionsValidator = Substitute.For<IPreprocessingStep>();
         private readonly ISourceCodeProcessor _sourceCodeProcessor = Substitute.For<ISourceCodeProcessor>();
 
 
         [Fact]
-        public async Task Run_ValidationFailed_ShouldNotParseSourceCode()
+        public async Task Run_PreprocessingFailed_ShouldNotParseSourceCode()
         {
             // Arrange
             var sut = ArrangeSut(new DashOptions());
 
-            _dashOptionsValidator.Validate().Returns(false);
+            _dashOptionsValidator.Process().Returns(false);
 
             // Act
             await sut.Run();
@@ -49,7 +49,7 @@ namespace Dash.Tests.Application
 
             _mockFileSystem.AddFile(@"c:\test.json", new MockFileData("{}"));
 
-            _dashOptionsValidator.Validate().Returns(true);
+            _dashOptionsValidator.Process().Returns(true);
 
             // Act
             await sut.Run();
@@ -69,7 +69,7 @@ namespace Dash.Tests.Application
 
             _mockFileSystem.AddFile(@"c:\test.json", new MockFileData("{}"));
 
-            _dashOptionsValidator.Validate().Returns(true);
+            _dashOptionsValidator.Process().Returns(true);
 
             _sourceCodeParser.Parse("{}").Throws(new ParserException("Foo"));
 
@@ -77,14 +77,14 @@ namespace Dash.Tests.Application
             await sut.Run();
 
             // Assert
-            _console.Error("Error while parsing the source code: Foo");
+            _console.Received(1).Error("Error while parsing the source code: Foo");
         }
 
         private DashApplication ArrangeSut(DashOptions dashOptions)
         {
             return new DashApplication(
                 _console,
-                _dashOptionsValidator,
+                new [] { _dashOptionsValidator },
                 new OptionsWrapper<DashOptions>(dashOptions),
                 _mockFileSystem,
                 _sourceCodeParser,

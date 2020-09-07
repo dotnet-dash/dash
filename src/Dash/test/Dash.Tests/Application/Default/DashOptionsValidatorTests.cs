@@ -1,7 +1,7 @@
 ﻿using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
-using Dash.Application.Default;
+using Dash.Application.PreprocessingSteps;
 using Dash.Common;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
@@ -16,7 +16,7 @@ namespace Dash.Tests.Application.Default
         private readonly MockFileSystem _mockFileSystem = new MockFileSystem();
 
         [Fact]
-        public async Task Validate_InputFileIsNull_ShouldWriteErrorToConsole()
+        public async Task Process_InputFileIsNull_ShouldWriteErrorToConsole()
         {
             // Arrange
             var sut = ArrangeSut(new DashOptions
@@ -25,7 +25,7 @@ namespace Dash.Tests.Application.Default
             });
 
             // Act
-            await sut.Validate();
+            await sut.Process();
 
             // Assert
             _console.Received(1).Error("Please specify a model file.");
@@ -33,7 +33,7 @@ namespace Dash.Tests.Application.Default
 
 
         [Fact]
-        public async Task Validate_InputFileIsNull_ShouldReturnFalse()
+        public async Task Process_InputFileIsNull_ShouldReturnFalse()
         {
             // Arrange
             var sut = ArrangeSut(new DashOptions
@@ -42,14 +42,14 @@ namespace Dash.Tests.Application.Default
             });
 
             // Act
-            var result = await sut.Validate();
+            var result = await sut.Process();
 
             // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
-        public async Task Validate_InputFileDoesNotExist_ShouldWriteErrorToConsole()
+        public async Task Process_InputFileDoesNotExist_ShouldWriteErrorToConsole()
         {
             // Arrange
             var sut = ArrangeSut(new DashOptions
@@ -58,14 +58,14 @@ namespace Dash.Tests.Application.Default
             });
 
             // Act
-            await sut.Validate();
+            await sut.Process();
 
             // Assert
             _console.Received(1).Error("Could not find the model file 'c:/temp/model.json'.");
         }
 
         [Fact]
-        public async Task Validate_InputFileDoesNotExist_ShouldReturnFalse()
+        public async Task Process_InputFileDoesNotExist_ShouldReturnFalse()
         {
             // Arrange
             var sut = ArrangeSut(new DashOptions
@@ -74,14 +74,14 @@ namespace Dash.Tests.Application.Default
             });
 
             // Act
-            var result = await sut.Validate();
+            var result = await sut.Process();
 
             // Assert
             result.Should().BeFalse();
         }
 
         [Fact]
-        public async Task Validate_ProjectFileDoesNotExist_ShouldWriteErrorToConsole()
+        public async Task Process_ProjectFileDoesNotExist_ShouldWriteErrorToConsole()
         {
             // Arrange
             _mockFileSystem.AddFile("c:/temp/model.json", new MockFileData("{}"));
@@ -93,7 +93,7 @@ namespace Dash.Tests.Application.Default
             });
 
             // Act
-            await sut.Validate();
+            await sut.Process();
 
             // Assert
             _console.Received(1).Error("Could not find the .csproj file 'c:/temp/project.csproj'.");

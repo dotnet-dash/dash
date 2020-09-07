@@ -1,4 +1,9 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash)
+<div style="text-align: center">
+    <img alt="dotnet-dash" src="./src/dash/src/dash/packageicon.png" width="250" height="250" />
+</div>
+<hr />
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
 
 # About Dash
 Dash is a Model-First code generator for .NET.
@@ -7,21 +12,27 @@ Dash promotes a Model-First approach to software development, allowing you to wr
 defining domain entities and its relationship with eachother using JSON.
 
 ## Installing Dash
-The following command installs the latest stable version of Dash:
+The following command installs the latest version of Dash:
 ~~~ cmd
-dotnet tool install --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.0.1-alpha
+dotnet tool install --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.1.0-alpha
 ~~~
 
-The following command updates Dash to the latest stable version:
+The following command updates Dash to the latest version:
 ~~~ cmd
-dotnet tool update --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.0.1-alpha
+dotnet tool update --global dotnet-dash --add-source https://api.nuget.org/v3/index.json --version 0.1.0-alpha
 ~~~
 
 ## Introduction
-To generate code, you simply run the following CLI command:
+To generate code, you need write a *Model* file.
+
+To generate code for your `.csproj`, you simply run the following CLI command:
 ~~~ cmd
 dotnet dash --file mymodel.json
 ~~~
+
+If you have added a [`.editorconfig`](https://docs.microsoft.com/en-us/visualstudio/ide/create-portable-custom-editor-options?view=vs-2019) file to your poject, the generated code will be formatted accordingly.
+
+### How does the Model file look like?
 
 At this point, it would be more interesting to see how the Model file looks like.
 
