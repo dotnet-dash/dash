@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
 {
-    public interface IApplicationServiceProvider
+    public interface IStartup
     {
-        IServiceCollection CreateServiceCollection(bool verbose, string workingDir);
+        IServiceCollection CreateServiceCollection(DashOptions dashOptions);
     }
 }

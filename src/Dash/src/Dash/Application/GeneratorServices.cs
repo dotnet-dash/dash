@@ -3,6 +3,7 @@
 
 using Dash.Engine;
 using Dash.Engine.Generator;
+using Dash.Engine.TemplateTransformers.Scriban;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
@@ -11,7 +12,10 @@ namespace Dash.Application
     {
         public static void Add(IServiceCollection services)
         {
+            services.AddSingleton<ITemplateTransformer, ScribanTemplateTransformer>();
             services.AddSingleton<IGenerator, DefaultGenerator>();
+            services.AddSingleton<IPostGenerator, EditorConfigCodeFormatter>();
+            services.AddSingleton<IPostGenerator, WriteBuildOutputPostGenerator>();
         }
     }
 }

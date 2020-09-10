@@ -4,15 +4,18 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Threading.Tasks;
 using Dash.Application;
+using Dash.Application.Default;
 using Dash.Common;
-using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp;
+using Dash.Engine.Generator;
+using Dash.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Xunit;
+using StringExtensions = Dash.Tests.TestHelpers.StringExtensions;
 
 namespace Dash.Tests
 {
@@ -20,28 +23,23 @@ namespace Dash.Tests
     {
         private readonly MockFileSystem _mockFileSystem;
         private readonly IConsole _console;
-        private readonly Program _sut;
 
         public ProgramTests()
         {
-            _mockFileSystem = new MockFileSystem();
+            _mockFileSystem = new MockFileSystem(null, "c:/project/");
+            _mockFileSystem.AddFile("c:/project/project.csproj", new MockFileData(string.Empty));
             _console = Substitute.For<IConsole>();
-
-            var serviceProvider = new ApplicationServiceProvider();
-            var services = serviceProvider.CreateServiceCollection(false, ".");
-            services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
-            services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
-
-            var mockedServiceProvider = Substitute.For<IApplicationServiceProvider>();
-            mockedServiceProvider.CreateServiceCollection(false, ".").Returns(services);
-
-            _sut = new Program(mockedServiceProvider);
         }
 
         [Fact]
         public async Task Run_FileIsNull_ShouldHavePrintedErrorMessage()
         {
-            await _sut.Run(null, ".", false);
+            // Arrange
+            var options = new DashOptions();
+            var sut = ArrangeSut(options);
+
+            // Act
+            await sut.Run(options);
 
             // Assert
             _console.Received(1).Error("Please specify a model file.");
@@ -52,9 +50,18 @@ namespace Dash.Tests
         {
             // Arrange
             ArrangeFile("Errors/MisconfigurationNoTemplateDefined.json");
+            var options = new DashOptions
+            {
+                InputFile = "c:/project/sut.json",
+                ProjectFile = null,
+                WorkingDirectory = ".",
+                Verbose = false,
+            };
+
+            var sut = ArrangeSut(options);
 
             // Act
-            await _sut.Run("c:/temp/sut.json", ".", false);
+            await sut.Run(options);
 
             // Assert
             _console.Received(1).Error("Configuration.Templates[0] object has no 'Template' property.");
@@ -65,9 +72,18 @@ namespace Dash.Tests
         {
             // Arrange
             ArrangeFile("Errors/EmbeddedTemplateNotFound.json");
+            var options = new DashOptions
+            {
+                InputFile = "c:/project/sut.json",
+                ProjectFile = null,
+                WorkingDirectory = ".",
+                Verbose = false,
+            };
+
+            var sut = ArrangeSut(options);
 
             // Act
-            await _sut.Run("c:/temp/sut.json", ".", false);
+            await sut.Run(options);
 
             // Assert
             _console.Received(1).Error("Dash template does not exist: dash://unknown/");
@@ -79,32 +95,43 @@ namespace Dash.Tests
             // Arrange
             ArrangeFile("HelloWorld.json");
             var expectedOutput = GetExpectedFileOutput("HelloWorld");
+            var options = new DashOptions
+            {
+                InputFile = "c:/project/sut.json",
+            };
+
+            var sut = ArrangeSut(options);
 
             // Act
-            await _sut.Run("c:/temp/sut.json", ".", false);
+            await sut.Run(options);
 
             // Assert
-            var generatedCode = _mockFileSystem.File.ReadAllText("c:/efcontext.generated.cs");
+            var generatedCode = _mockFileSystem.File.ReadAllText("c:/project/efcontext.generated.cs");
 
-            AssertThatTreesAreEquivalent(generatedCode, expectedOutput);
+            generatedCode.Should().HaveSameTree(expectedOutput);
         }
 
+        private Program ArrangeSut(DashOptions options)
+        {
+            var startup = new Startup();
+            var services = startup.CreateServiceCollection(options);
+            services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
+            services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
+            services.Remove(services.First(e => e.ImplementationType == typeof(EditorConfigCodeFormatter)));
+
+            var mockedStartup = Substitute.For<IStartup>();
+            mockedStartup.CreateServiceCollection(options).Returns(services);
+
+            return new Program(mockedStartup);
+        }
         private void ArrangeFile(string fileName)
         {
-            _mockFileSystem.AddFile("c:/temp/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
+            _mockFileSystem.AddFile("c:/project/sut.json", new MockFileData(File.ReadAllText($"Samples/{fileName}")));
         }
 
         private string GetExpectedFileOutput(string fileName)
         {
             return File.ReadAllText($"Samples/ExpectedOutput/{fileName}");
-        }
-
-        private void AssertThatTreesAreEquivalent(string generatedCode, string expectedCode)
-        {
-            var producedTree = CSharpSyntaxTree.ParseText(generatedCode);
-            var expectedTree = CSharpSyntaxTree.ParseText(expectedCode);
-
-            producedTree.IsEquivalentTo(expectedTree).Should().BeTrue();
         }
     }
 }

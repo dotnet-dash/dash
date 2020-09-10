@@ -3,15 +3,15 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dash.Application
+namespace Dash.Application.Default
 {
-    public class ApplicationServiceProvider : IApplicationServiceProvider
+    public class Startup : IStartup
     {
-        public IServiceCollection CreateServiceCollection(bool verbose, string workingDir)
+        public IServiceCollection CreateServiceCollection(DashOptions dashOptions)
         {
             var services = new ServiceCollection();
 
-            ApplicationServices.Add(services, verbose, workingDir);
+            ApplicationServices.Add(services, dashOptions);
             CommonServices.Add(services);
             RepositoryServices.Add(services);
             SourceCodeServices.Add(services);

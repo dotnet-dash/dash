@@ -15,6 +15,7 @@ namespace Dash.Application
             services.AddSingleton<ISymbolRepository, DefaultSymbolRepository>();
             services.AddSingleton<IErrorRepository, ErrorRepository>();
             services.AddSingleton<IUriResourceRepository, UriResourceRepository>();
+            services.AddSingleton<IBuildOutputRepository, BuildOutputRepository>();
         }
     }
 }
