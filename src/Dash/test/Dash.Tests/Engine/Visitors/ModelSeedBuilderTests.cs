@@ -72,24 +72,24 @@ namespace Dash.Tests.Engine.Visitors
                 .SeedData.Should().SatisfyRespectively(
                     first =>
                     {
-                        first.Should().SatisfyRespectively(
-                            a => a.Key.Should().Be("CurrencyCode"),
-                            b => b.Key.Should().Be("CurrencyName"),
-                            c => c.Key.Should().Be("NumericCode")
+                        first.Keys.Should().SatisfyRespectively(
+                            a => a.Should().Be("CurrencyCode"),
+                            b => b.Should().Be("CurrencyName"),
+                            c => c.Should().Be("NumericCode")
                         );
 
-                        first.Should().SatisfyRespectively(
-                            a => a.Value.Should().Be("EUR"),
-                            b => b.Value.Should().Be("Euro"),
-                            c => c.Value.Should().Be(978)
+                        first.Values.Should().SatisfyRespectively(
+                            a => a.Should().Be("EUR"),
+                            b => b.Should().Be("Euro"),
+                            c => c.Should().Be(978)
                         );
                     },
                     second =>
                     {
-                        second.Should().SatisfyRespectively(
-                            a => a.Value.Should().Be("USD"),
-                            b => b.Value.Should().Be("US Dollars"),
-                            c => c.Value.Should().Be(840)
+                        second.Values.Should().SatisfyRespectively(
+                            a => a.Should().Be("USD"),
+                            b => b.Should().Be("US Dollars"),
+                            c => c.Should().Be(840)
                         );
                     });
         }

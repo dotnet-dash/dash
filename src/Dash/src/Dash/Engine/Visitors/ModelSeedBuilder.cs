@@ -64,8 +64,7 @@ namespace Dash.Engine.Visitors
             {
                 line++;
 
-                // Morestachio doesn't support a Dictionary<string, object>
-                var seedDataRow = new List<KeyValuePair<string, object>>();
+                var seedDataRow = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                 foreach (var (csvHeader, entityAttributeName) in node.MapHeaders)
                 {
                     var nativeDataType = entityModel.CodeAttributes
@@ -74,7 +73,7 @@ namespace Dash.Engine.Visitors
 
                     if (csv.TryGetField<object>(csvHeader, _typeConverters[nativeDataType], out var value))
                     {
-                        seedDataRow.Add(new KeyValuePair<string, object>(entityAttributeName, value));
+                        seedDataRow.Add(entityAttributeName, value);
                     }
                     else
                     {
