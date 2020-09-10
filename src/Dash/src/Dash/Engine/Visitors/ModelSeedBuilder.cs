@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Dash.Common;
+using Dash.Engine.Utilities;
+using Dash.Extensions;
 using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
@@ -19,6 +22,7 @@ namespace Dash.Engine.Visitors
         private readonly IModelRepository _modelRepository;
         private readonly IErrorRepository _errorRepository;
         private readonly IUriResourceRepository _uriResourceRepository;
+        private readonly TypeConverterDictionary _typeConverters = new TypeConverterDictionary();
 
         public ModelSeedBuilder(IConsole console,
             IFileSystem fileSystem,
@@ -44,8 +48,12 @@ namespace Dash.Engine.Visitors
             };
             csv.Configuration.HasHeaderRecord = node.FirstLineIsHeader;
             csv.Configuration.Delimiter = node.Delimiter;
+
+            int line = 0;
+
             if (node.FirstLineIsHeader)
             {
+                line++;
                 await csv.ReadAsync();
                 csv.ReadHeader();
             }
@@ -54,14 +62,27 @@ namespace Dash.Engine.Visitors
 
             while (await csv.ReadAsync())
             {
-                var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                line++;
+
+                // Morestachio doesn't support a Dictionary<string, object>
+                var seedDataRow = new List<KeyValuePair<string, object>>();
                 foreach (var (csvHeader, entityAttributeName) in node.MapHeaders)
                 {
-                    var value = csv.GetField<string>(csvHeader);
-                    dictionary.Add(entityAttributeName, value);
+                    var nativeDataType = entityModel.CodeAttributes
+                        .First(e => e.Name.IsSame(entityAttributeName))
+                        .DataType;
+
+                    if (csv.TryGetField<object>(csvHeader, _typeConverters[nativeDataType], out var value))
+                    {
+                        seedDataRow.Add(new KeyValuePair<string, object>(entityAttributeName, value));
+                    }
+                    else
+                    {
+                        // Let user configure what to do if value cannot be converted
+                    }
                 }
 
-                entityModel.SeedData.Add(dictionary);
+                entityModel.SeedData.Add(seedDataRow);
             }
 
             await base.Visit(node);

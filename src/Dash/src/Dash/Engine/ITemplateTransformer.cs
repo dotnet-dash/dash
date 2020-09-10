@@ -7,6 +7,6 @@ namespace Dash.Engine
 {
     public interface ITemplateTransformer
     {
-        Task<string> Transform(string template);
+        Task<string> Transform(string templateText);
     }
 }

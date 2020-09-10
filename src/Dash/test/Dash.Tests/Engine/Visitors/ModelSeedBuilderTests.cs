@@ -27,30 +27,37 @@ namespace Dash.Tests.Engine.Visitors
             var mockFileSystem = new MockFileSystem();
 
             var csvContent = new StringBuilder();
-            csvContent.AppendLine("Code;Name");
-            csvContent.AppendLine("EUR;Euro");
-            csvContent.AppendLine("USD;US Dollars");
+            csvContent.AppendLine("Code;Name;NumericCode");
+            csvContent.AppendLine("EUR;Euro;978");
+            csvContent.AppendLine("USD;US Dollars;840");
             mockFileSystem.AddFile("c:\\currencies.csv", new MockFileData(csvContent.ToString()));
 
+            var entityModel = new EntityModel("Currency");
+            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyCode", "string", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyName", "string", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("NumericCode", "int", false, null));
+
             var modelRepository = new DefaultModelRepository();
-            modelRepository.Add(new EntityModel("CurrencyCode"));
+            modelRepository.Add(entityModel);
 
             var errorRepository = new ErrorRepository();
 
-            var uriResourceRepository = NSubstitute.Substitute.For<IUriResourceRepository>();
+            var uriResourceRepository = Substitute.For<IUriResourceRepository>();
             uriResourceRepository.Get(new Uri("https://currencycode")).Returns("c:\\currencies.csv");
 
-            var sut = new ModelSeedBuilder(NSubstitute.Substitute.For<IConsole>(),
+            var sut = new ModelSeedBuilder(Substitute.For<IConsole>(),
                 mockFileSystem,
                 modelRepository,
                 errorRepository,
                 uriResourceRepository);
 
-            var parent = new EntityDeclarationNode(new ModelNode(), "CurrencyCode");
+            var parent = new EntityDeclarationNode(new ModelNode(), "Currency");
+
             var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 {"Code", "CurrencyCode"},
-                {"Name", "CurrencyName"}
+                {"Name", "CurrencyName"},
+                {"NumericCode", "NumericCode"}
             };
             var node = new CsvSeedDeclarationNode(parent, new Uri("https://currencycode"), true, ";", dictionary);
 
@@ -61,23 +68,29 @@ namespace Dash.Tests.Engine.Visitors
             errorRepository.HasErrors().Should().BeFalse();
 
             modelRepository
-                .Get("CurrencyCode")
+                .Get("Currency")
                 .SeedData.Should().SatisfyRespectively(
                     first =>
                     {
-                        first.Keys.Should().SatisfyRespectively(
-                            a => a.Should().Be("CurrencyCode"),
-                            b => b.Should().Be("CurrencyName"));
+                        first.Should().SatisfyRespectively(
+                            a => a.Key.Should().Be("CurrencyCode"),
+                            b => b.Key.Should().Be("CurrencyName"),
+                            c => c.Key.Should().Be("NumericCode")
+                        );
 
-                        first.Values.Should().SatisfyRespectively(
-                            a => a.Should().Be("EUR"),
-                            b => b.Should().Be("Euro"));
+                        first.Should().SatisfyRespectively(
+                            a => a.Value.Should().Be("EUR"),
+                            b => b.Value.Should().Be("Euro"),
+                            c => c.Value.Should().Be(978)
+                        );
                     },
                     second =>
                     {
-                        second.Values.Should().SatisfyRespectively(
-                            a => a.Should().Be("USD"),
-                            b => b.Should().Be("US Dollars"));
+                        second.Should().SatisfyRespectively(
+                            a => a.Value.Should().Be("USD"),
+                            b => b.Value.Should().Be("US Dollars"),
+                            c => c.Value.Should().Be(840)
+                        );
                     });
         }
     }

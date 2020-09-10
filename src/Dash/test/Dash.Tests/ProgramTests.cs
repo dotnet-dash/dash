@@ -4,15 +4,18 @@
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Application.Default;
 using Dash.Common;
+using Dash.Engine.Generator;
 using Dash.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Xunit;
+using StringExtensions = Dash.Tests.TestHelpers.StringExtensions;
 
 namespace Dash.Tests
 {
@@ -114,6 +117,7 @@ namespace Dash.Tests
             var services = startup.CreateServiceCollection(options);
             services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
             services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
+            services.Remove(services.First(e => e.ImplementationType == typeof(EditorConfigCodeFormatter)));
 
             var mockedStartup = Substitute.For<IStartup>();
             mockedStartup.CreateServiceCollection(options).Returns(services);
