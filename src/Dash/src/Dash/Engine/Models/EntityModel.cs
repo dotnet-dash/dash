@@ -25,7 +25,7 @@ namespace Dash.Engine.Models
 
         public IList<ReferencedEntityModel> CollectionReferences { get; } = new List<ReferencedEntityModel>();
 
-        public IList<IDictionary<string, string>> SeedData { get; } = new List<IDictionary<string, string>>();
+        public IList<IDictionary<string, object>> SeedData { get; } = new List<IDictionary<string, object>>();
 
         public void InheritAttributes(EntityModel superEntity)
         {

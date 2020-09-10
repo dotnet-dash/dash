@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System;
 using Dash.Extensions;
 using FluentAssertions;
 using Xunit;
@@ -93,6 +94,30 @@ namespace Dash.Tests.Extensions
 
             // Assert
             result.Should().Be("//foo//bar/");
+        }
+
+        [Theory]
+        [InlineData(@"c:\foo\bar.txt", @"c:/foo/bar.txt")]
+        [InlineData(@"c:\foo\.\bar.txt", @"c:/foo/bar.txt")]
+        [InlineData(@"c:\foo\.\.\bar.txt", @"c:/foo/bar.txt")]
+        [InlineData(@"c:\foo\..\bar.txt", @"c:/bar.txt")]
+        public void AbsolutePath_GivenInput_ShouldReturnExpected(string input, string expected)
+        {
+            // Act
+            var result = input.AbsolutePath();
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void AbsolutePath_RelativePath_ShouldThrowInvalidOperationException()
+        {
+            // Act
+            Action act = () => "./foo.txt".AbsolutePath();
+
+            // Assert
+            act.Should().Throw<InvalidOperationException>();
         }
     }
 }

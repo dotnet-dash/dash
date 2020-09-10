@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using System.IO;
 
 namespace Dash.Extensions
 {
@@ -38,6 +39,16 @@ namespace Dash.Extensions
             }
 
             return path;
+        }
+
+        public static string AbsolutePath(this string path)
+        {
+            if (!Path.IsPathRooted(path))
+            {
+                throw new InvalidOperationException();
+            }
+
+            return Path.GetFullPath(path).NormalizeSlashes();
         }
     }
 }

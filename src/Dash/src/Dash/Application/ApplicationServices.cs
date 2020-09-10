@@ -1,20 +1,28 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Dash.Application.Default;
+using Dash.Application.PreprocessingSteps;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
 {
     public static class ApplicationServices
     {
-        public static void Add(IServiceCollection services, bool verbose, string workingDirectory)
+        public static void Add(IServiceCollection services, DashOptions dashOptions)
         {
             services.AddSingleton<DashApplication>();
             services.Configure<DashOptions>(options =>
             {
-                options.Verbose = verbose;
-                options.WorkingDirectory = workingDirectory;
+                options.InputFile = dashOptions.InputFile;
+                options.ProjectFile = dashOptions.ProjectFile;
+                options.WorkingDirectory = dashOptions.WorkingDirectory;
+                options.Verbose = dashOptions.Verbose;
             });
+
+            services.AddSingleton<IPreprocessingStep, DashOptionsValidator>();
+            services.AddSingleton<IPreprocessingStep, FindProjectFile>();
+            services.AddSingleton<ISourceCodeProcessor, SourceCodeProcessor>();
         }
     }
 }
