@@ -28,7 +28,7 @@ To reference default templates inside the [Dash JSON Model](./readme.md#Basic-An
 ## Custom Templates
 
 ### Writing Custom Templates
-Dash uses [Morestachio](https://github.com/JPVenson/morestachio) as its templating engine.
+Dash uses [Scriban](https://github.com/lunet-io/scriban) as its templating engine.
 
 ### Placing Custom Templates
 You can place custom templates anywhere inside your .NET project.
