@@ -22,6 +22,7 @@ namespace Dash.Application
 
             services.AddSingleton<IPreprocessingStep, DashOptionsValidator>();
             services.AddSingleton<IPreprocessingStep, FindProjectFile>();
+            services.AddSingleton<IPreprocessingStep, ParseProjectFile>();
             services.AddSingleton<ISourceCodeProcessor, SourceCodeProcessor>();
         }
     }

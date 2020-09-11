@@ -16,7 +16,7 @@ using System.Collections.Generic;
 #nullable enable
 namespace {{ namespace }}
 {
-    public partial class {{ modelName }}DbContext
+    public partial class {{ modelName }}DbContext : DbContext
     {
         public {{ modelName }}DbContext(DbContextOptions<{{ modelName }}DbContext> options) : base(options)
         {

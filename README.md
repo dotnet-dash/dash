@@ -1,14 +1,13 @@
-<div style="text-align: center">
-    <img alt="dotnet-dash" src="./src/dash/src/dash/packageicon.png" width="250" height="250" />
+# dash &middot; [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
+
+<div style="text-align: center; padding:3em">
+    <img alt="dotnet-dash" src="./.github/img/logo-w-text.png" width="50%" />
 </div>
 <hr />
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
+Dash is a .NET Core command-line tool for fast model-driven code generation.
 
-# About Dash
-Dash is a Model-First code generator for .NET.
-
-Dash promotes a Model-First approach to software development, allowing you to write concise model specifications
+Dash promotes a model-driven approach to software development, allowing you to write concise model specifications
 defining domain entities and its relationship with eachother using JSON.
 
 ## Installing Dash
@@ -22,15 +21,50 @@ The following command updates Dash to the latest version:
 dotnet tool update --global dotnet-dash --version 0.1.0-alpha
 ~~~
 
-## Introduction
-To generate code, you need write a *Model* file.
+## Hello World example
+To generate code, you need to write a *Model* file.
+
+Consider the following `helloworld.json` Model file, where we define **one** _Entity_ `Account` with **two** _Attributes_:
+~~~ JSON
+{
+    "Model": {
+        "Account": {
+            "Username": "String",
+            "PasswordHash": "String"
+        }
+    }
+}
+~~~
 
 To generate code for your `.csproj`, you simply run the following CLI command:
 ~~~ cmd
-dotnet dash --file mymodel.json
+dotnet dash --file helloworld.json
 ~~~
 
 If you have added a [`.editorconfig`](https://docs.microsoft.com/en-us/visualstudio/ide/create-portable-custom-editor-options?view=vs-2019) file to your poject, the generated code will be formatted accordingly.
+
+The result is the following POCO class:
+~~~ csharp
+public class Account
+{
+    public string Username { get; set; }
+    public string PasswordHash { get; set; }
+}
+~~~
+
+and EF Context class:
+~~~ csharp
+public class HelloWorldDbContext : DbContext
+{
+    public ICollection<Account> Accounts { get; set; }
+}
+~~~
+
+## Advanced examples
+Here are some more advanced and practical Model file examples that showcases the power of Dash:
+
+- [Currency and Country](./docs/currency-and-country): this example showcases the use of [Relationships](./docs/relationships), and providing your Entities with [Seed Data](./docs/seed-data) from a CSV file.
+- [IdentityServer4](./docs/samples/identityserver4): here, we use Dash to recreate parts of the wonderful [IdentityServer4](https://github.com/IdentityServer/IdentityServer4) open source project.
 
 ### How does the Model file look like?
 

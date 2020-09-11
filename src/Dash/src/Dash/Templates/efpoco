@@ -3,7 +3,8 @@
 // </auto-generated>
 using System.Collections.Generic;
 
-namespace Nnn
+#nullable enable
+namespace {{ namespace }}
 {
 {{- for e in entities }}
     public partial class {{ e.name }}
@@ -28,3 +29,4 @@ namespace Nnn
     }
 {{- end }}
 }
+#nullable restore
