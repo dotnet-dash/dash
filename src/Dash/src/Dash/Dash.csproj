@@ -64,4 +64,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PreprocessingSteps\Default\" />
+  </ItemGroup>
+
 </Project>

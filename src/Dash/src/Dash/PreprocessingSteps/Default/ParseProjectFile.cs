@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Dash.Application;
 using Dash.Roslyn;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Application.PreprocessingSteps
+namespace Dash.PreprocessingSteps.Default
 {
     public class ParseProjectFile : IPreprocessingStep
     {

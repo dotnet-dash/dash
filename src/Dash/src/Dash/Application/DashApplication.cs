@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dash.Common;
 using Dash.Engine;
 using Dash.Exceptions;
+using Dash.PreprocessingSteps;
 using Microsoft.Extensions.Options;
 
 namespace Dash.Application

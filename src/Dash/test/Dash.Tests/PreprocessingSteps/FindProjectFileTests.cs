@@ -4,14 +4,14 @@
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Application;
-using Dash.Application.PreprocessingSteps;
 using Dash.Common;
+using Dash.PreprocessingSteps.Default;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
-namespace Dash.Tests.Application.PreprocessingSteps
+namespace Dash.Tests.PreprocessingSteps
 {
     public class FindProjectFileTests
     {

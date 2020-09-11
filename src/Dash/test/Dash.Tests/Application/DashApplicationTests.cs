@@ -7,6 +7,7 @@ using Dash.Application;
 using Dash.Common;
 using Dash.Engine;
 using Dash.Exceptions;
+using Dash.PreprocessingSteps;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
