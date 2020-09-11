@@ -14,7 +14,7 @@ namespace Dash.Tests.Common
     public class DefaultConsoleTests
     {
         [Fact]
-        public void Trace_VerboseDisabled_ShouldNotHaveWrittenToTheConsole()
+        public void Trace_VerboseDisabled_ShouldNotWriteToConsole()
         {
             // Arrange
             var sut = CreateSut(false);
@@ -30,7 +30,7 @@ namespace Dash.Tests.Common
         }
 
         [Fact]
-        public void Trace_VerboseEnabled_ShouldHaveWrittenToConsole()
+        public void Trace_VerboseEnabled_ShouldWriteToConsole()
         {
             // Arrange
             var sut = CreateSut(true);
@@ -45,11 +45,13 @@ namespace Dash.Tests.Common
             textWriter.ToString().Should().Be("Hello" + Environment.NewLine);
         }
 
-        [Fact]
-        public void Info_VerboseDisabled_ShouldHaveWrittenToConsole()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Info_VerboseDisabled_ShouldWriteToConsole(bool verbose)
         {
             // Arrange
-            var sut = CreateSut(false);
+            var sut = CreateSut(verbose);
             var textWriter = new StringWriter();
             Console.SetOut(textWriter);
 
@@ -59,6 +61,24 @@ namespace Dash.Tests.Common
             // Assert
             textWriter.Close();
             textWriter.ToString().Should().Be("Hello" + Environment.NewLine);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Error_Verbose_ShouldWriteToConsole(bool verbose)
+        {
+            // Arrange
+            var sut = CreateSut(verbose);
+            var textWriter = new StringWriter();
+            Console.SetError(textWriter);
+
+            // Act
+            sut.Error("Foo");
+
+            // Assert
+            textWriter.Close();
+            textWriter.ToString().Should().Be("Foo" + Environment.NewLine);
         }
 
         private static DefaultConsole CreateSut(bool verbose)

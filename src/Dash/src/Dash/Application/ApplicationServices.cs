@@ -21,9 +21,6 @@ namespace Dash.Application
                 options.Verbose = dashOptions.Verbose;
             });
 
-            services.AddSingleton<IPreprocessingStep, DashOptionsValidator>();
-            services.AddSingleton<IPreprocessingStep, FindProjectFile>();
-            services.AddSingleton<IPreprocessingStep, ParseProjectFile>();
             services.AddSingleton<ISourceCodeProcessor, SourceCodeProcessor>();
         }
     }
