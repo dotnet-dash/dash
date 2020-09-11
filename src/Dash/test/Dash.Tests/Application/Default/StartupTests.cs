@@ -18,7 +18,7 @@ namespace Dash.Tests.Application.Default
             var sut = new Startup();
 
             // Act
-            var result = sut.CreateServiceCollection(new DashOptions());
+            var result = sut.ConfigureServices(new DashOptions());
 
             // Assert
             var serviceProvider = result.BuildServiceProvider();

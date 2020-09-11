@@ -7,6 +7,6 @@ namespace Dash.Application
 {
     public interface IStartup
     {
-        IServiceCollection CreateServiceCollection(DashOptions dashOptions);
+        IServiceCollection ConfigureServices(DashOptions dashOptions);
     }
 }

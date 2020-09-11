@@ -7,7 +7,7 @@ namespace Dash.Application.Default
 {
     public class Startup : IStartup
     {
-        public IServiceCollection CreateServiceCollection(DashOptions dashOptions)
+        public IServiceCollection ConfigureServices(DashOptions dashOptions)
         {
             var services = new ServiceCollection();
 

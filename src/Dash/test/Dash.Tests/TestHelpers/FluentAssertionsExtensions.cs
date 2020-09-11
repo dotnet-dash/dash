@@ -35,7 +35,7 @@ namespace Dash.Tests.TestHelpers
             Execute.Assertion
                 .BecauseOf(because, becauseArgs)
                 .ForCondition(tree.IsEquivalentTo(expectedTree))
-                .FailWith("The syntax trees of both source codes are not the same");
+                .FailWith("The syntax trees of both source codes are not the same: {0} vs {1}", _instance, sourceCode);
 
             return new AndConstraint<SourceCodeStringAssertions>(this);
         }

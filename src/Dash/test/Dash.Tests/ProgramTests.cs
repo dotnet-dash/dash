@@ -98,6 +98,7 @@ namespace Dash.Tests
             var options = new DashOptions
             {
                 InputFile = "c:/project/sut.json",
+                DefaultNamespace = "Hello"
             };
 
             var sut = ArrangeSut(options);
@@ -114,13 +115,13 @@ namespace Dash.Tests
         private Program ArrangeSut(DashOptions options)
         {
             var startup = new Startup();
-            var services = startup.CreateServiceCollection(options);
+            var services = startup.ConfigureServices(options);
             services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
             services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
             services.Remove(services.First(e => e.ImplementationType == typeof(EditorConfigCodeFormatter)));
 
             var mockedStartup = Substitute.For<IStartup>();
-            mockedStartup.CreateServiceCollection(options).Returns(services);
+            mockedStartup.ConfigureServices(options).Returns(services);
 
             return new Program(mockedStartup);
         }
