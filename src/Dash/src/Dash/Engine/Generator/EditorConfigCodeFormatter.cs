@@ -5,14 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Application;
 using Dash.Common;
 using Dash.Roslyn;
-using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.Extensions.Options;
 
 namespace Dash.Engine.Generator
 {
