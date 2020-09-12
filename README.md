@@ -53,7 +53,7 @@ public class Account
 }
 ~~~
 
-As you can see, even though the `Id` attribute was not explicitly declared, 
+As you can see, even though the `Id` attribute was not explicitly declared, Dash will implicitly add the attribute to the Model.
 
 EF Context class:
 ~~~ csharp
