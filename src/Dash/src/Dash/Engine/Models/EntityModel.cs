@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Dash.Constants;
 using Dash.Extensions;
 
 namespace Dash.Engine.Models
@@ -53,5 +54,8 @@ namespace Dash.Engine.Models
                 }
             }
         }
+
+        public IEnumerable<AttributeModel> WithoutIdAttribute() =>
+            CodeAttributes.Where(e => !e.Name.IsSame(DashModelFileConstants.BaseEntityIdAttributeName));
     }
 }

@@ -39,7 +39,7 @@ namespace Dash
         public async Task Run(DashOptions dashOptions)
         {
             var services = _startup
-                .CreateServiceCollection(dashOptions)
+                .ConfigureServices(dashOptions)
                 .BuildServiceProvider();
 
             using var scope = services.CreateScope();

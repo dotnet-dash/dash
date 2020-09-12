@@ -10,12 +10,12 @@ using Dash.Application;
 using Dash.Application.Default;
 using Dash.Common;
 using Dash.Engine.Generator;
+using Dash.Roslyn;
 using Dash.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NSubstitute;
 using Xunit;
-using StringExtensions = Dash.Tests.TestHelpers.StringExtensions;
 
 namespace Dash.Tests
 {
@@ -23,12 +23,19 @@ namespace Dash.Tests
     {
         private readonly MockFileSystem _mockFileSystem;
         private readonly IConsole _console;
+        private readonly IWorkspace _workspace;
+        private readonly IProject _project;
 
         public ProgramTests()
         {
             _mockFileSystem = new MockFileSystem(null, "c:/project/");
             _mockFileSystem.AddFile("c:/project/project.csproj", new MockFileData(string.Empty));
             _console = Substitute.For<IConsole>();
+
+            _project = Substitute.For<IProject>();
+
+            _workspace = Substitute.For<IWorkspace>();
+            _workspace.OpenProjectAsync().Returns(_project);
         }
 
         [Fact]
@@ -100,6 +107,8 @@ namespace Dash.Tests
                 InputFile = "c:/project/sut.json",
             };
 
+            _project.Namespace.Returns("Hello");
+
             var sut = ArrangeSut(options);
 
             // Act
@@ -114,13 +123,14 @@ namespace Dash.Tests
         private Program ArrangeSut(DashOptions options)
         {
             var startup = new Startup();
-            var services = startup.CreateServiceCollection(options);
+            var services = startup.ConfigureServices(options);
             services.Replace(new ServiceDescriptor(typeof(IFileSystem), _mockFileSystem));
             services.Replace(new ServiceDescriptor(typeof(IConsole), _console));
+            services.Replace(new ServiceDescriptor(typeof(IWorkspace), _workspace));
             services.Remove(services.First(e => e.ImplementationType == typeof(EditorConfigCodeFormatter)));
 
             var mockedStartup = Substitute.For<IStartup>();
-            mockedStartup.CreateServiceCollection(options).Returns(services);
+            mockedStartup.ConfigureServices(options).Returns(services);
 
             return new Program(mockedStartup);
         }

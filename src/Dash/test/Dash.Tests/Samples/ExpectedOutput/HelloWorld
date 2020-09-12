@@ -3,10 +3,15 @@
 // </auto-generated>
 using Microsoft.EntityFrameworkCore;
 
-namespace Nnn
+#nullable enable
+namespace Hello
 {
-    public partial class CustomDbContext : DbContext
+    public partial class SutDbContext : DbContext
     {
+        public SutDbContext(DbContextOptions<SutDbContext> options) : base(options)
+        {
+        }
+
         public DbSet<Account> Account { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -18,3 +23,4 @@ namespace Nnn
         }
     }
 }
+#nullable restore

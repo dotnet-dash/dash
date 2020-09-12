@@ -3,7 +3,7 @@
 
 using System.Threading.Tasks;
 
-namespace Dash.Application
+namespace Dash.PreprocessingSteps
 {
     public interface IPreprocessingStep
     {

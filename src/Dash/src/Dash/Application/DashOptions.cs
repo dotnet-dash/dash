@@ -12,5 +12,7 @@ namespace Dash.Application
         public string? ProjectFile { get; set; }
 
         public string? InputFile { get; set; }
+
+        public string? DefaultNamespace { get; set; }
     }
 }

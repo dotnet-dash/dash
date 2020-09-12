@@ -119,5 +119,22 @@ namespace Dash.Tests.Extensions
             // Assert
             act.Should().Throw<InvalidOperationException>();
         }
+
+        [Theory]
+        [InlineData("", "")]
+        [InlineData("F", "F")]
+        [InlineData("f", "F")]
+        [InlineData("fo", "Fo")]
+        [InlineData("foo", "Foo")]
+        [InlineData("foobar", "Foobar")]
+        [InlineData("fooBar", "FooBar")]
+        public void StartWithCapitalLetter_WithInput_ShouldReturnExpectedValue(string input, string expectedValue)
+        {
+            // Act
+            var result = input.StartWithCapitalLetter();
+
+            // Assert
+            result.Should().Be(expectedValue);
+        }
     }
 }

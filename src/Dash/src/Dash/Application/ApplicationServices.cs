@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using Dash.Application.Default;
-using Dash.Application.PreprocessingSteps;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dash.Application
@@ -20,8 +19,6 @@ namespace Dash.Application
                 options.Verbose = dashOptions.Verbose;
             });
 
-            services.AddSingleton<IPreprocessingStep, DashOptionsValidator>();
-            services.AddSingleton<IPreprocessingStep, FindProjectFile>();
             services.AddSingleton<ISourceCodeProcessor, SourceCodeProcessor>();
         }
     }

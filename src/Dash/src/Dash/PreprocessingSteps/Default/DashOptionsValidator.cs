@@ -3,10 +3,11 @@
 
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using Dash.Application;
 using Dash.Common;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Application.PreprocessingSteps
+namespace Dash.PreprocessingSteps.Default
 {
     public class DashOptionsValidator : IPreprocessingStep
     {

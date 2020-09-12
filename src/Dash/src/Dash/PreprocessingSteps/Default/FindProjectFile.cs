@@ -4,11 +4,12 @@
 using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
+using Dash.Application;
 using Dash.Common;
 using Dash.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Application.PreprocessingSteps
+namespace Dash.PreprocessingSteps.Default
 {
     public class FindProjectFile : IPreprocessingStep
     {

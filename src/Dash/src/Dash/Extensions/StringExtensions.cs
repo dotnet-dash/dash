@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Dash.Extensions
 {
@@ -49,6 +50,16 @@ namespace Dash.Extensions
             }
 
             return Path.GetFullPath(path).NormalizeSlashes();
+        }
+
+        public static string StartWithCapitalLetter(this string s)
+        {
+            if (s.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            return s.First().ToString().ToUpper() + s.Substring(1);
         }
     }
 }

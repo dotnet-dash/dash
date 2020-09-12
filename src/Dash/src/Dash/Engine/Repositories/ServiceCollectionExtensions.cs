@@ -1,15 +1,10 @@
-﻿// Copyright (c) Huy Hoang. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+﻿using Microsoft.Extensions.DependencyInjection;
 
-using Dash.Engine;
-using Dash.Engine.Repositories;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Dash.Application
+namespace Dash.Engine.Repositories
 {
-    public static class RepositoryServices
+    public static class ServiceCollectionExtensions
     {
-        public static void Add(IServiceCollection services)
+        public static void AddRepositories(this IServiceCollection services)
         {
             services.AddSingleton<IModelRepository, DefaultModelRepository>();
             services.AddSingleton<ISymbolRepository, DefaultSymbolRepository>();

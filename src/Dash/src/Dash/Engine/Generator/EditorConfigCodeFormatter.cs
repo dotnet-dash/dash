@@ -5,13 +5,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Application;
 using Dash.Common;
-using Microsoft.Build.Locator;
+using Dash.Roslyn;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.Extensions.Options;
 
 namespace Dash.Engine.Generator
 {
@@ -20,33 +17,25 @@ namespace Dash.Engine.Generator
     {
         private readonly IConsole _console;
         private readonly IBuildOutputRepository _buildOutputRepository;
-        private readonly IErrorRepository _errorRepository;
-        private readonly DashOptions _options;
+        private readonly IWorkspace _workspace;
 
         public EditorConfigCodeFormatter(
             IConsole console,
             IBuildOutputRepository buildOutputRepository,
-            IOptions<DashOptions> dashOptions,
-            IErrorRepository errorRepository)
+            IWorkspace workspace)
         {
             _console = console;
             _buildOutputRepository = buildOutputRepository;
-            _errorRepository = errorRepository;
-            _options = dashOptions.Value;
+            _workspace = workspace;
         }
 
         public async Task Run()
         {
             _console.Info("Format code according to existing .editorconfig in project directory");
 
-            MSBuildLocator.RegisterDefaults();
-            using var workspace = MSBuildWorkspace.Create();
-
-            _console.Trace($"Opening project file '{_options.ProjectFile}'");
-            var project = await workspace.OpenProjectAsync(_options.ProjectFile);
+            var project = await _workspace.OpenProjectAsync();
             if (project == null)
             {
-                _errorRepository.Add("Unable to open project file");
                 return;
             }
 
@@ -56,21 +45,18 @@ namespace Dash.Engine.Generator
             _console.Trace("Adding build outputs to project");
             foreach (var buildOutput in buildOutputs)
             {
-                var newDocument = project.AddDocument(buildOutput.Path, buildOutput.GeneratedSourceCodeContent, null, buildOutput.Path);
-                project = newDocument.Project;
-
-                newDocumentIds.Add(newDocument.Id);
+                var newDocument = project.AddDocument(buildOutput.Path, buildOutput.GeneratedSourceCodeContent);
+                newDocumentIds.Add(newDocument.DocumentId);
             }
 
             var documents = newDocumentIds
-                .Select(documentId => project.Solution.GetDocument(documentId))
-                .Where(e => e != null)
+                .Select(documentId => project.GetDocument(documentId))
                 .Select(e => e!);
 
             foreach (var document in documents)
             {
                 _console.Trace($"Formatting document {document.FilePath}");
-                var formattedDocument = await Formatter.FormatAsync(document);
+                var formattedDocument = await Formatter.FormatAsync(document.Document);
                 var formattedSourceCode = await formattedDocument.GetTextAsync();
                 _buildOutputRepository.Update(new BuildOutput(document.FilePath!, formattedSourceCode.ToString()));
             }
