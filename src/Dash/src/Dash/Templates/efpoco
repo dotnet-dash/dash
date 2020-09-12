@@ -20,7 +20,8 @@ namespace {{ namespace }}
     {{- end }}
 
     {{- for r in e.single_references }}
-        public ICollection<{{ r.entity_model }}>{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }} { get; set; }
+        public int{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }}Id { get; set; }
+        public {{ r.entity_model }}{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }} { get; set; }
     {{- end }}
 
     {{- for r in e.collection_references }}
