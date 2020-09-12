@@ -102,11 +102,11 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(CsvSeedDeclarationNode node)
         {
-            foreach (var pair in node.MapHeaders)
+            foreach (var (key, value) in node.MapHeaders)
             {
-                if (!node.Parent.AttributeDeclarations.Any(e => e.AttributeName.IsSame(pair.Value)))
+                if (!node.Parent.AttributeDeclarations.Any(e => e.AttributeName.IsSame(key)))
                 {
-                    _errorRepository.Add($"Trying to map header '{pair.Key}' to unknown Entity Attribute '{pair.Value}'");
+                    _errorRepository.Add($"Trying to map header '{value}' to unknown Entity Attribute '{key}'");
                 }
             }
 

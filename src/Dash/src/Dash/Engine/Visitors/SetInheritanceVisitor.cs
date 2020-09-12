@@ -4,6 +4,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Common;
+using Dash.Constants;
 using Dash.Extensions;
 using Dash.Nodes;
 
@@ -12,8 +13,6 @@ namespace Dash.Engine.Visitors
     public class SetInheritanceVisitor : BaseVisitor
     {
         private const string BaseEntityName = "Base";
-        private const string BaseEntityIdAttributeName = "Id";
-        private const string BaseEntityIdAttributeDataType = "Int";
 
         public SetInheritanceVisitor(IConsole console) : base(console)
         {
@@ -52,11 +51,11 @@ namespace Dash.Engine.Visitors
 
         private void AddIdAttributeIfNotDeclared(EntityDeclarationNode baseEntity)
         {
-            var idAttribute = baseEntity.AttributeDeclarations.FirstOrDefault(e => e.AttributeName.IsSame(BaseEntityIdAttributeName));
+            var idAttribute = baseEntity.AttributeDeclarations.FirstOrDefault(e => e.AttributeName.IsSame(DashModelFileConstants.BaseEntityIdAttributeName));
             if (idAttribute == null)
             {
-                Console.Trace($"No attribute '{BaseEntityIdAttributeName}' declared. Adding '{BaseEntityIdAttributeName}'");
-                baseEntity.InsertAttributeDeclaration(0, BaseEntityIdAttributeName, BaseEntityIdAttributeDataType);
+                Console.Trace($"No attribute '{DashModelFileConstants.BaseEntityIdAttributeName}' declared. Adding '{DashModelFileConstants.BaseEntityIdAttributeName}'");
+                baseEntity.InsertAttributeDeclaration(0, DashModelFileConstants.BaseEntityIdAttributeName, DashModelFileConstants.BaseEntityIdAttributeDataType);
             }
         }
     }

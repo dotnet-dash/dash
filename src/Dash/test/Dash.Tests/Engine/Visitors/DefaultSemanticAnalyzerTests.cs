@@ -249,7 +249,7 @@ namespace Dash.Tests.Engine.Visitors
                 null,
                 new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    { "CsvHeader", "NonExistingAttribute" }
+                    { "NonExistingAttribute", "CsvHeader" }
                 });
 
             // Act

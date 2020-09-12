@@ -1,4 +1,4 @@
-# dash &middot; [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
 
 <div style="text-align: center; padding:3em">
     <img alt="dotnet-dash" src="./.github/img/logo-w-text.png" width="50%" />
@@ -13,12 +13,12 @@ defining domain entities and its relationship with eachother using JSON.
 ## Installing Dash
 The following command installs the latest version of Dash:
 ~~~ cmd
-dotnet tool install --global dotnet-dash --version 0.1.0-alpha
+dotnet tool install --global dotnet-dash --version 0.1.1-alpha
 ~~~
 
 The following command updates Dash to the latest version:
 ~~~ cmd
-dotnet tool update --global dotnet-dash --version 0.1.0-alpha
+dotnet tool update --global dotnet-dash --version 0.1.1-alpha
 ~~~
 
 ## Hello World example
@@ -47,12 +47,15 @@ The result is the following POCO class:
 ~~~ csharp
 public class Account
 {
+    public int Id { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
 }
 ~~~
 
-and EF Context class:
+As you can see, even though the `Id` attribute was not explicitly declared, 
+
+EF Context class:
 ~~~ csharp
 public class HelloWorldDbContext : DbContext
 {
@@ -63,7 +66,7 @@ public class HelloWorldDbContext : DbContext
 ## Advanced examples
 Here are some more advanced and practical Model file examples that showcases the power of Dash:
 
-- [Currency and Country](./docs/currency-and-country): this example showcases the use of [Relationships](./docs/relationships), and providing your Entities with [Seed Data](./docs/seed-data) from a CSV file.
+- [Currency and Country](./docs/currency-and-country.md): this example showcases the use of [Relationships](./docs/relationships), and providing your Entities with [Seed Data](./docs/seed-data) from a CSV file.
 - [IdentityServer4](./docs/samples/identityserver4): here, we use Dash to recreate parts of the wonderful [IdentityServer4](https://github.com/IdentityServer/IdentityServer4) open source project.
 
 ### How does the Model file look like?
