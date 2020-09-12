@@ -47,34 +47,36 @@ namespace Dash.Engine.Visitors
                 return;
             }
 
+            await ReadCsv(node, entityModel);
+
+            await base.Visit(node);
+        }
+
+        private async Task ReadCsv(CsvSeedDeclarationNode node, EntityModel entityModel)
+        {
             var localCopy = await _uriResourceRepository.Get(node.UriNode.Uri);
             using var reader = new StreamReader(_fileSystem.FileStream.Create(localCopy, FileMode.Open));
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var csvReader = await CreateCsvReader(node, reader);
 
-            csv.Configuration.MissingFieldFound = (headerNames, index, context) =>
+            if (node.FirstLineIsHeader)
             {
-                _errorRepository.Add(context.Field);
-            };
-            csv.Configuration.HasHeaderRecord = node.FirstLineIsHeader;
-            csv.Configuration.Delimiter = node.Delimiter;
+                await csvReader.ReadAsync();
+                csvReader.ReadHeader();
+            }
 
+            await ProcessCsv(node, entityModel, csvReader);
+        }
+
+        private async Task ProcessCsv(
+            CsvSeedDeclarationNode node,
+            EntityModel entityModel,
+            CsvReader csvReader)
+        {
             int line = 0;
 
             int longId = 0; // This needs to be refactored in the future to support long, guid, etc.
 
-            if (node.FirstLineIsHeader)
-            {
-                line++;
-                await csv.ReadAsync();
-                csv.ReadHeader();
-            }
-
-            var attributes = entityModel
-                .CodeAttributes
-                .Where(e => !e.Name.IsSame(DashModelFileConstants.BaseEntityIdAttributeName))
-                .ToList();
-
-            while (await csv.ReadAsync())
+            while (await csvReader.ReadAsync())
             {
                 line++;
                 longId++;
@@ -84,16 +86,11 @@ namespace Dash.Engine.Visitors
                     {DashModelFileConstants.BaseEntityIdAttributeName, longId}
                 };
 
-                foreach (var attribute in attributes)
+                foreach (var attribute in entityModel.WithoutIdAttribute())
                 {
-                    if (attribute.IsNullable) // TODO: This should fail the unit test
-                    {
-                        continue;
-                    }
-
                     if (node.MapHeaders.TryGetValue(attribute.Name, out var csvHeader))
                     {
-                        if (csv.TryGetField<object>(csvHeader, _typeConverters[attribute.DataType], out var value))
+                        if (csvReader.TryGetField<object>(csvHeader, _typeConverters[attribute.DataType], out var value))
                         {
                             seedDataRow.Add(attribute.Name, value);
                         }
@@ -114,8 +111,16 @@ namespace Dash.Engine.Visitors
 
                 entityModel.SeedData.Add(seedDataRow);
             }
+        }
 
-            await base.Visit(node);
+        private Task<CsvReader> CreateCsvReader(CsvSeedDeclarationNode node, StreamReader streamReader)
+        {
+            var csv = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+
+            csv.Configuration.MissingFieldFound = (headerNames, index, context) => { _errorRepository.Add(context.Field); };
+            csv.Configuration.HasHeaderRecord = node.FirstLineIsHeader;
+            csv.Configuration.Delimiter = node.Delimiter;
+            return Task.FromResult(csv);
         }
 
         private bool IsMappingValid(CsvSeedDeclarationNode node, EntityModel entityModel)

@@ -29,9 +29,9 @@ namespace Dash.Tests.Engine.Visitors
         public ModelSeedBuilderTests()
         {
             var csvContent = new StringBuilder();
-            csvContent.AppendLine("Code;Name;NumericCode");
-            csvContent.AppendLine("EUR;Euro;978");
-            csvContent.AppendLine("USD;US Dollars;840");
+            csvContent.AppendLine("Code;Name;NumericCode;MinorUnit");
+            csvContent.AppendLine("EUR;Euro;978;2");
+            csvContent.AppendLine("USD;US Dollars;840;2");
             _mockFileSystem.AddFile("c:\\currencies.csv", new MockFileData(csvContent.ToString()));
 
             _uriResourceRepository.Get(new Uri("https://currencycode")).Returns("c:\\currencies.csv");
@@ -56,7 +56,8 @@ namespace Dash.Tests.Engine.Visitors
                 {
                     {"CurrencyCode", "Code"},
                     {"CurrencyName", "Name"},
-                    {"NumericCode", "NumericCode"}
+                    {"NumericCode", "NumericCode"},
+                    {"MinorUnit", "MinorUnit"}
                 });
 
             // Act
@@ -75,6 +76,7 @@ namespace Dash.Tests.Engine.Visitors
                             e => e.Should().Be("CurrencyCode"),
                             e => e.Should().Be("CurrencyName"),
                             e => e.Should().Be("NumericCode"),
+                            e => e.Should().Be("MinorUnit"),
                             e => e.Should().Be("Description")
                         );
 
@@ -83,6 +85,7 @@ namespace Dash.Tests.Engine.Visitors
                             e => e.Should().Be("EUR"),
                             e => e.Should().Be("Euro"),
                             e => e.Should().Be(978),
+                            e => e.Should().Be(2),
                             e => e.Should().Be("Foo")
                         );
                     },
@@ -93,6 +96,7 @@ namespace Dash.Tests.Engine.Visitors
                             e => e.Should().Be("USD"),
                             e => e.Should().Be("US Dollars"),
                             e => e.Should().Be(840),
+                            e => e.Should().Be(2),
                             e => e.Should().Be("Foo")
                         );
                     });
@@ -128,6 +132,7 @@ namespace Dash.Tests.Engine.Visitors
             entityModel.CodeAttributes.Add(new AttributeModel("CurrencyCode", "string", false, null));
             entityModel.CodeAttributes.Add(new AttributeModel("CurrencyName", "string", false, null));
             entityModel.CodeAttributes.Add(new AttributeModel("NumericCode", "int", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("MinorUnit", "int", true, null));
             entityModel.CodeAttributes.Add(new AttributeModel("Description", "string", false, "Foo"));
             entityModel.CodeAttributes.Add(new AttributeModel("Comments", "string", true, null));
 

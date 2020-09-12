@@ -54,5 +54,8 @@ namespace Dash.Engine.Models
                 }
             }
         }
+
+        public IEnumerable<AttributeModel> WithoutIdAttribute() =>
+            CodeAttributes.Where(e => !e.Name.IsSame(DashModelFileConstants.BaseEntityIdAttributeName));
     }
 }
