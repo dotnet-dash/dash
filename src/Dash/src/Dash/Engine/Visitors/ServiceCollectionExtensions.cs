@@ -1,15 +1,10 @@
-﻿// Copyright (c) Huy Hoang. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+﻿using Microsoft.Extensions.DependencyInjection;
 
-using Dash.Engine;
-using Dash.Engine.Visitors;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Dash.Application
+namespace Dash.Engine.Visitors
 {
-    public static class NodeVisitorServices
+    public static class ServiceCollectionExtensions
     {
-        public static void Add(IServiceCollection services)
+        public static void AddNodeVisitors(this IServiceCollection services)
         {
             services.AddSingleton<INodeVisitor, CreateJoinedEntityVisitor>();
             services.AddSingleton<INodeVisitor, SetInheritanceVisitor>();
