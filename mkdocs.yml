@@ -1,3 +1,7 @@
+site_name: Dash, .NET Tool for fast model-driven code generation
+nav:
+    - Home: readme.md
+    - Model: model.md
 theme:
     name: mkdocs
     highlightjs: true
