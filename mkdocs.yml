@@ -3,7 +3,7 @@ nav:
     - Home: readme.md
     - Model: model.md
 theme:
-    name: mkdocs
+    name: readthedocs
     highlightjs: true
     hljs_languages:
         - cs
