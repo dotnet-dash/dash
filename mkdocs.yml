@@ -13,3 +13,6 @@ theme:
     hljs_languages:
         - cs
         - json
+
+markdown_extensions:
+    - admonition
