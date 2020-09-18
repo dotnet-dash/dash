@@ -2,15 +2,11 @@ site_name: Dash, .NET Tool for fast model-driven code generation
 nav:
     - Home: index.md
     - Introduction:
-        - The Big Picture: introduction/the-big-picture.md
-        - Contributing: introduction/contributing.md
         - Getting Started: introduction/getting-started.md
-    
+    - User Guide:
+        - Writing Your Model: user-guide/writing-your-model.md
+        - Writing Your Custom Templates: user-guide/custom-templates.md
 
-
-
-    - 
-    - Model: model.md
 theme:
     name: readthedocs
     highlightjs: true
