@@ -1,6 +1,15 @@
 site_name: Dash, .NET Tool for fast model-driven code generation
 nav:
-    - Home: readme.md
+    - Home: index.md
+    - Introduction:
+        - The Big Picture: introduction/the-big-picture.md
+        - Contributing: introduction/contributing.md
+        - Getting Started: introduction/getting-started.md
+    
+
+
+
+    - 
     - Model: model.md
 theme:
     name: readthedocs

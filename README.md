@@ -1,7 +1,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
 
 <div align="center">
-    <img alt="dotnet-dash" src="./.github/img/logo-w-text.png" width="50%" />
+    <img alt="dotnet-dash" src="./docs/img/logo-w-text.png" width="50%" />
 </div>
 <hr />
 
