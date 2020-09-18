@@ -1,0 +1,18 @@
+site_name: Dash
+nav:
+    - Home: index.md
+    - User Guide:
+        - Writing Your Model File: user-guide/writing-your-model-file.md
+        - Writing Your Custom Templates: user-guide/custom-templates.md
+    - Examples:
+        - Country And Currency: examples/country-and-currency.md
+
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - cs
+        - json
+
+markdown_extensions:
+    - admonition
