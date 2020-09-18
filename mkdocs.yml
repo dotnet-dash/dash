@@ -1,4 +1,4 @@
-site_name: Dash, .NET Tool for fast model-driven code generation
+site_name: Dash
 nav:
     - Home: index.md
     - Introduction:
@@ -6,6 +6,8 @@ nav:
     - User Guide:
         - Writing Your Model: user-guide/writing-your-model.md
         - Writing Your Custom Templates: user-guide/custom-templates.md
+    - Examples:
+        - Country And Currency: examples/country-and-currency.md
 
 theme:
     name: readthedocs
