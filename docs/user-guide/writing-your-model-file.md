@@ -156,12 +156,12 @@ To define an Attribute for an Entity, simply add a key/value pair to the Entity 
 The _value_ of the key/value pair defines the data type of the attribute, and must adhere to the following _Data Type Syntax_:
 
 ~~~
-[dash datatype][constraints]
+[dash data type][constraints]
 ~~~
 
-where `[dash datatype]` must be one of the following values:
+where `[dash data type]` must be one of the following values:
 
-| Dash datatype   | .NET     | SqlServer        |
+| Dash data type  | .NET     | SqlServer        |
 |-----------------|----------|------------------|
 | `string`        | String   | varchar          |
 | `unicode`       | String   | nvarchar         |
