@@ -27,7 +27,7 @@ Only two sections are supported: the _optional_ `Configuration` and the _require
 
 ~~~ JSON
 {
-    "Conf7iguration": {
+    "Configuration": {
     },
 
     "Model": {
@@ -68,6 +68,7 @@ An attribute consists of a _Name_ and _[Dash Data Type](attributes.md#dash-data-
 ~~~
 
 In the above example, we have added the 2 attributes to the `Person` entity:
+
 1. `Name` of the type `string`
 1. `Age` of the type `int`
 
@@ -78,4 +79,4 @@ In the above example, we have added the 2 attributes to the `Person` entity:
 !!! important
 
     Dash will automatically add an `Id` attribute for every Entity.
-    Please visit the [Attributes documentation](attributes.md) for more information
+    Please visit the [Attributes documentation](attributes.md) for more information.
