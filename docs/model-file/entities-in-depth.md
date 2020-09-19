@@ -17,6 +17,7 @@ To show you how the default `Base` Entity is defined internally by Dash, we will
 ~~~
 
 In the above, we see that:
+
 - all Entities will inherit an `Id` attribute of the type `Int`
 - the `"@@Abstract": true` tells Dash **NOT** to generate code for this Entity.
 
