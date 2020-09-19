@@ -18,6 +18,7 @@
     <None Remove="Samples\ExtendBase.json" />
     <None Remove="Samples\Has.json" />
     <None Remove="Samples\HasAndBelongsToMany.json" />
+    <None Remove="Samples\HasArrayValue.json" />
     <None Remove="Samples\HasMany.json" />
     <None Remove="Samples\HasNullable.json" />
     <None Remove="Samples\HelloWorld.json" />
@@ -34,6 +35,12 @@
     <Content Include="Samples\Errors\MisconfigurationNoTemplateDefined.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Samples\HasArrayValue.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\HasMany.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\Seed.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -41,9 +48,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Has.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\HasMany.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HasAndBelongsToMany.json">
