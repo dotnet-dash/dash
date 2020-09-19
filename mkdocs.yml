@@ -8,9 +8,8 @@ nav:
     - Home: index.md
     - Model File:
         - Introduction: model-file/introduction.md
-        - Defining Relationships: model-file/defining-relationships.md
+        - Entities In-Depth: model-file/entities-in-depth.md
         - Seeding data: model-file/seeding-data.md
-        - Inheritance: model-file/inheritance.md
     - Templates:
         - Built-in Templates: templates/built-in-templates.md
         - Custom Templates: templates/custom-templates.md
