@@ -80,3 +80,118 @@ In the above example, we have added the 2 attributes to the `Person` entity:
 
     Dash will automatically add an `Id` attribute for every Entity.
     Please visit the [Attributes documentation](attributes.md) for more information.
+
+## Relationships
+Dash supports 3 types of relationships:
+
+| Relationship type | Dash Key/Value Pair         |
+|-------------------|-----------------------------|
+| 1 to 1            | `@@Has`                     |
+| 1 to Many         | `@@Has Many`                |
+| Many to Many      | `@@Has Many And Belongs To` |
+
+### 1 to 1
+To define a 1:1 relationship, simply add a `@@Has` object to your Entity.
+
+#### Reference the Entity using an Array of Strings
+This is the most concise way of defining a relationship. However, its limitation is that you cannot have multiple references to the same Entity.
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has": ["Address"]
+        },
+
+        "Address": {
+        },
+    }
+}
+~~~
+
+#### Reference the Entity using an Object and Key/Value pairs.
+This is a bit more verbose but lets you define multiple relationships with the same Entity, and also naming the relationship.
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has": {
+                "BillingAddress": "Address",
+                "ShippingAddress": "Address"
+            }
+        },
+
+        "Address": {
+        }
+    }
+}
+~~~
+
+### 1 to Many
+To define a 1 to Many relationship, add a `@@Has Many` object to your Entity.
+
+#### Reference the Entity using an Array of Strings
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has Many": ["Address"]
+        },
+
+        "Address": {
+        }        
+    }
+}
+~~~
+
+#### Reference the Entity using an Object and Key/Value pairs.
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has Many": {
+                "Address": "Address"
+            }
+        },
+
+        "Address": {
+        }
+    }
+}
+~~~
+
+### Many to Many
+To define a Many to Many relationship, add a `@@Has Many And Belongs To` object to your Entity.
+
+#### Reference the Entity using an Array of Strings
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has Many And Belongs To": {
+                "Address": "Address"
+            }
+        },
+
+        "Address": {
+        }
+    }
+}
+~~~
+
+#### Reference the Entity using an Object and Key/Value pairs.
+~~~ JSON
+{
+    "Model": {
+        "Person": {
+            "@@Has Many And Belongs To": {
+                "Address": "Address"
+            }
+        },
+
+        "Address": {
+        }
+    }
+}
+~~~
+
+## Actions
