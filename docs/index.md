@@ -20,7 +20,7 @@ Here is a visual representation of the above:
 Installation is pretty simple, just copy and paste the following command:
 
 ~~~
-dotnet tool install --global dotnet-dash --version 0.1.2-alpha
+dotnet tool install --global dotnet-dash --version 0.2.0-alpha
 ~~~
 
 If you have successfully installed Dash, the following command will bring up the help screen:
@@ -33,7 +33,7 @@ dotnet dash --help
 Updating to the latest, or different, version of Dash is equally simple:
 
 ~~~
-dotnet tool update --global dotnet-dash --version 0.1.2-alpha
+dotnet tool update --global dotnet-dash --version 0.2.0-alpha
 ~~~
 
 ## Hello World example
