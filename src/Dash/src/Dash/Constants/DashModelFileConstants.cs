@@ -6,5 +6,8 @@
         public const string BaseEntityIdAttributeDataType = "Int";
 
         public const string DataTypeInteger = "int";
+
+        public const string True = "true";
+        public const string False = "false";
     }
 }

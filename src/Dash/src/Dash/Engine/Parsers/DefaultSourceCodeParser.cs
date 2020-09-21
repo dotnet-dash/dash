@@ -172,6 +172,10 @@ namespace Dash.Engine.Parsers
                     {
                         entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString());
                     }
+                    else if (attribute.Name.IsSame("@@Abstract"))
+                    {
+                        entityDeclarationNode.AddAbstractDeclarationNode(attribute.Value.GetBoolean());
+                    }
                 }
             }
         }

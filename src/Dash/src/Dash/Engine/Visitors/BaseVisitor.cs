@@ -46,6 +46,7 @@ namespace Dash.Engine.Visitors
             Console.Trace($"{GetType().Name} visiting attributes of {node.Name}");
             await node.AttributeDeclarations.Accept(this);
             await node.InheritanceDeclarationNodes.Accept(this);
+            await node.AbstractDeclarationNodes.Accept(this);
             await node.Has.Accept(this);
             await node.HasMany.Accept(this);
             await node.HasAndBelongsToMany.Accept(this);
@@ -76,6 +77,11 @@ namespace Dash.Engine.Visitors
         }
 
         public virtual Task Visit(InheritanceDeclarationNode node)
+        {
+            return Task.CompletedTask;
+        }
+
+        public virtual Task Visit(AbstractDeclarationNode node)
         {
             return Task.CompletedTask;
         }

@@ -1,0 +1,11 @@
+﻿{
+    "Model": {
+        "Foo": {
+            "@@Abstract": true
+        },
+
+        "Bar": {
+            "@@Inherits": "Foo"
+        }
+    }
+}

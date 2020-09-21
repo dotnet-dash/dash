@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dash.Common;
+using Dash.Constants;
 using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
+#pragma warning disable S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)
 namespace Dash.Engine.Visitors
 {
     public class DefaultSemanticAnalyzer : BaseVisitor
@@ -62,6 +64,11 @@ namespace Dash.Engine.Visitors
             if (node.InheritanceDeclarationNodes.Count() > 1)
             {
                 _errorRepository.Add($"Multiple inheritance declaration found for '{node.Name}'");
+            }
+
+            if (node.AbstractDeclarationNodes.Count() > 1)
+            {
+                _errorRepository.Add($"Multiple abstract declarations found for '{node.Name}'");
             }
 
             return base.Visit(node);
@@ -165,3 +172,4 @@ namespace Dash.Engine.Visitors
         }
     }
 }
+#pragma warning restore S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)

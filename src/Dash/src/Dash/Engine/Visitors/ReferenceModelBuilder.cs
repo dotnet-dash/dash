@@ -8,7 +8,7 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class ReferenceModelBuilder : BaseVisitor, IModelBuilder
+    public class ReferenceModelBuilder : BaseVisitor
     {
         private readonly IModelRepository _modelRepository;
         private readonly IEntityReferenceValueParser _entityReferenceValueParser;

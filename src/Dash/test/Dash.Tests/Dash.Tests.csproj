@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Samples\Abstract.json" />
     <None Remove="Samples\Configuration.json" />
     <None Remove="Samples\EmptyBaseDefined.json" />
     <None Remove="Samples\EmptyModel.json" />
@@ -29,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Samples\Abstract.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\Errors\EmbeddedTemplateNotFound.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

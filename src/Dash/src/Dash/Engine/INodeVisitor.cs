@@ -18,6 +18,7 @@ namespace Dash.Engine
         Task Visit(HasManyReferenceDeclarationNode node);
         Task Visit(HasAndBelongsToManyDeclarationNode node);
         Task Visit(InheritanceDeclarationNode node);
+        Task Visit(AbstractDeclarationNode node);
         Task Visit(CsvSeedDeclarationNode node);
         Task Visit(UriNode node);
     }
