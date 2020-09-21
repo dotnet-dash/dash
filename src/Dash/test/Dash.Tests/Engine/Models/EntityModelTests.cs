@@ -9,20 +9,6 @@ namespace Dash.Tests.Engine.Models
 {
     public class EntityTests
     {
-        [Theory]
-        [InlineData("base", false)]
-        [InlineData("Base", false)]
-        [InlineData("Account", true)]
-        [InlineData("Order", true)]
-        public void CodeGeneration_Name_ExpectedPropertyValue(string entityModelName, bool expectedValue)
-        {
-            // Arrange
-            var sut = new EntityModel(entityModelName);
-
-            // Act + Assert
-            sut.CodeGeneration.Should().Be(expectedValue);
-        }
-
         [Fact]
         public void InheritAttributes()
         {

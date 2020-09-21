@@ -43,7 +43,9 @@ namespace Dash.Engine.Visitors
             if (baseEntity == null)
             {
                 Console.Trace($"No entity '{BaseEntityName}' declared. Adding '{BaseEntityName}'");
-                baseEntity = node.AddEntityDeclarationNode(BaseEntityName);
+                baseEntity = node
+                    .AddEntityDeclarationNode(BaseEntityName)
+                    .AddAbstractDeclarationNode(true);
             }
 
             return baseEntity;

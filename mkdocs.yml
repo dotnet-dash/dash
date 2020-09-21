@@ -1,9 +1,18 @@
 site_name: Dash
+site_description: Documentation for dotnet dash cli tool
+site_author: Huy Hoang
+
+repo_url: https://github.com/dotnet-dash/dash
+
 nav:
     - Home: index.md
-    - User Guide:
-        - Writing Your Model File: user-guide/writing-your-model-file.md
-        - Writing Your Custom Templates: user-guide/custom-templates.md
+    - Model File:
+        - Introduction: model-file/introduction.md
+        - Entities In-Depth: model-file/entities-in-depth.md
+        - Seeding data: model-file/seeding-data.md
+    - Templates:
+        - Built-in Templates: templates/built-in-templates.md
+        - Custom Templates: templates/custom-templates.md
     - Examples:
         - Country And Currency: examples/country-and-currency.md
 
@@ -16,3 +25,5 @@ theme:
 
 markdown_extensions:
     - admonition
+
+copyright: Copyright &copy; 2020 Huy Hoang

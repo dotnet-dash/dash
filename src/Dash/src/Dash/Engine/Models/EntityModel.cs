@@ -17,7 +17,7 @@ namespace Dash.Engine.Models
 
         public string Name { get; }
 
-        public bool CodeGeneration => !Name.IsSame("Base");
+        public bool IsAbstract { get; set; }
 
         public IList<AttributeModel> CodeAttributes { get; } = new List<AttributeModel>();
         public IList<AttributeModel> DataAttributes { get; } = new List<AttributeModel>();

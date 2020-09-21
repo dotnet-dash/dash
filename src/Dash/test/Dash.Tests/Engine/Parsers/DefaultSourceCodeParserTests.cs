@@ -142,6 +142,40 @@ namespace Dash.Tests.Engine.Parsers
         }
 
         [Fact]
+        public void Parse_HasArrayValue_ShouldHaveParsedTree()
+        {
+            // Act
+            var result = _sut.Parse(File.ReadAllText("Samples/HasArrayValue.json"));
+
+            // Assert
+            result.ModelNode.EntityDeclarations.Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Name.Should().Be("Person");
+                    first.Has.Should().SatisfyRespectively(
+                        a =>
+                        {
+                            a.Name.Should().Be("Car");
+                            a.ReferencedEntity.Should().Be("Car");
+                        },
+                        b =>
+                        {
+                            b.Name.Should().Be("Pet");
+                            b.ReferencedEntity.Should().Be("Pet");
+                        });
+                },
+                second =>
+                {
+                    second.Name.Should().Be("Car");
+                },
+                third =>
+                {
+                    third.Name.Should().Be("Pet");
+                }
+            );
+        }
+
+        [Fact]
         public void Parse_HasNullable_ShouldHaveParsedTree()
         {
             // Act

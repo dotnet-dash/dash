@@ -239,6 +239,22 @@ namespace Dash.Tests.Engine.Visitors
         }
 
         [Fact]
+        public async Task Visit_EntityDeclarationNode_MultipleAbstractionDeclarationNodesFound_ShouldHaveUpdatedErrorRepository()
+        {
+            // Arrange
+            var entityDeclarationNode = new EntityDeclarationNode(new ModelNode(), "Foo")
+                .AddAbstractDeclarationNode(true)
+                .AddAbstractDeclarationNode(false);
+
+            // Act
+            await _sut.Visit(entityDeclarationNode);
+
+            // Assert
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first => first.Should().Be("Multiple abstract declarations found for 'Foo'"));
+        }
+
+        [Fact]
         public async Task Visit_CsvSeedDeclarationNode_HeaderNameIsNotAnAttribute_ShouldHaveUpdatedErrorRepository()
         {
             // Arrange

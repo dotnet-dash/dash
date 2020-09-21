@@ -31,7 +31,7 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             {
                 {"namespace", _options.DefaultNamespace!},
                 {"modelName", Path.GetFileNameWithoutExtension(_options.InputFile!).StartWithCapitalLetter()},
-                {"entities", _modelRepository.EntityModels.Where(e => e.CodeGeneration)}
+                {"entities", _modelRepository.EntityModels.Where(e => !e.IsAbstract)}
             };
             scriptObject.Import(typeof(GetCSharpLiteralFormatter));
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dash.Engine;
 
@@ -12,6 +13,7 @@ namespace Dash.Nodes
     {
         private readonly List<AttributeDeclarationNode> _attributeDeclarations = new List<AttributeDeclarationNode>();
         private readonly List<InheritanceDeclarationNode> _inheritanceDeclarations = new List<InheritanceDeclarationNode>();
+        private readonly List<AstNode> _astNodes = new List<AstNode>();
 
         public EntityDeclarationNode(ModelNode parent, string name)
         {
@@ -26,6 +28,8 @@ namespace Dash.Nodes
         public IEnumerable<AttributeDeclarationNode> AttributeDeclarations => _attributeDeclarations;
 
         public IEnumerable<InheritanceDeclarationNode> InheritanceDeclarationNodes => _inheritanceDeclarations;
+
+        public IEnumerable<AbstractDeclarationNode> AbstractDeclarationNodes => _astNodes.OfType<AbstractDeclarationNode>();
 
         public IList<HasReferenceDeclarationNode> Has { get; } = new List<HasReferenceDeclarationNode>();
 
@@ -60,6 +64,13 @@ namespace Dash.Nodes
             _inheritanceDeclarations.Add(inheritance);
 
             return inheritance;
+        }
+
+        public EntityDeclarationNode AddAbstractDeclarationNode(bool value)
+        {
+            _astNodes.Add(new AbstractDeclarationNode(this, value));
+
+            return this;
         }
 
         public EntityDeclarationNode AddHasDeclaration(string name, string referencedEntity)

@@ -11,7 +11,7 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class DefaultModelBuilder : BaseVisitor, IModelBuilder
+    public class DefaultModelBuilder : BaseVisitor
     {
         private readonly IDataTypeParser _dataTypeParser;
         private readonly IModelRepository _modelRepository;
@@ -49,6 +49,14 @@ namespace Dash.Engine.Visitors
                 entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable, result.DefaultValue));
                 entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable, result.DefaultValue));
             }
+
+            return base.Visit(node);
+        }
+
+        public override Task Visit(AbstractDeclarationNode node)
+        {
+            var entityModel = _modelRepository.Get(node.Parent.Name);
+            entityModel.IsAbstract = node.Value;
 
             return base.Visit(node);
         }

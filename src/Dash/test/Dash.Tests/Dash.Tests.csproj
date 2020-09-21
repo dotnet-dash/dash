@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Samples\Abstract.json" />
     <None Remove="Samples\Configuration.json" />
     <None Remove="Samples\EmptyBaseDefined.json" />
     <None Remove="Samples\EmptyModel.json" />
@@ -18,6 +19,7 @@
     <None Remove="Samples\ExtendBase.json" />
     <None Remove="Samples\Has.json" />
     <None Remove="Samples\HasAndBelongsToMany.json" />
+    <None Remove="Samples\HasArrayValue.json" />
     <None Remove="Samples\HasMany.json" />
     <None Remove="Samples\HasNullable.json" />
     <None Remove="Samples\HelloWorld.json" />
@@ -28,10 +30,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Samples\Abstract.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Samples\Errors\EmbeddedTemplateNotFound.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Errors\MisconfigurationNoTemplateDefined.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\HasArrayValue.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\HasMany.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Seed.json">
@@ -41,9 +52,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Has.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\HasMany.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HasAndBelongsToMany.json">
