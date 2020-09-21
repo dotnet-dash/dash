@@ -18,6 +18,7 @@
     <Copyright>Huy Hoang</Copyright>
     <RepositoryUrl>https://github.com/dotnet-dash/dash</RepositoryUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>dotnetcore codegenerator code generation</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
