@@ -9,3 +9,8 @@ updates:
     directory: "/src/Dash/src/Dash"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "nuget"
+    directory: "/src/Dash/test/Dash.Tests"
+    schedule:
+      interval: "daily"
