@@ -9,7 +9,7 @@ namespace Hello
         {
         }
 
-        public DbSet<Account> Account { get; set; }
+        public DbSet<Account> Account => Set<Account>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

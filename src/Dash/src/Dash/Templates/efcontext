@@ -20,7 +20,7 @@ namespace {{ namespace }}
         }
 
 {{- for e in entities }}
-        public DbSet<{{ e.name }}> {{ e.name }} { get; set; }
+        public DbSet<{{ e.name }}> {{ e.name }} => Set<{{ e.name }}>();
 {{- end }}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
