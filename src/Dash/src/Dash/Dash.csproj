@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.2.1-alpha</Version>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-dash</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
@@ -12,7 +12,7 @@
     <Authors>Huy Hoang</Authors>
     <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
     <Description>Dash is a command-line tool for fast model-driven code generation.</Description>
-    <PackageReleaseNotes>Implemented @@Abstract, a Dash implementation of the concept of Abstract Types. Entities marked with @@Abstract will be left out of the code generation, but is useful for Entity Inheritance to reduce redundancy in Model Files.</PackageReleaseNotes>
+    <PackageReleaseNotes>Bugfix: fix CS6818 warning in generated DbContext class</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/dotnet-dash</PackageProjectUrl>
     <PackageIcon>packageicon.png</PackageIcon>
     <Copyright>Huy Hoang</Copyright>
