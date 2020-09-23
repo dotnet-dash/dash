@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Samples\Abstract.json" />
     <None Remove="Samples\Configuration.json" />
     <None Remove="Samples\EmptyBaseDefined.json" />
     <None Remove="Samples\EmptyModel.json" />
@@ -30,9 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Samples\Abstract.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Samples\Errors\EmbeddedTemplateNotFound.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -42,9 +38,6 @@
     <Content Include="Samples\HasArrayValue.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Samples\HasMany.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Samples\Seed.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -52,6 +45,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Has.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\HasMany.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HasAndBelongsToMany.json">
@@ -87,10 +83,10 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
-    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.1.9" />
+    <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="12.1.1" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">

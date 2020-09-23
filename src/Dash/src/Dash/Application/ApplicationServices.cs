@@ -14,8 +14,7 @@ namespace Dash.Application
             services.Configure<DashOptions>(options =>
             {
                 options.InputFile = dashOptions.InputFile;
-                options.ProjectFile = dashOptions.ProjectFile;
-                options.WorkingDirectory = dashOptions.WorkingDirectory;
+                options.Project = dashOptions.Project;
                 options.Verbose = dashOptions.Verbose;
             });
 

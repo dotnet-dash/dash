@@ -12,29 +12,29 @@ namespace Dash.Extensions
     {
         public static string GetAbsoluteWorkingDirectory(this IFileSystem fileSystem, DashOptions dashOptions)
         {
-            if (dashOptions.WorkingDirectory == ".")
+            if (dashOptions.Project == null)
             {
                 return fileSystem.Directory.GetCurrentDirectory();
             }
 
-            if (dashOptions.WorkingDirectory == "..")
+            var fileName = Path.GetFileName(dashOptions.Project);
+            if (string.Equals(fileName, dashOptions.Project, StringComparison.InvariantCultureIgnoreCase))
             {
-                var currentDirectory = fileSystem.Directory.GetCurrentDirectory();
-                var directoryInfo = fileSystem.DirectoryInfo.FromDirectoryName(currentDirectory);
-                return directoryInfo.Parent.FullName;
+                return fileSystem.Directory.GetCurrentDirectory();
             }
 
-            return fileSystem.DirectoryInfo.FromDirectoryName(dashOptions.WorkingDirectory).FullName;
+            var directoryName = Path.GetDirectoryName(dashOptions.Project);
+            return fileSystem.DirectoryInfo.FromDirectoryName(directoryName).FullName;
         }
 
-        public static string AbsolutePath(this IFileSystem fileSystem, Uri uri, DashOptions dashOptions)
+        public static string AbsolutePath(this IFileSystem fileSystem, Uri relativeUri, DashOptions dashOptions)
         {
-            if (uri.IsAbsoluteUri)
+            if (relativeUri.IsAbsoluteUri)
             {
-                return fileSystem.DirectoryInfo.FromDirectoryName(uri.LocalPath).FullName;
+                return fileSystem.DirectoryInfo.FromDirectoryName(relativeUri.LocalPath).FullName;
             }
 
-            var combinedPath = Path.Combine(fileSystem.GetAbsoluteWorkingDirectory(dashOptions), uri.ToString());
+            var combinedPath = Path.Combine(fileSystem.GetAbsoluteWorkingDirectory(dashOptions), relativeUri.ToString());
 
             return fileSystem.DirectoryInfo.FromDirectoryName(combinedPath).FullName;
         }

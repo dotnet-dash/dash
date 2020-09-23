@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dash.Application;
 using Dash.Common;
-using Dash.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Dash.PreprocessingSteps.Default
@@ -29,11 +28,11 @@ namespace Dash.PreprocessingSteps.Default
 
         public Task<bool> Process()
         {
-            if (_options.ProjectFile == null)
+            if (_options.Project == null)
             {
                 _console.Info("No .csproj specified. Finding .csproj");
 
-                var path = _fileSystem.GetAbsoluteWorkingDirectory(_options);
+                var path = _fileSystem.Directory.GetCurrentDirectory();
 
                 var projectFiles = _fileSystem.Directory.GetFiles(path, "*.csproj");
                 if (projectFiles.Length == 0)
@@ -44,11 +43,11 @@ namespace Dash.PreprocessingSteps.Default
 
                 if (projectFiles.Length > 1)
                 {
-                    _console.Error("Multiple .csproj files found in working directory.");
+                    _console.Error("Multiple .csproj files found in working directory. Please specify the project explicitly.");
                     return Task.FromResult(false);
                 }
 
-                _options.ProjectFile = projectFiles.First();
+                _options.Project = projectFiles.First();
                 return Task.FromResult(true);
             }
 
