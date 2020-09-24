@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dash.Common;
 using Dash.Engine;
 using Dash.Exceptions;
+using Dash.Extensions;
 using Dash.PreprocessingSteps;
 using Microsoft.Extensions.Options;
 
@@ -39,6 +40,9 @@ namespace Dash.Application
 
         public async Task Run()
         {
+            var workingDirectory = _fileSystem.GetAbsoluteWorkingDirectory(_dashOptions);
+            _console.Trace($"Working directory: {workingDirectory}");
+
             foreach (var step in _preprocessingSteps)
             {
                 var succeeded = await step.Process();
