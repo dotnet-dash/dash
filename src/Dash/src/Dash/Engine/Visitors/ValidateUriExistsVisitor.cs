@@ -9,13 +9,13 @@ using Dash.Nodes;
 
 namespace Dash.Engine.Visitors
 {
-    public class ValidateUriVisitor : BaseVisitor
+    public class ValidateUriExistsVisitor : BaseVisitor
     {
         private readonly IFileSystem _fileSystem;
         private readonly IErrorRepository _errorRepository;
         private readonly IEmbeddedTemplateProvider _embeddedTemplateProvider;
 
-        public ValidateUriVisitor(
+        public ValidateUriExistsVisitor(
             IConsole console,
             IFileSystem fileSystem,
             IErrorRepository errorRepository,
@@ -28,21 +28,30 @@ namespace Dash.Engine.Visitors
 
         public override async Task Visit(UriNode node)
         {
-            if (node.Uri.Scheme.IsSame("file") &&
-                node.UriMustExist &&
+            ValidateFileExists(node);
+            await ValidateDashResourceExists(node);
+
+            await base.Visit(node);
+        }
+
+        private void ValidateFileExists(UriNode node)
+        {
+            if (node.UriMustExist &&
+                node.Uri.Scheme.IsSame("file") &&
                 !_fileSystem.File.Exists(node.Uri.AbsolutePath))
             {
                 _errorRepository.Add($"File does not exist: '{node.Uri}'");
             }
+        }
 
-            if (node.Uri.Scheme.IsSame("dash") &&
-                node.UriMustExist &&
+        private async Task ValidateDashResourceExists(UriNode node)
+        {
+            if (node.UriMustExist &&
+                node.Uri.Scheme.IsSame("dash") &&
                 !(await _embeddedTemplateProvider.Exists(node.Uri.Host)))
             {
                 _errorRepository.Add($"Dash template does not exist: {node.Uri}");
             }
-
-            await base.Visit(node);
         }
     }
 }

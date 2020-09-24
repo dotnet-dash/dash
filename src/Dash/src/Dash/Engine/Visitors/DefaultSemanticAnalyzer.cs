@@ -121,24 +121,14 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(UriNode node)
         {
-            string scheme;
+            var scheme = node.Uri.OriginalString.StartsWith(".")
+                ? Uri.UriSchemeFile
+                : node.Uri.Scheme;
 
-            try
+            if (!node.SupportedSchemes.Contains(scheme, StringComparer.OrdinalIgnoreCase))
             {
-                scheme = node.Uri.Scheme;
-            }
-            catch (InvalidOperationException)
-            {
-                _errorRepository.Add($"No scheme defined for Uri '{node.Uri}'. Supported schemes: file, http(s), dash");
-                return Task.CompletedTask;
-            }
-
-            if (!scheme.IsSame("file") &&
-                !scheme.IsSame("https") &&
-                !scheme.IsSame("http") &&
-                !scheme.IsSame("dash"))
-            {
-                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in Uri {node.Uri}");
+                var supported = string.Join(", ", node.SupportedSchemes);
+                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in Uri {node.Uri}. Supported schemes: {supported}");
             }
 
             return base.Visit(node);

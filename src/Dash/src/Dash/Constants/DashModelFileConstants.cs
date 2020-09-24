@@ -9,5 +9,7 @@ namespace Dash.Constants
         public const string BaseEntityIdAttributeDataType = "Int";
 
         public const string DataTypeInteger = "int";
+
+        public const string UriSchemeDash = "dash";
     }
 }

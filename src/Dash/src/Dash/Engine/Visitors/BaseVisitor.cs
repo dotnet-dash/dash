@@ -34,6 +34,11 @@ namespace Dash.Engine.Visitors
             {
                 await node.TemplateUriNode.Accept(this);
             }
+
+            if (node.OutputUriNode != null)
+            {
+                await node.OutputUriNode.Accept(this);
+            }
         }
 
         public virtual async Task Visit(ModelNode node)

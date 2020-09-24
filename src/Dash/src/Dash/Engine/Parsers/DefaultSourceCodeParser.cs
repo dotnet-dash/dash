@@ -5,14 +5,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Dash.Common;
 using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
+#pragma warning disable S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)
 namespace Dash.Engine.Parsers
 {
     public class DefaultSourceCodeParser : ISourceCodeParser
     {
+        private readonly IFileService _fileService;
+
+        public DefaultSourceCodeParser(IFileService fileService)
+        {
+            _fileService = fileService;
+        }
+
         public SourceCodeNode Parse(string sourceCode)
         {
             try
@@ -35,12 +44,23 @@ namespace Dash.Engine.Parsers
             if (!document.RootElement.TryGetProperty("Configuration", out var configurationProperty))
             {
                 return new ConfigurationNode()
-                    .AddTemplateNode("dash://efpoco")
-                    .AddTemplateNode("dash://efcontext");
+                    .AddTemplateNode("dash://efpoco", _fileService.AbsoluteWorkingDirectory)
+                    .AddTemplateNode("dash://efcontext", _fileService.AbsoluteWorkingDirectory);
             }
 
             var configurationSourceCode = configurationProperty.GetRawText();
-            return JsonSerializer.Deserialize<ConfigurationNode>(configurationSourceCode);
+
+            var deserialized = JsonSerializer.Deserialize<ConfigurationNode>(configurationSourceCode);
+
+            foreach (var item in deserialized.Templates)
+            {
+                if (item.Output == null)
+                {
+                    item.Output = _fileService.AbsoluteWorkingDirectory;
+                }
+            }
+
+            return deserialized;
         }
 
         private ModelNode ParseModel(JsonDocument document)
@@ -181,3 +201,4 @@ namespace Dash.Engine.Parsers
         }
     }
 }
+#pragma warning restore S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)

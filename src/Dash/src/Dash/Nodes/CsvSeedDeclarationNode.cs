@@ -19,7 +19,7 @@ namespace Dash.Nodes
         public CsvSeedDeclarationNode(EntityDeclarationNode parent, Uri uri, bool firstLineIsHeader, string? delimiter, IDictionary<string, string> mapHeaders)
         {
             Parent = parent;
-            UriNode = new UriNode(uri, true);
+            UriNode = UriNode.ForExternalResources(uri);
             FirstLineIsHeader = firstLineIsHeader;
             Delimiter = delimiter ?? ",";
             MapHeaders = mapHeaders;

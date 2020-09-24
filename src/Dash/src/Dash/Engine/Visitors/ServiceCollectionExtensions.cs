@@ -14,7 +14,7 @@ namespace Dash.Engine.Visitors
             services.AddSingleton<INodeVisitor, DefaultSymbolCollector>();
             services.AddSingleton<INodeVisitor, ValidateConfigurationVisitor>();
             services.AddSingleton<INodeVisitor, DefaultSemanticAnalyzer>();
-            services.AddSingleton<INodeVisitor, ValidateUriVisitor>();
+            services.AddSingleton<INodeVisitor, ValidateUriExistsVisitor>();
             services.AddSingleton<INodeVisitor, DefaultModelBuilder>();
             services.AddSingleton<INodeVisitor, ReferenceModelBuilder>();
             services.AddSingleton<INodeVisitor, UriResourceDownload>();
