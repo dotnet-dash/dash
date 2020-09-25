@@ -16,6 +16,7 @@ namespace Dash.Common
             services.AddSingleton<IClock, Clock>();
             services.AddSingleton<IConsole, DefaultConsole>();
             services.AddSingleton<IFileSystem, FileSystem>();
+            services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<ISessionService, SessionService>();
 
             services.AddSingleton<IEmbeddedTemplateProvider, EmbeddedTemplateProvider>();

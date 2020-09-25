@@ -60,8 +60,7 @@ namespace Dash.Tests
             var options = new DashOptions
             {
                 InputFile = "c:/project/sut.json",
-                ProjectFile = null,
-                WorkingDirectory = ".",
+                Project = null,
                 Verbose = false,
             };
 
@@ -82,8 +81,7 @@ namespace Dash.Tests
             var options = new DashOptions
             {
                 InputFile = "c:/project/sut.json",
-                ProjectFile = null,
-                WorkingDirectory = ".",
+                Project = null,
                 Verbose = false,
             };
 

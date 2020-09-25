@@ -92,7 +92,7 @@ namespace Dash.Tests.Application.Default
             var sut = ArrangeSut(new DashOptions
             {
                 InputFile = "c:/temp/model.json",
-                ProjectFile = "c:/temp/project.csproj"
+                Project = "c:/temp/project.csproj"
             });
 
             // Act

@@ -7,9 +7,7 @@ namespace Dash.Application
     {
         public bool Verbose { get; set; }
 
-        public string WorkingDirectory { get; set; } = ".";
-
-        public string? ProjectFile { get; set; }
+        public string? Project { get; set; }
 
         public string? InputFile { get; set; }
 

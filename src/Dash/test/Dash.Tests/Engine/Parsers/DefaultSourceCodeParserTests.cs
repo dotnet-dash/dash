@@ -4,10 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Dash.Common;
 using Dash.Engine.Parsers;
 using Dash.Exceptions;
 using Dash.Nodes;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine.Parsers
@@ -18,7 +20,9 @@ namespace Dash.Tests.Engine.Parsers
 
         public DefaultSourceCodeParserTests()
         {
-            _sut = new DefaultSourceCodeParser();
+            var fileService = Substitute.For<IFileService>();
+            fileService.AbsoluteWorkingDirectory.Returns("c:/foo");
+            _sut = new DefaultSourceCodeParser(fileService);
         }
 
         [Fact]
@@ -59,7 +63,7 @@ namespace Dash.Tests.Engine.Parsers
                 second =>
                 {
                     second.Template.Should().Be("file:///relative/MyTemplates/Poco");
-                    second.Output.Should().Be(".");
+                    second.Output.Should().Be("c:/foo");
                 }
             );
         }

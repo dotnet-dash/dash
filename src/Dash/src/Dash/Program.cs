@@ -15,18 +15,16 @@ namespace Dash
 
         /// <summary></summary>
         /// <param name="file">The Dash model file.</param>
-        /// <param name="projectFile">The .csproj file. If unspecified, Dash will automatically try to find the .csproj.</param>
-        /// <param name="workingDir">Used as the base path for relative paths defined inside your Model file</param>
+        /// <param name="project">The .csproj file. If unspecified, Dash will automatically try to find the .csproj inside the current working directory.</param>
         /// <param name="verbose">Show verbose output</param>
         [ExcludeFromCodeCoverage]
-        public static async Task Main(string? file, string? projectFile, string workingDir = ".", bool verbose = false)
+        public static async Task Main(string? file, string? project, bool verbose = false)
         {
             await new Program(new Startup())
                 .Run(new DashOptions
                 {
                     InputFile = file,
-                    ProjectFile = projectFile,
-                    WorkingDirectory = workingDir,
+                    Project = project,
                     Verbose = verbose,
                 });
         }

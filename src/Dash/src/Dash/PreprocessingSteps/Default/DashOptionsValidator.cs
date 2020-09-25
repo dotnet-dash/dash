@@ -39,9 +39,9 @@ namespace Dash.PreprocessingSteps.Default
                 return Task.FromResult(false);
             }
 
-            if (_dashOptions.ProjectFile != null && !_fileSystem.File.Exists(_dashOptions.ProjectFile))
+            if (_dashOptions.Project != null && !_fileSystem.File.Exists(_dashOptions.Project))
             {
-                _console.Error($"Could not find the .csproj file '{_dashOptions.ProjectFile}'.");
+                _console.Error($"Could not find the .csproj file '{_dashOptions.Project}'.");
                 return Task.FromResult(false);
             }
 

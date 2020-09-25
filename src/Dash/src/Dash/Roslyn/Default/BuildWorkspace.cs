@@ -38,8 +38,8 @@ namespace Dash.Roslyn.Default
         {
             _workspace.CloseSolution();
 
-            _console.Trace($"Opening project file '{_options.ProjectFile}'");
-            var project = await _workspace.OpenProjectAsync(_options.ProjectFile!);
+            _console.Trace($"Opening project file '{_options.Project}'");
+            var project = await _workspace.OpenProjectAsync(_options.Project!);
             if (project == null)
             {
                 _errorRepository.Add("Unable to open project file");

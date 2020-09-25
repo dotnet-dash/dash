@@ -31,7 +31,7 @@ namespace Dash.Tests.Engine.Visitors
             // Arrange
             _uriResourceRepository.Exists(new Uri("file://localhost/foo/bar.csv")).Returns(true);
 
-            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
+            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -45,7 +45,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_HttpResourceNotFoundInRepository_ShouldDownload()
         {
             // Arrange
-            var node = new UriNode(new Uri("https://foo/bar.csv"), true);
+            var node = UriNode.ForFileOutput(new Uri("https://foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -58,7 +58,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_IsFile_ShouldNotDownload()
         {
             // Arrange
-            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
+            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -71,7 +71,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_IsFile_ShouldAddToRepository()
         {
             // Arrange
-            var node = new UriNode(new Uri("file://localhost/foo/bar.csv"), true);
+            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -89,7 +89,7 @@ namespace Dash.Tests.Engine.Visitors
             var content = new byte[] { };
             _httpUriDownloader.Download(new Uri(uri)).Returns((true, "bar.csv", content));
 
-            var node = new UriNode(new Uri(uri), true);
+            var node = UriNode.ForExternalResources(new Uri(uri));
 
             // Act
             await _sut.Visit(node);
@@ -104,7 +104,7 @@ namespace Dash.Tests.Engine.Visitors
             // Arrange
             _httpUriDownloader.Download(new Uri("https://foo/bar.csv")).Returns((false, null, null));
 
-            var node = new UriNode(new Uri("https://foo/bar.csv"), true);
+            var node = UriNode.ForExternalResources(new Uri("https://foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);

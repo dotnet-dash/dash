@@ -17,50 +17,42 @@ namespace Dash.Tests.PreprocessingSteps
     {
         private readonly MockFileSystem _mockFileSystem;
         private readonly IConsole _console;
+        private readonly OptionsWrapper<DashOptions> _options;
+        private readonly FindProjectFile _sut;
 
         public FindProjectFileTests()
         {
             _mockFileSystem = new MockFileSystem(null, "c:/temp");
             _mockFileSystem.AddFile("c:/temp/project.csproj", new MockFileData(string.Empty));
-
+            _options = new OptionsWrapper<DashOptions>(new DashOptions
+            {
+                Project = null,
+            });
             _console = Substitute.For<IConsole>();
+            _sut = new FindProjectFile(_options, _console, _mockFileSystem);
         }
 
         [Fact]
-        public async Task Process_NoProjectFileFound_ShouldOutputErrorToConsole()
+        public async Task Process_NoProjectFoundInWorkingDirectory_ShouldOutputErrorToConsole()
         {
             // Arrange
-            var options = new OptionsWrapper<DashOptions>(new DashOptions
-            {
-                ProjectFile = null,
-                WorkingDirectory = "c:/",
-            });
-
-            var sut = new FindProjectFile(options, _console, _mockFileSystem);
+            _mockFileSystem.Directory.SetCurrentDirectory("c:/");
 
             // Act
-            await sut.Process();
+            await _sut.Process();
 
             // Assert
             _console.Received(1).Error("No .csproj file found in working directory.");
         }
 
         [Fact]
-        public async Task Process_NoProjectFileFound_ShouldReturnFalse()
+        public async Task Process_NoProjectFoundInWorkingDirectory_ShouldReturnFalse()
         {
             // Arrange
-            _mockFileSystem.AddDirectory("c:/temp/xxx");
-
-            var options = new OptionsWrapper<DashOptions>(new DashOptions
-            {
-                ProjectFile = null,
-                WorkingDirectory = "c:/temp/xxx",
-            });
-
-            var sut = new FindProjectFile(options, _console, _mockFileSystem);
+            _mockFileSystem.Directory.SetCurrentDirectory("c:/");
 
             // Act
-            var result = await sut.Process();
+            var result = await _sut.Process();
 
             // Assert
             result.Should().BeFalse();
@@ -69,19 +61,11 @@ namespace Dash.Tests.PreprocessingSteps
         [Fact]
         public void Process_ProjectFileFound_ShouldUpdateDashOptionsProjectFileProperty()
         {
-            // Arrange
-            var dashOptions = new DashOptions
-            {
-                ProjectFile = null,
-            };
-
-            var sut = new FindProjectFile(new OptionsWrapper<DashOptions>(dashOptions), Substitute.For<IConsole>(), _mockFileSystem);
-
             // Act
-            sut.Process();
+            _sut.Process();
 
             // Assert
-            dashOptions.ProjectFile.Should().NotBeNull().And.Be(@"c:\temp\project.csproj");
+            _options.Value.Project.Should().NotBeNull().And.Be(@"c:\temp\project.csproj");
         }
 
         [Fact]
@@ -90,33 +74,21 @@ namespace Dash.Tests.PreprocessingSteps
             // Arrange
             _mockFileSystem.AddFile("c:/temp/project2.csproj", new MockFileData(string.Empty));
 
-            var options = new OptionsWrapper<DashOptions>(new DashOptions
-            {
-                ProjectFile = null,
-            });
-
-            var sut = new FindProjectFile(options, _console, _mockFileSystem);
-
             // Act
-            sut.Process();
+            _sut.Process();
 
             // Assert
-            _console.Received(1).Error("Multiple .csproj files found in working directory.");
+            _console.Received(1).Error("Multiple .csproj files found in working directory. Please specify the project explicitly.");
         }
 
         [Fact]
-        public async Task Process_ProjectFileIsNull_ShouldReturnTrue()
+        public async Task Process_ProjectFileIsNotNull_ShouldReturnTrue()
         {
             // Arrange
-            var options = new OptionsWrapper<DashOptions>(new DashOptions
-            {
-                ProjectFile = "c:/foo.csproj",
-            });
-
-            var sut = new FindProjectFile(options, _console, _mockFileSystem);
+            _options.Value.Project = "c:/foo.csproj";
 
             // Act
-            var result = await sut.Process();
+            var result = await _sut.Process();
 
             // Assert
             result.Should().BeTrue();

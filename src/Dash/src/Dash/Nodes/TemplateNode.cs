@@ -11,7 +11,7 @@ namespace Dash.Nodes
     {
         public string? Template { get; set; } = null;
 
-        public string Output { get; set; } = ".";
+        public string? Output { get; set; } = null;
 
         public UriNode? TemplateUriNode
         {
@@ -20,7 +20,7 @@ namespace Dash.Nodes
                 var uri = Template?.ToUri();
                 return uri == null
                     ? null
-                    : new UriNode(uri, true);
+                    : UriNode.ForInternalExternalResources(uri);
             }
         }
 
@@ -28,10 +28,10 @@ namespace Dash.Nodes
         {
             get
             {
-                var uri = Output.ToUri();
+                var uri = Output?.ToUri();
                 return uri == null
                     ? null
-                    : new UriNode(uri, false);
+                    : UriNode.ForFileOutput(uri);
             }
         }
 

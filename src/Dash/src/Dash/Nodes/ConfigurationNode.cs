@@ -15,7 +15,7 @@ namespace Dash.Nodes
 
         public IList<TemplateNode> Templates { get; set; } = new List<TemplateNode>();
 
-        public ConfigurationNode AddTemplateNode(string template, string? output)
+        public ConfigurationNode AddTemplateNode(string template, string output)
         {
             var node = new TemplateNode
             {
@@ -29,11 +29,6 @@ namespace Dash.Nodes
 
             Templates.Add(node);
             return this;
-        }
-
-        public ConfigurationNode AddTemplateNode(string template)
-        {
-            return AddTemplateNode(template, null);
         }
 
         public override async Task Accept(INodeVisitor visitor)
