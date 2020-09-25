@@ -3,7 +3,7 @@ using Dash.Application;
 using Dash.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace Dash.Common
+namespace Dash.Common.Default
 {
     public class FileService : IFileService
     {
