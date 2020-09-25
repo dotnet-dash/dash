@@ -15,13 +15,13 @@ using Xunit;
 
 namespace Dash.Tests.Engine.Visitors
 {
-    public class ValidateUriVisitorTests
+    public class ValidateUriExistsVisitorTests
     {
         private readonly ErrorRepository _errorRepository = new ErrorRepository();
         private readonly MockFileSystem _mockFileSystem = new MockFileSystem();
         private readonly ValidateUriExistsVisitor _sut;
 
-        public ValidateUriVisitorTests()
+        public ValidateUriExistsVisitorTests()
         {
             _sut = new ValidateUriExistsVisitor(Substitute.For<IConsole>(),
                 _mockFileSystem,
