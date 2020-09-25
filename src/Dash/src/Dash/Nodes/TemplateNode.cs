@@ -31,7 +31,7 @@ namespace Dash.Nodes
                 var uri = Output?.ToUri();
                 return uri == null
                     ? null
-                    : UriNode.ForFileOutput(uri);
+                    : UriNode.ForOutputFile(uri);
             }
         }
 

@@ -31,7 +31,7 @@ namespace Dash.Tests.Engine.Visitors
             // Arrange
             _uriResourceRepository.Exists(new Uri("file://localhost/foo/bar.csv")).Returns(true);
 
-            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
+            var node = UriNode.ForOutputFile(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -45,7 +45,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_HttpResourceNotFoundInRepository_ShouldDownload()
         {
             // Arrange
-            var node = UriNode.ForFileOutput(new Uri("https://foo/bar.csv"));
+            var node = UriNode.ForExternalResources(new Uri("https://foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -58,7 +58,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_IsFile_ShouldNotDownload()
         {
             // Arrange
-            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
+            var node = UriNode.ForOutputFile(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
@@ -68,16 +68,29 @@ namespace Dash.Tests.Engine.Visitors
         }
 
         [Fact]
-        public async Task Visit_UriNode_IsFile_ShouldAddToRepository()
+        public async Task Visit_UriNode_IsExistingFile_ShouldAddToRepository()
         {
             // Arrange
-            var node = UriNode.ForFileOutput(new Uri("file://localhost/foo/bar.csv"));
+            var node = UriNode.ForExistingFile(new Uri("file://localhost/foo/bar.csv"));
 
             // Act
             await _sut.Visit(node);
 
             // Assert
             await _uriResourceRepository.Received(1).Add(new Uri("file://localhost/foo/bar.csv"));
+        }
+
+        [Fact]
+        public async Task Visit_UriNode_IsOutputFile_ShouldNotAddToRepository()
+        {
+            // Arrange
+            var node = UriNode.ForOutputFile(new Uri("file://localhost/foo/bar.csv"));
+
+            // Act
+            await _sut.Visit(node);
+
+            // Assert
+            await _uriResourceRepository.DidNotReceive().Add(Arg.Any<Uri>());
         }
 
         [Theory]

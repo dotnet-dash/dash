@@ -61,7 +61,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_FileNotExpectedToExist_ShouldNotAddErrorToRepository()
         {
             // Arrange
-            var uriNode = UriNode.ForFileOutput(new Uri("file:///c:/foo.txt"));
+            var uriNode = UriNode.ForOutputFile(new Uri("file:///c:/foo.txt"));
 
             // Act
             await _sut.Visit(uriNode);
@@ -74,7 +74,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_UriNode_UnsupportedSchemeFound_ShouldNotAddErrorToRepository()
         {
             // Arrange
-            var uriNode = UriNode.ForFileOutput(new Uri("https://foo"));
+            var uriNode = UriNode.ForOutputFile(new Uri("https://foo"));
 
             // Act
             await _sut.Visit(uriNode);

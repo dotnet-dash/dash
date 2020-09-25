@@ -15,7 +15,7 @@ namespace Dash.Nodes
             Uri.UriSchemeFile
         });
 
-        public static UriNode ForFileOutput(Uri uri) => new UriNode(uri, false, new []
+        public static UriNode ForOutputFile(Uri uri) => new UriNode(uri, false, new []
         {
             Uri.UriSchemeFile
         });
