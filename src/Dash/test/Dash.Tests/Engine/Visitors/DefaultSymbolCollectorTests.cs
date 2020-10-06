@@ -2,12 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System.Threading.Tasks;
-using Dash.Common;
 using Dash.Engine;
-using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
-using FluentAssertions;
+using FluentArrange.NSubstitute;
 using NSubstitute;
 using Xunit;
 
@@ -15,43 +13,27 @@ namespace Dash.Tests.Engine.Visitors
 {
     public class DefaultSymbolCollectorTests
     {
-        private readonly ISymbolRepository _symbolRepository = new DefaultSymbolRepository();
-        private readonly DefaultSymbolCollector _sut;
-
-        public DefaultSymbolCollectorTests()
-        {
-            _sut = new DefaultSymbolCollector(Substitute.For<IConsole>(), _symbolRepository);
-        }
-
         [Fact]
-        public void GetEntityNames_NoVisits_ShouldReturnEmptyCollection()
-        {
-            // Act
-            var result = _symbolRepository.GetEntityNames();
-
-            // Assert
-            result.Count.Should().Be(0);
-        }
-
-        [Fact]
-        public async Task Visit_EntityDeclarationNode_ShouldAddSymbolsToRepository()
+        public async Task Visit_EntityDeclarationNode_ShouldCallSymbolRepositoryAddEntity()
         {
             // Arrange
+            var context = Arrange.For<DefaultSymbolCollector>();
+
             var modelNode = new ModelNode();
 
             // Act
-            await _sut.Visit(new EntityDeclarationNode(modelNode, "Foo"));
+            await context.Sut.Visit(new EntityDeclarationNode(modelNode, "Foo"));
 
             // Assert
-            _symbolRepository
-                .GetEntityNames()
-                .Should().SatisfyRespectively(first => first.Should().Be("Foo"));
+            context.Dependency<ISymbolRepository>().Received(1).AddEntity("Foo");
         }
 
         [Fact]
-        public async Task Visit_ModelNode_ShouldAddAllSymbolsToRepository()
+        public async Task Visit_ModelNode_ShouldCallSymbolRepositoryAddEntityAttribute()
         {
             // Arrange
+            var context = Arrange.For<DefaultSymbolCollector>();
+
             var modelNode = new ModelNode();
             modelNode
                 .AddEntityDeclarationNode("Order")
@@ -62,16 +44,11 @@ namespace Dash.Tests.Engine.Visitors
                 .AddAttributeDeclaration("Quantity", "Int");
 
             // Act
-            await _sut.Visit(modelNode);
+            await context.Sut.Visit(modelNode);
 
             // Assert
-            _symbolRepository
-                .GetAttributeNames("Order")
-                .Should().SatisfyRespectively(first => first.Should().Be("Description"));
-
-            _symbolRepository
-                .GetAttributeNames("OrderLine")
-                .Should().SatisfyRespectively(first => first.Should().Be("Quantity"));
+            context.Dependency<ISymbolRepository>().Received(1).AddEntityAttribute("Order", "Description");
+            context.Dependency<ISymbolRepository>().Received(1).AddEntityAttribute("OrderLine", "Quantity");
         }
     }
 }

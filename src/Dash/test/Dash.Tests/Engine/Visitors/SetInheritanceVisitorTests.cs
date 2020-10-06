@@ -2,9 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System.Threading.Tasks;
-using Dash.Common;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
+using FluentArrange.NSubstitute;
 using FluentAssertions;
 using Xunit;
 
@@ -16,9 +16,9 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_ModelNode_ShouldHaveSetDefaultInheritanceIfNotDeclared()
         {
             // Arrange
-            var sut = new SetInheritanceVisitor(NSubstitute.Substitute.For<IConsole>());
+            var sut = Arrange.Sut<SetInheritanceVisitor>();
 
-            ModelNode modelNode = new ModelNode();
+            var modelNode = new ModelNode();
             modelNode.AddEntityDeclarationNode("Order");
             modelNode.AddEntityDeclarationNode("OrderLine").AddInheritanceDeclaration("SomeOtherBase");
 
@@ -30,20 +30,12 @@ namespace Dash.Tests.Engine.Visitors
                 first =>
                 {
                     first.Name.Should().Be("Order");
-                    first.InheritanceDeclarationNodes.Should().SatisfyRespectively(
-                        a =>
-                        {
-                            a.InheritedEntity.Should().Be("Base");
-                        });
+                    first.InheritanceDeclarationNodes.Should().SatisfyRespectively(a => a.InheritedEntity.Should().Be("Base"));
                 },
                 second =>
                 {
                     second.Name.Should().Be("OrderLine");
-                    second.InheritanceDeclarationNodes.Should().SatisfyRespectively(
-                        a =>
-                        {
-                            a.InheritedEntity.Should().Be("SomeOtherBase");
-                        });
+                    second.InheritanceDeclarationNodes.Should().SatisfyRespectively(a => a.InheritedEntity.Should().Be("SomeOtherBase"));
                 },
                 third =>
                 {
