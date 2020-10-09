@@ -53,7 +53,7 @@
     <PackageReference Include="Scriban" Version="2.1.4" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20427.1" />
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20427.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.2.1" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.2.2" />
   </ItemGroup>
 
   <ItemGroup>
