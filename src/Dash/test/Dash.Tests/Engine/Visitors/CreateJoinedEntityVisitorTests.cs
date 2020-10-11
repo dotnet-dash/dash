@@ -3,11 +3,10 @@
 
 using System.Linq;
 using System.Threading.Tasks;
-using Dash.Common;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
+using FluentArrange.NSubstitute;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 
 namespace Dash.Tests.Engine.Visitors
@@ -18,7 +17,7 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_HasAndBelongsToManyDeclarationNode()
         {
             // Arrange
-            var sut = new CreateJoinedEntityVisitor(Substitute.For<IConsole>());
+            var sut = Arrange.Sut<CreateJoinedEntityVisitor>();
 
             var modelNode = new ModelNode();
             HasAndBelongsToManyDeclarationNode node = modelNode
