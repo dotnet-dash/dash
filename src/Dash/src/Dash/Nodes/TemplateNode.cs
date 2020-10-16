@@ -9,9 +9,11 @@ namespace Dash.Nodes
 {
     public class TemplateNode : AstNode
     {
-        public string? Template { get; set; } = null;
+        public string? Template { get; set; }
 
-        public string? Output { get; set; } = null;
+        public string? Output { get; set; }
+
+        public bool OneClassPerFile { get; set; }
 
         public UriNode? TemplateUriNode
         {

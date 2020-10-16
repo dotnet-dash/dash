@@ -136,5 +136,18 @@ namespace Dash.Tests.Extensions
             // Assert
             result.Should().Be(expectedValue);
         }
+
+        [Theory]
+        [InlineData("autogen")]
+        [InlineData(".autogen")]
+        [InlineData(".autogen.")]
+        public void AppendFilenameSuffix(string suffix)
+        {
+            // Act
+            var result = "foo".AppendFilenameSuffix(suffix);
+
+            // Assert
+            result.Should().Be("foo.autogen");
+        }
     }
 }

@@ -2,14 +2,17 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Threading.Tasks;
 using Dash.Application;
-using Dash.Common;
 using Dash.Engine;
 using Dash.Engine.Generator;
+using Dash.Engine.Models;
 using Dash.Nodes;
+using FluentArrange.NSubstitute;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
@@ -18,91 +21,85 @@ namespace Dash.Tests.Engine.Generator
 {
     public class DefaultGeneratorTests
     {
-        private readonly IUriResourceRepository _uriResourceRepository = Substitute.For<IUriResourceRepository>();
-        private readonly IBuildOutputRepository _buildOutputRepository = Substitute.For<IBuildOutputRepository>();
-        private readonly ITemplateTransformer _templateTransformer = Substitute.For<ITemplateTransformer>();
-        private readonly IFileSystem _mockFileSystem = new MockFileSystem();
-        private readonly DefaultGenerator _sut;
-
-        public DefaultGeneratorTests()
-        {
-            _sut = new DefaultGenerator(
-                _uriResourceRepository,
-                Substitute.For<IConsole>(),
-                _buildOutputRepository,
-                _templateTransformer,
-                new OptionsWrapper<DashOptions>(new DashOptions()),
-                _mockFileSystem);
-        }
-
         [Fact]
         public async Task Generate_HappyFlow_ShouldHaveWrittenFileToFileSystem()
         {
             // Arrange
-            _uriResourceRepository.GetContents(new Uri("dash://foo")).Returns("foo template");
-            _uriResourceRepository.GetContents(new Uri("dash://bar")).Returns("bar template");
-
-            _templateTransformer.Transform("foo template").Returns("foo template transformed");
-            _templateTransformer.Transform("bar template").Returns("bar template transformed");
+            var context = Arrange.For<DefaultGenerator>()
+                .WithDependency<IUriResourceRepository>(d =>
+                {
+                    d.GetContents(new Uri("dash://foo")).Returns("foo template");
+                    d.GetContents(new Uri("dash://bar")).Returns("bar template");
+                })
+                .WithDependency<ITemplateTransformer>(d =>
+                {
+                    d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed");
+                    d.Transform("bar template", Arg.Any<IEnumerable<EntityModel>>()).Returns("bar template transformed");
+                })
+                .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()))
+                .WithDependency<IFileSystem>(new MockFileSystem());
 
             var configuration = new ConfigurationNode()
                 .AddTemplateNode("dash://foo", @"c:\foo\")
-                .AddTemplateNode("dash://bar", @"c:\bar\sub\");
-
-            configuration.Header = null;
+                .AddTemplateNode("dash://bar", @"c:\bar\sub\")
+                .WithNullHeader();
 
             var sourceCodeDocument = new SourceCodeNode(configuration, new ModelNode());
 
             // Act
-            await _sut.Generate(sourceCodeDocument);
+            await context.Sut.Generate(sourceCodeDocument);
 
             // Assert
-            _buildOutputRepository.Received(1).Add(@"c:/foo/foo.generated.cs", "foo template transformed");
-            _buildOutputRepository.Received(1).Add(@"c:/bar/sub/bar.generated.cs", "bar template transformed");
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(@"c:/foo/foo.generated.cs", "foo template transformed");
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(@"c:/bar/sub/bar.generated.cs", "bar template transformed");
         }
 
         [Fact]
         public async Task Generate_RelativePaths_ShouldWriteTo()
         {
             // Arrange
-            _uriResourceRepository.GetContents(new Uri("dash://foo")).Returns("foo template");
-            _templateTransformer.Transform("foo template").Returns("foo template transformed");
-            _mockFileSystem.Directory.SetCurrentDirectory("c:/output/");
+            var context = Arrange.For<DefaultGenerator>()
+                .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo/")).Returns("foo template"))
+                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed"))
+                .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
+                .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 
             var configuration = new ConfigurationNode()
-                .AddTemplateNode("dash://foo", ".");
-            configuration.Header = null;
+                .AddTemplateNode("dash://foo", ".")
+                .WithNullHeader();
 
             var sourceCodeDocument = new SourceCodeNode(configuration, new ModelNode());
 
             // Act
-            await _sut.Generate(sourceCodeDocument);
+            await context.Sut.Generate(sourceCodeDocument);
 
             // Assert
-            _buildOutputRepository.Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
-            _buildOutputRepository.Received(1).Add(@"c:/output/foo.generated.cs", "foo template transformed");
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(@"c:/output/foo.generated.cs", "foo template transformed");
         }
 
         [Fact]
         public async Task Generate_HeaderDefined_ShouldUseDefinedHeader()
         {
             // Arrange
-            _uriResourceRepository.GetContents(new Uri("dash://foo")).Returns("foo template");
-            _templateTransformer.Transform("foo template").Returns("foo template transformed");
-            _mockFileSystem.Directory.SetCurrentDirectory("c:/output/");
+            var context = Arrange.For<DefaultGenerator>()
+                .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo/")).Returns("foo template"))
+                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed"))
+                .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
+                .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 
             var configuration = new ConfigurationNode()
-                .AddTemplateNode("dash://foo", ".");
-            configuration.Header = "Header";
+                .AddTemplateNode("dash://foo", ".")
+                .WithHeader("Header");
 
             var sourceCodeDocument = new SourceCodeNode(configuration, new ModelNode());
 
             // Act
-            await _sut.Generate(sourceCodeDocument);
+            await context.Sut.Generate(sourceCodeDocument);
 
             // Assert
-            _buildOutputRepository.Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
-            _buildOutputRepository.Received(1).Add(@"c:/output/foo.generated.cs", "// Header" + Environment.NewLine + Environment.NewLine + "foo template transformed");
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(@"c:/output/foo.generated.cs", "// Header" + Environment.NewLine + Environment.NewLine + "foo template transformed");
         }
 
         [Theory]
@@ -113,24 +110,26 @@ namespace Dash.Tests.Engine.Generator
         public async Task Generate_AutogenSuffixDefined_ShouldUseAutogenSuffix(string autogenSuffix)
         {
             // Arrange
-            _uriResourceRepository.GetContents(new Uri("dash://foo")).Returns("foo template");
-            _templateTransformer.Transform("foo template").Returns("foo template transformed");
-            _mockFileSystem.Directory.SetCurrentDirectory("c:/output/");
+            var context = Arrange.For<DefaultGenerator>()
+                .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo")).Returns("foo template"))
+                .WithDependency<IModelRepository>(d => d.EntityModels.Returns(new[] {new EntityModel("Foo")}))
+                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Is<IEnumerable<EntityModel>>(e => e.Single().Name == "Foo")).Returns("foo template transformed"))
+                .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
+                .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 
             var configuration = new ConfigurationNode()
-                .AddTemplateNode("dash://foo", ".");
-            configuration.Header = null;
-            configuration.AutogenSuffix = autogenSuffix;
+                .AddTemplateNode("dash://foo", ".")
+                .WithNullHeader()
+                .WithAutogenSuffix(autogenSuffix);
 
             var sourceCodeDocument = new SourceCodeNode(configuration, new ModelNode());
 
             // Act
-            await _sut.Generate(sourceCodeDocument);
+            await context.Sut.Generate(sourceCodeDocument);
 
             // Assert
-            _buildOutputRepository.Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
-            _buildOutputRepository.Received(1).Add(@"c:/output/foo.autogen.cs", "foo template transformed");
-
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(Arg.Any<string>(), Arg.Any<string>());
+            context.Dependency<IBuildOutputRepository>().Received(1).Add(@"c:/output/foo.autogen.cs", "foo template transformed");
         }
     }
 }
