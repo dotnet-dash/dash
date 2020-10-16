@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System;
 using System.Threading.Tasks;
 using Dash.Common;
 using Dash.Extensions;
@@ -24,15 +25,12 @@ namespace Dash.Engine.Visitors
 
         public override async Task Visit(UriNode node)
         {
-            if (!await _uriResourceRepository.Exists(node.Uri))
+            if (node.UriMustExist && !await _uriResourceRepository.Exists(node.Uri))
             {
-                if (node.Uri.Scheme.IsSame("https") || node.Uri.Scheme.IsSame("http"))
+                if (node.Uri.Scheme.IsSame(Uri.UriSchemeHttps) ||
+                    node.Uri.Scheme.IsSame(Uri.UriSchemeHttp))
                 {
-                    var downloadResult = await _httpUriDownloader.Download(node.Uri);
-                    if (downloadResult.Success)
-                    {
-                        await _uriResourceRepository.Add(node.Uri, downloadResult.FileName!, downloadResult.Content!);
-                    }
+                    await Download(node);
                 }
                 else
                 {
@@ -41,6 +39,15 @@ namespace Dash.Engine.Visitors
             }
 
             await base.Visit(node);
+        }
+
+        private async Task Download(UriNode node)
+        {
+            var downloadResult = await _httpUriDownloader.Download(node.Uri);
+            if (downloadResult.Success)
+            {
+                await _uriResourceRepository.Add(node.Uri, downloadResult.FileName!, downloadResult.Content!);
+            }
         }
     }
 }

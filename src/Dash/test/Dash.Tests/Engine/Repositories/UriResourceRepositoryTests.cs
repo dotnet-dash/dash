@@ -6,8 +6,8 @@ using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Threading.Tasks;
 using Dash.Common;
-using Dash.Engine;
 using Dash.Engine.Repositories;
+using FluentArrange.NSubstitute;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -16,68 +16,64 @@ namespace Dash.Tests.Engine.Repositories
 {
     public class UriResourceRepositoryTests
     {
-        private readonly IFileSystem _fileSystem = new MockFileSystem();
-        private readonly ISessionService _sessionService = Substitute.For<ISessionService>();
-        private readonly UriResourceRepository _sut;
-
-        public UriResourceRepositoryTests()
-        {
-            _sut = new UriResourceRepository(
-                Substitute.For<IConsole>(),
-                _fileSystem,
-                _sessionService,
-                Substitute.For<IEmbeddedTemplateProvider>());
-        }
-
         [Theory]
         [InlineData("dash://embedded", "dash://embedded/")]
         [InlineData("file://c:/foo/bar.csv", "file:///c:/foo/bar.csv")]
         public async Task Add_UriResourceNotAdded_ShouldAdd(string uri, string expectedResult)
         {
+            // Arrange
+            var context = Arrange.For<UriResourceRepository>()
+                .WithDependency<IFileSystem>(new MockFileSystem());
+
             // Act
-            await _sut.Add(new Uri(uri));
+            await context.Sut.Add(new Uri(uri));
 
             // Assert
-            var count = await _sut.Count();
-            count.Should().Be(1);
-
-            var result = await _sut.Get(new Uri(uri));
-            result.Should().Be(expectedResult);
+            (await context.Sut.Count()).Should().Be(1);
+            (await context.Sut.Get(new Uri(uri))).Should().Be(expectedResult);
         }
 
         [Fact]
         public async Task Add_UriResourceAlreadyAdded_ShouldNotAdd()
         {
             // Arrange
-            await _sut.Add(new Uri("file://c:/foo/bar.csv"));
+            var context = Arrange.For<UriResourceRepository>()
+                .WithDependency<IFileSystem>(new MockFileSystem());
+
+            await context.Sut.Add(new Uri("file://c:/foo/bar.csv"));
 
             // Act
-            await _sut.Add(new Uri("file://c:/foo/bar.csv"));
+            await context.Sut.Add(new Uri("file://c:/foo/bar.csv"));
 
             // Assert
-            var count = await _sut.Count();
-            count.Should().Be(1);
+            (await context.Sut.Count()).Should().Be(1);
         }
 
         [Fact]
         public async Task Add_UriFileNameContents_ShouldAddAndWriteToFile()
         {
             // Arrange
-            var bytes = new byte[] {1};
-            _sessionService.GetTempPath("bar.csv").Returns("c:/temp/bar.csv");
+            var context = Arrange.For<UriResourceRepository>()
+                .WithDependency<ISessionService>(d => d.GetTempPath("bar.csv").Returns("c:/temp/bar.csv"))
+                .WithDependency<IFileSystem>(new MockFileSystem());
+
+            var bytes = new byte[] { 1 };
 
             // Act
-            await _sut.Add(new Uri("https://foo/bar.csv"), "bar.csv", bytes);
+            await context.Sut.Add(new Uri("https://foo/bar.csv"), "bar.csv", bytes);
 
             // Assert
-            _fileSystem.File.Exists("c:/temp/bar.csv").Should().BeTrue();
+            context.Dependency<IFileSystem>().File.Exists("c:/temp/bar.csv").Should().BeTrue();
         }
 
         [Fact]
         public void Get_UriResourceDoesNotExist_ShouldThrowInvalidOperationException()
         {
+            // Arrange
+            var sut = Arrange.Sut<UriResourceRepository>();
+
             // Act
-            Action act = () => _sut.Get(new Uri("file:///c:/foo/bar.csv"));
+            Action act = () => sut.Get(new Uri("file:///c:/foo/bar.csv"));
 
             // Assert
             act.Should().Throw<InvalidOperationException>()
@@ -88,10 +84,13 @@ namespace Dash.Tests.Engine.Repositories
         public async Task Get_UriResourceDoesExist_ShouldReturnValue()
         {
             // Arrange
-            await _sut.Add(new Uri("file:///foo.csv"));
+            var sut = Arrange.Sut<UriResourceRepository>(async s =>
+            {
+                await s.Add(new Uri("file:///foo.csv"));
+            });
 
             // Act
-            var result = await _sut.Get(new Uri("file:///foo.csv"));
+            var result = await sut.Get(new Uri("file:///foo.csv"));
 
             // Assert
             result.Should().NotBeNull();

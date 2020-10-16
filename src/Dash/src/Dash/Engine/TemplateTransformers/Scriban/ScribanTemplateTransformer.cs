@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Dash.Application;
+using Dash.Engine.Models;
 using Dash.Extensions;
 using Microsoft.Extensions.Options;
 using Scriban;
@@ -14,16 +15,14 @@ namespace Dash.Engine.TemplateTransformers.Scriban
 {
     public class ScribanTemplateTransformer : ITemplateTransformer
     {
-        private readonly IModelRepository _modelRepository;
         private readonly DashOptions _options;
 
         public ScribanTemplateTransformer(IModelRepository modelRepository, IOptions<DashOptions> options)
         {
-            _modelRepository = modelRepository;
             _options = options.Value;
         }
 
-        public async Task<string> Transform(string templateText)
+        public async Task<string> Transform(string templateText, IEnumerable<EntityModel> entities)
         {
             var template = Template.Parse(templateText);
 
@@ -31,7 +30,7 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             {
                 {"namespace", _options.DefaultNamespace!},
                 {"modelName", Path.GetFileNameWithoutExtension(_options.InputFile!).StartWithCapitalLetter()},
-                {"entities", _modelRepository.EntityModels.Where(e => !e.IsAbstract)}
+                {"entities", entities}
             };
             scriptObject.Import(typeof(GetCSharpLiteralFormatter));
 

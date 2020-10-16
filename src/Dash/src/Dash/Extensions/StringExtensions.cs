@@ -61,5 +61,15 @@ namespace Dash.Extensions
 
             return s.First().ToString().ToUpper() + s.Substring(1);
         }
+
+        public static string AppendFilenameSuffix(this string s, string suffix)
+        {
+            if (!string.IsNullOrWhiteSpace(suffix))
+            {
+                return s + "." + suffix.Trim('.');
+            }
+
+            return s;
+        }
     }
 }

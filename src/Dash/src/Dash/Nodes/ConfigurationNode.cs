@@ -31,6 +31,24 @@ namespace Dash.Nodes
             return this;
         }
 
+        public ConfigurationNode WithHeader(string header)
+        {
+            Header = header;
+            return this;
+        }
+
+        public ConfigurationNode WithNullHeader()
+        {
+            Header = null;
+            return this;
+        }
+
+        public ConfigurationNode WithAutogenSuffix(string autogenSuffix)
+        {
+            AutogenSuffix = autogenSuffix;
+            return this;
+        }
+
         public override async Task Accept(INodeVisitor visitor)
         {
             await visitor.Visit(this);

@@ -31,20 +31,20 @@ namespace Dash.Tests.Engine.Nodes
         }
 
         [Fact]
-        public void ForFileOutput_SupportedSchemesShouldContainFileSchemeOnly()
+        public void ForOutputFile_SupportedSchemesShouldContainFileSchemeOnly()
         {
             // Act
-            var result = UriNode.ForFileOutput(new Uri("file://c:/foo.csv"));
+            var result = UriNode.ForOutputFile(new Uri("file://c:/foo.csv"));
 
             // Assert
             result.SupportedSchemes.Should().BeEquivalentTo("file");
         }
 
         [Fact]
-        public void ForFileOutput_UriMustExistShouldBeFalse()
+        public void ForOutputFile_UriMustExistShouldBeFalse()
         {
             // Act
-            var result = UriNode.ForFileOutput(new Uri("file://c:/foo.csv"));
+            var result = UriNode.ForOutputFile(new Uri("file://c:/foo.csv"));
 
             // Assert
             result.UriMustExist.Should().BeFalse();

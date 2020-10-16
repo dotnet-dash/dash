@@ -36,6 +36,36 @@ namespace Dash.Tests.Engine.Visitors
         }
 
         [Fact]
+        public async Task Visit_UriNode_SingleDot_HasErrorsShouldBeFalse()
+        {
+            // Arrange
+            var uriNode = UriNode.ForExistingFile(new Uri(".", UriKind.Relative));
+
+            // Act
+            await _sut.Visit(uriNode);
+
+            // Assert
+            _errorRepository.HasErrors().Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Visit_UriNode_ContainsUnsupportedScheme_ShouldHaveUpdatedErrorRepository()
+        {
+            // Arrange
+            var uriNode = UriNode.ForExistingFile(new Uri("https://foo"));
+
+            // Act
+            await _sut.Visit(uriNode);
+
+            // Assert
+            _errorRepository.GetErrors().Should().SatisfyRespectively(
+                first =>
+                {
+                    first.Should().Be("Unsupported scheme 'https' found in Uri 'https://foo/'. Supported schemes: file");
+                });
+        }
+
+        [Fact]
         public async Task Visit_ModelNode_ShouldHaveVisitedEntityDeclarationNodes()
         {
             // Arrange

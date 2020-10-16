@@ -128,7 +128,7 @@ namespace Dash.Engine.Visitors
             if (!node.SupportedSchemes.Contains(scheme, StringComparer.OrdinalIgnoreCase))
             {
                 var supported = string.Join(", ", node.SupportedSchemes);
-                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in Uri {node.Uri}. Supported schemes: {supported}");
+                _errorRepository.Add($"Unsupported scheme '{node.Uri.Scheme}' found in Uri '{node.Uri}'. Supported schemes: {supported}");
             }
 
             return base.Visit(node);
