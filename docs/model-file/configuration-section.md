@@ -70,7 +70,8 @@ Dash will use the referenced templates to generate code.
 ~~~ JSON
 {
     "Template": "dash://efpoco",
-    "Output": "./Poco"
+    "Output": "./Poco",
+    "OneClassPerFile": false
 }
 ~~~
 
@@ -87,6 +88,13 @@ The absolute output file location, or relative to the [working directory](to-do)
 **data type:** [`uri`](#uri)
 
 **default:** `.`
+
+### OneClassPerFile
+Specifies whether each entity should be persisted in its own file.
+
+**data type:** `boolean`
+
+**default:** `false`
 
 ### URI
 To reference Templates (and other types of [Resources](to-do)), you provide a value conform to the [Uniform Resource Identifier syntax](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier).
