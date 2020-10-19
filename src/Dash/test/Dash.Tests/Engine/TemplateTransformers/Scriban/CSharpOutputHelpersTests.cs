@@ -78,5 +78,20 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
             // Assert
             result.Should().Be(expectedOutput);
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetPropertyDefaultValueAssignment_AttributeWithBooleanDataType_ShouldReturnEmptyString(bool isNullable)
+        {
+            // Arrange
+            var attribute = new AttributeModel("foo", new BoolDataType(), "bool", isNullable, null);
+
+            // Act
+            var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
     }
 }

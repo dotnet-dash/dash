@@ -8,5 +8,6 @@ namespace Dash.Engine.DataTypes
         public string Name => "bool";
         public bool IsNumeric => false;
         public bool IsDateTime => false;
+        public bool IsBoolean => true;
     }
 }

@@ -8,6 +8,7 @@ namespace Dash.Engine.DataTypes
         public string Name => "int";
         public bool IsNumeric => true;
         public bool IsDateTime => false;
+        public bool IsBoolean => false;
 
         public static IntDataType Default => new IntDataType();
     }

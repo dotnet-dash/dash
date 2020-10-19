@@ -13,5 +13,7 @@ namespace Dash.Engine
         public bool IsNumeric { get; }
 
         public bool IsDateTime { get; }
+
+        bool IsBoolean { get; }
     }
 }

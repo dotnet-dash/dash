@@ -42,7 +42,8 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             else if (value is AttributeModel attribute)
             {
                 if (attribute.DashDataType.IsNumeric ||
-                    attribute.DashDataType.IsDateTime)
+                    attribute.DashDataType.IsDateTime ||
+                    attribute.DashDataType.IsBoolean)
                 {
                     return string.Empty;
                 }
