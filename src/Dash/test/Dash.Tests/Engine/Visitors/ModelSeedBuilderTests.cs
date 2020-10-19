@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dash.Common;
 using Dash.Engine;
+using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
@@ -128,13 +129,13 @@ namespace Dash.Tests.Engine.Visitors
         public EntityModel ArrangeEntityModel()
         {
             var entityModel = new EntityModel("Currency");
-            entityModel.CodeAttributes.Add(new AttributeModel("Id", "int", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyCode", "string", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyName", "string", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("NumericCode", "int", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("MinorUnit", "int", true, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("Description", "string", false, "Foo"));
-            entityModel.CodeAttributes.Add(new AttributeModel("Comments", "string", true, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "int", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyCode", new StringDataType(), "string", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyName", new StringDataType(), "string", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("NumericCode", new IntDataType(), "int", false, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("MinorUnit", new IntDataType(), "int", true, null));
+            entityModel.CodeAttributes.Add(new AttributeModel("Description", new StringDataType(), "string", false, "Foo"));
+            entityModel.CodeAttributes.Add(new AttributeModel("Comments", new StringDataType(), "string", true, null));
 
             return entityModel;
         }

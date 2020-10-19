@@ -17,7 +17,7 @@ namespace Dash.Engine.TemplateTransformers.Scriban
     {
         private readonly DashOptions _options;
 
-        public ScribanTemplateTransformer(IModelRepository modelRepository, IOptions<DashOptions> options)
+        public ScribanTemplateTransformer(IOptions<DashOptions> options)
         {
             _options = options.Value;
         }
@@ -32,7 +32,7 @@ namespace Dash.Engine.TemplateTransformers.Scriban
                 {"modelName", Path.GetFileNameWithoutExtension(_options.InputFile!).StartWithCapitalLetter()},
                 {"entities", entities}
             };
-            scriptObject.Import(typeof(GetCSharpLiteralFormatter));
+            scriptObject.Import(typeof(CSharpOutputHelpers));
 
             var context = new TemplateContext();
             context.PushGlobal(scriptObject);

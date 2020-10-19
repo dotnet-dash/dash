@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using FluentAssertions;
 using Xunit;
@@ -14,14 +15,14 @@ namespace Dash.Tests.Engine.Models
         {
             // Arrange
             var superEntity = new EntityModel("Base");
-            superEntity.CodeAttributes.Add(new AttributeModel("Id", "Guid", false, null));
-            superEntity.CodeAttributes.Add(new AttributeModel("Created", "DateTime", false, null));
-            superEntity.CodeAttributes.Add(new AttributeModel("Name", "String", false, null));
+            superEntity.CodeAttributes.Add(new AttributeModel("Id", new GuidDataType(), "Guid", false, null));
+            superEntity.CodeAttributes.Add(new AttributeModel("Created", new DateTimeDataType(), "DateTime", false, null));
+            superEntity.CodeAttributes.Add(new AttributeModel("Name", new StringDataType(), "String", false, null));
 
             var sut = new EntityModel("Person");
-            sut.CodeAttributes.Add(new AttributeModel("Name", "Unicode", false, null));
-            sut.CodeAttributes.Add(new AttributeModel("GivenName", "String", false, null));
-            sut.CodeAttributes.Add(new AttributeModel("Id", "Int", false, null));
+            sut.CodeAttributes.Add(new AttributeModel("Name", new UnicodeDataType(), "Unicode", false, null));
+            sut.CodeAttributes.Add(new AttributeModel("GivenName", new StringDataType(), "String", false, null));
+            sut.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "Int", false, null));
 
             // Act
             sut.InheritAttributes(superEntity);

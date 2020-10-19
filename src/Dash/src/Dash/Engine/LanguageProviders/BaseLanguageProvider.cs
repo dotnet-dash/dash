@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using Dash.Constants;
+using Dash.Engine.DataTypes;
 using Dash.Exceptions;
 
 namespace Dash.Engine.LanguageProviders
@@ -17,34 +17,19 @@ namespace Dash.Engine.LanguageProviders
         public abstract string String { get; }
         public abstract string Unicode { get; }
 
-        public string Translate(string dashDataType)
+        public string Translate(IDataType dataType)
         {
-            switch (dashDataType.ToLower())
+            return dataType switch
             {
-                case DashModelFileConstants.DataTypeInteger:
-                    return Int;
-
-                case "bool":
-                    return Bool;
-
-                case "datetime":
-                    return DateTime;
-
-                case "email":
-                    return Email;
-
-                case "guid":
-                    return Guid;
-
-                case "string":
-                    return String;
-
-                case "unicode":
-                    return Unicode;
-
-                default:
-                    throw new InvalidDataTypeException(dashDataType);
-            }
+                IntDataType _ => Int,
+                BoolDataType _ => Bool,
+                DateTimeDataType _ => DateTime,
+                EmailDataType _ => Email,
+                GuidDataType _ => Guid,
+                StringDataType _ => String,
+                UnicodeDataType _ => Unicode,
+                _ => throw new InvalidDataTypeException(dataType.Name),
+            };
         }
     }
 }

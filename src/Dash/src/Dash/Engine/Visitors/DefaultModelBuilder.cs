@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Common;
+using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -41,13 +42,15 @@ namespace Dash.Engine.Visitors
         {
             var result = _dataTypeParser.Parse(node.AttributeDataType);
 
-            var codeDataType = _codeLanguageProvider.Translate(result.DataType);
-            var databaseDataType = _databaseLanguageProvider.Translate(result.DataType);
-
             if (_modelRepository.TryGet(node.Parent.Name, out var entityModel))
             {
-                entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, codeDataType, result.IsNullable, result.DefaultValue));
-                entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, databaseDataType, result.IsNullable, result.DefaultValue));
+                var dataType = DataTypeFactory.Create(result.DataType);
+
+                var codeDataType = _codeLanguageProvider.Translate(dataType);
+                var databaseDataType = _databaseLanguageProvider.Translate(dataType);
+
+                entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, dataType, codeDataType, result.IsNullable, result.DefaultValue));
+                entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, dataType, databaseDataType, result.IsNullable, result.DefaultValue));
             }
 
             return base.Visit(node);

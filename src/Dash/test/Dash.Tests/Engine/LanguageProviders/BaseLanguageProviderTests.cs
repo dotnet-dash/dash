@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
+using Dash.Engine;
 using Dash.Engine.LanguageProviders;
 using Dash.Exceptions;
 using FluentAssertions;
@@ -17,9 +18,11 @@ namespace Dash.Tests.Engine.LanguageProviders
         {
             // Arrange
             var sut = Substitute.For<BaseLanguageProvider>();
+            var unknownDataType = Substitute.For<IDataType>();
+            unknownDataType.Name.Returns("unknown");
 
             // Act
-            Action act = () => sut.Translate("unknown");
+            Action act = () => sut.Translate(unknownDataType);
 
             // Assert
             act.Should().Throw<InvalidDataTypeException>()

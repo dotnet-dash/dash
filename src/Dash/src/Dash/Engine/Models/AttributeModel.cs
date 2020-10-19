@@ -3,17 +3,23 @@
 
 namespace Dash.Engine.Models
 {
+    /// <summary>
+    /// This class represents an Attribute and could be consumed by an <see cref="ITemplateTransformer"/>.
+    /// </summary>
     public class AttributeModel
     {
-        public AttributeModel(string name, string dataType, bool isNullable, string? defaultValue)
+        public AttributeModel(string name, IDataType dashDataType, string dataType, bool isNullable, string? defaultValue)
         {
             Name = name;
+            DashDataType = dashDataType;
             DataType = dataType;
             IsNullable = isNullable;
             DefaultValue = defaultValue;
         }
 
         public string Name { get; }
+
+        public IDataType DashDataType { get; }
 
         public string DataType { get; }
 
