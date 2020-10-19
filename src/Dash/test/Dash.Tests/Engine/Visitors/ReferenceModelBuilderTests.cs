@@ -4,6 +4,7 @@
 using System.Threading.Tasks;
 using Dash.Common;
 using Dash.Engine;
+using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using Dash.Engine.Parsers;
 using Dash.Engine.Repositories;
@@ -151,7 +152,7 @@ namespace Dash.Tests.Engine.Visitors
             // Arrange
             var foo = new EntityModel("Foo");
             var bar = new EntityModel("Bar");
-            bar.CodeAttributes.Add(new AttributeModel("Id", "Int", true, "123"));
+            bar.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "Int", true, "123"));
 
             _modelRepository.Add(foo);
             _modelRepository.Add(bar);

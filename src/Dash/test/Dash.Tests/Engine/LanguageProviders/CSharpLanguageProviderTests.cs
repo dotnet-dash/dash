@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Dash.Engine.DataTypes;
 using Dash.Engine.LanguageProviders;
 using FluentAssertions;
 using Xunit;
@@ -23,7 +24,7 @@ namespace Dash.Tests.Engine.LanguageProviders
             var sut = new CSharpLanguageProvider();
 
             // Act
-            var result = sut.Translate(dashDataType);
+            var result = sut.Translate(DataTypeFactory.Create(dashDataType));
 
             // Assert
             result.Should().Be(expectedDataType);
