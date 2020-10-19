@@ -12,6 +12,6 @@ namespace Dash.Engine
         string Guid { get; }
         string String { get; }
         string Unicode { get; }
-        public string Translate(string dashDataType);
+        public string Translate(IDataType dataType);
     }
 }

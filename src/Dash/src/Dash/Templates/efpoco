@@ -13,16 +13,16 @@ namespace {{ namespace }}
         {{- if a.data_type_regular_expression }}
         [RegularExpression({{ a.data_type_regular_expression }})]
         {{- end }}
-        public {{ a.data_type }}{{- if a.is_nullable }}?{{- end }} {{ a.name }} { get; set; }
+        public {{ a.data_type }}{{- if a.is_nullable }}?{{- end }} {{ a.name }} { get; set; }{{ a | get_property_default_value_assignment }}
     {{- end }}
 
     {{- for r in e.single_references }}
         public int{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }}Id { get; set; }
-        public {{ r.entity_model }}{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }} { get; set; }
+        public {{ r.entity_model }}{{- if r.is_nullable }}?{{- end }} {{ r.reference_name }} { get; set; }{{ r | get_property_default_value_assignment }}
     {{- end }}
 
     {{- for r in e.collection_references }}
-        public ICollection<{{ r.entity_model }}> {{ r.reference_name }} { get; set; }
+        public ICollection<{{ r.entity_model }}> {{ r.reference_name }} { get; set; } = null!;
     {{- end }}
     }
 {{- end }}
