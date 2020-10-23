@@ -4,6 +4,7 @@
 
 <hr />
 
+[![Build Status](https://dev.azure.com/dotnet-dash/Dash/_apis/build/status/Dash.Azure.CI?branchName=master)](https://dev.azure.com/dotnet-dash/Dash/_build/latest?definitionId=1&branchName=master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dotnet-dash_dash&metric=alert_status)](https://sonarcloud.io/dashboard?id=dotnet-dash_dash) [![Nuget version](https://img.shields.io/nuget/v/dotnet-dash)](https://www.nuget.org/packages/dotnet-dash)
 [![Documentation Status](https://readthedocs.org/projects/dotnet-dash/badge/?version=latest)](https://dotnet-dash.readthedocs.io/en/latest/?badge=latest)
 
