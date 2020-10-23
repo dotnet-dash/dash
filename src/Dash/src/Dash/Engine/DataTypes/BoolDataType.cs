@@ -9,5 +9,7 @@ namespace Dash.Engine.DataTypes
         public bool IsNumeric => false;
         public bool IsDateTime => false;
         public bool IsBoolean => true;
+        public bool IsString => false;
+        public bool IsUnicode => false;
     }
 }
