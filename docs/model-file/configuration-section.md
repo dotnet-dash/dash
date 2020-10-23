@@ -1,4 +1,4 @@
-### Configuration
+### Configuration Section
 Inside the `Configuration` object, you define key/value pairs related to code generation.
 
 Here is an example:

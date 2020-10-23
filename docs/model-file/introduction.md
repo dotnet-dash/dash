@@ -1,5 +1,5 @@
 # Introduction
-Dash uses the JSON format to describe the domain models. Each JSON file is called a _Dash Model File_.
+Dash uses the JSON format to describe the domain models. Each JSON file is called a _(Dash) Model File_.
 
 Model Files are written according to Dash's own JSON specification which, throughout this documentation, is referred to as _Dash JSON_.
 
@@ -54,7 +54,7 @@ Entities are defined using key/value pairs directly under the `Model` object, li
 In the above example, we defined the entity `Person` with 0 attributes.
 
 ## Attributes
-An attribute consists of a _Name_ and _[Dash Data Type](attributes.md#dash-data-type)_, and is defined using a key/value pair placed directly under an Entity object, like this:
+An attribute consists of a _Name_ and a _[Data Type Declaration](./data-type-declaration.md)_, and is defined using a key/value pair placed directly under an Entity object, like this:
 
 ~~~ JSON
 {
@@ -69,12 +69,13 @@ An attribute consists of a _Name_ and _[Dash Data Type](attributes.md#dash-data-
 
 In the above example, we have added the 2 attributes to the `Person` entity:
 
-1. `Name` of the type `string`
-1. `Age` of the type `int`
+1. `Name` of the data type `string`
+1. `Age` of the data type `int`
 
 !!! note
 
-    You can add constraints to the Dash Data Type to limit the length, or enforce a [regular expression](to-do). Please visit the [Attributes documentation](attributes.md) to read more.
+    You can add constraints to the Data Type Declaration to limit the length, or enforce a [regular expression](to-do).
+    Please visit the [Data Type Declaration](./data-type-declaration.md) to read more about this subject.
 
 !!! important
 
