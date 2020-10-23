@@ -58,7 +58,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithIntDataType_ShouldReturnEmptyString(bool isNullable)
         {
             // Arrange
-            var attribute = new AttributeModel("foo", new DataTypeParserResult(new IntDataType()).WithIsNullable(isNullable), "int");
+            var attribute = new AttributeModel("foo", new DataTypeDeclarationParserResult(new IntDataType()).WithIsNullable(isNullable), "int");
 
             // Act
             var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
@@ -73,7 +73,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithStringDataType_ShouldReturnResult(bool isNullable, string expectedOutput)
         {
             // Arrange
-            var attribute = new AttributeModel("foo", new DataTypeParserResult(new StringDataType()).WithIsNullable(isNullable), "string");
+            var attribute = new AttributeModel("foo", new DataTypeDeclarationParserResult(new StringDataType()).WithIsNullable(isNullable), "string");
 
             // Act
             var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
@@ -88,7 +88,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithBooleanDataType_ShouldReturnEmptyString(bool isNullable)
         {
             // Arrange
-            var dataTypeParserResult = new DataTypeParserResult(new BoolDataType())
+            var dataTypeParserResult = new DataTypeDeclarationParserResult(new BoolDataType())
                 .WithIsNullable(isNullable);
 
             var attribute = new AttributeModel("foo", dataTypeParserResult, "bool");

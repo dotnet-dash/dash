@@ -173,7 +173,7 @@ namespace Dash.Tests.Engine.Visitors
                 first =>
                 {
                     first.Name.Should().Be("Id");
-                    first.DataType.Should().Be("Int");
+                    first.TargetEnvironmentDataType.Should().Be("Int");
                     first.IsNullable.Should().BeTrue();
                     first.DefaultValue.Should().Be("123");
                 });

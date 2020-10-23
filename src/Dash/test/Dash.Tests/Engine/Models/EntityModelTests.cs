@@ -33,22 +33,22 @@ namespace Dash.Tests.Engine.Models
                 first =>
                 {
                     first.Name.Should().Be("Id");
-                    first.DataType.Should().Be("Int");
+                    first.TargetEnvironmentDataType.Should().Be("Int");
                 },
                 second =>
                 {
                     second.Name.Should().Be("Created");
-                    second.DataType.Should().Be("DateTime");
+                    second.TargetEnvironmentDataType.Should().Be("DateTime");
                 },
                 third =>
                 {
                     third.Name.Should().Be("Name");
-                    third.DataType.Should().Be("Unicode");
+                    third.TargetEnvironmentDataType.Should().Be("Unicode");
                 },
                 fourth =>
                 {
                     fourth.Name.Should().Be("GivenName");
-                    fourth.DataType.Should().Be("String");
+                    fourth.TargetEnvironmentDataType.Should().Be("String");
                 }
             );
         }

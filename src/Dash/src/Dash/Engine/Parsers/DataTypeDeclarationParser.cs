@@ -9,23 +9,23 @@ using Dash.Exceptions;
 
 namespace Dash.Engine.Parsers
 {
-    public class DataTypeParser : IDataTypeParser
+    public class DataTypeDeclarationParser : IDataTypeDeclarationParser
     {
-        public DataTypeParserResult Parse(string dataTypeSpecification)
+        public DataTypeDeclarationParserResult Parse(string dataTypeDeclaration)
         {
-            if (TryFindMatch("^([a-zA-Z0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
+            if (TryFindMatch("^([a-zA-Z0-9]+)", dataTypeDeclaration, out var dashDataType, out var remainingSpecification))
             {
-                var result = new DataTypeParserResult(DataTypeFactory.Create(dashDataType!));
+                var result = new DataTypeDeclarationParserResult(DataTypeFactory.Create(dashDataType!));
 
                 ParseConstraints(result, remainingSpecification);
 
                 return result;
             }
 
-            throw new InvalidDataTypeException(dataTypeSpecification);
+            throw new InvalidDataTypeException(dataTypeDeclaration);
         }
 
-        private void ParseConstraints(DataTypeParserResult result, string constraints)
+        private void ParseConstraints(DataTypeDeclarationParserResult result, string constraints)
         {
             var alreadyProcessed = new StringBuilder();
 
@@ -41,7 +41,7 @@ namespace Dash.Engine.Parsers
                 switch (constraints[0])
                 {
                     case ':':
-                        result.DataTypeRegularExpression = constraints.Substring(1);
+                        result.WithRegularExpression(constraints.Substring(1));
                         return;
 
                     case '?':
@@ -66,12 +66,12 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void ParseLength(DataTypeParserResult result, string value, out string remaining)
+        private void ParseLength(DataTypeDeclarationParserResult result, string value, out string remaining)
         {
             if (TryFindMatch(@"^(\[\d+\])", value, out var foundValue, out remaining))
             {
                 foundValue = foundValue![1..^1];
-                result.Length = int.Parse(foundValue);
+                result.WithMaximumLength(int.Parse(foundValue));
                 return;
             }
 
@@ -87,7 +87,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private bool ParseDefaultValue(DataTypeParserResult result, string value, out string remaining)
+        private bool ParseDefaultValue(DataTypeDeclarationParserResult result, string value, out string remaining)
         {
             if (TryFindMatch(@"^(\(=='(.+)'\))", value, out var parsedValue, out remaining))
             {

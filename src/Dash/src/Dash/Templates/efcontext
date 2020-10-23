@@ -28,9 +28,9 @@ namespace {{ namespace }}
 {{- for e in entities }}
     {{- for p in e.code_attributes }}
             modelBuilder.Entity<{{ e.name }}>().Property(p => p.{{- p.name }})
-        {{- if p.dash_data_type.is_string }}.IsUnicode({{- p.dash_data_type.is_unicode }}){{- end }}
+        {{- if p.data_type.is_string }}.IsUnicode({{- p.data_type.is_unicode }}){{- end }}
         {{- if !p.is_nullable }}.IsRequired(){{- end }}
-        {{- if p.length != null }}.HasMaxLength({{- p.length }}){{- end }}
+        {{- if p.max_length != null }}.HasMaxLength({{- p.max_length }}){{- end }}
         {{- if p.default_value }}.HasDefaultValue({{- p.default_value | get_csharp_literal }}){{- end }}
         {{- if true }};{{- end }}
     {{- end }}

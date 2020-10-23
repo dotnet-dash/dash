@@ -10,31 +10,31 @@ namespace Dash.Engine.Models
     /// </summary>
     public class AttributeModel
     {
-        private readonly DataTypeParserResult _parsedDashDataType;
+        private readonly DataTypeDeclarationParserResult _parsedDashDataTypeDeclaration;
 
-        public AttributeModel(string name, DataTypeParserResult parserResult, string dataType)
+        public AttributeModel(string name, DataTypeDeclarationParserResult declarationParserResult, string targetEnvironmentDataType)
         {
             Name = name;
-            _parsedDashDataType = parserResult;
-            DataType = dataType;
+            _parsedDashDataTypeDeclaration = declarationParserResult;
+            TargetEnvironmentDataType = targetEnvironmentDataType;
         }
 
         public string Name { get; }
 
-        public IDataType DashDataType => _parsedDashDataType.DataType;
+        public IDataType DataType => _parsedDashDataTypeDeclaration.DataType;
 
-        public string? DefaultValue => _parsedDashDataType.DefaultValue;
+        public string? DefaultValue => _parsedDashDataTypeDeclaration.DefaultValue;
 
-        public string? RegularExpression => _parsedDashDataType.DataTypeRegularExpression;
+        public string? RegularExpression => _parsedDashDataTypeDeclaration.RegularExpression;
 
-        public bool IsNullable => _parsedDashDataType.IsNullable;
+        public bool IsNullable => _parsedDashDataTypeDeclaration.IsNullable;
 
-        public int? Length => _parsedDashDataType.Length;
+        public int? MaxLength => _parsedDashDataTypeDeclaration.MaxLength;
 
-        public int? RangeLowerBound => _parsedDashDataType.RangeLowerBound;
+        public int? RangeLowerBound => _parsedDashDataTypeDeclaration.RangeLowerBound;
 
-        public int? RangeUpperBound => _parsedDashDataType.RangeUpperBound;
+        public int? RangeUpperBound => _parsedDashDataTypeDeclaration.RangeUpperBound;
 
-        public string DataType { get; }
+        public string TargetEnvironmentDataType { get; }
     }
 }

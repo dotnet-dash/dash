@@ -90,7 +90,7 @@ namespace Dash.Engine.Visitors
                 {
                     if (node.MapHeaders.TryGetValue(attribute.Name, out var csvHeader))
                     {
-                        if (csvReader.TryGetField<object>(csvHeader, _typeConverters[attribute.DataType], out var value))
+                        if (csvReader.TryGetField<object>(csvHeader, _typeConverters[attribute.TargetEnvironmentDataType], out var value))
                         {
                             seedDataRow.Add(attribute.Name, value);
                         }

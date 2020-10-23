@@ -66,10 +66,10 @@ namespace Dash.Engine.Models
             return WithAttribute<T>(name, targetDataType, null);
         }
 
-        public EntityModel WithAttribute<T>(string name, string targetDataType, Action<DataTypeParserResult>? configure)
+        public EntityModel WithAttribute<T>(string name, string targetDataType, Action<DataTypeDeclarationParserResult>? configure)
             where T : IDataType
         {
-            var parsedDataTypeResult = new DataTypeParserResult(Activator.CreateInstance<T>());
+            var parsedDataTypeResult = new DataTypeDeclarationParserResult(Activator.CreateInstance<T>());
 
             configure?.Invoke(parsedDataTypeResult);
 

@@ -9,13 +9,13 @@ using Xunit;
 
 namespace Dash.Tests.Engine.Parsers
 {
-    public class DataTypeParserTests
+    public class DataTypeDeclarationDeclarationParserTests
     {
-        private readonly DataTypeParser _sut;
+        private readonly DataTypeDeclarationParser _sut;
 
-        public DataTypeParserTests()
+        public DataTypeDeclarationDeclarationParserTests()
         {
-            _sut = new DataTypeParser();
+            _sut = new DataTypeDeclarationParser();
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace Dash.Tests.Engine.Parsers
         public void Parse_InvalidDataTypeSpecification_ShouldReturn(string invalidDataTypeSpecification)
         {
             // Arrange
-            var sut = new DataTypeParser();
+            var sut = new DataTypeDeclarationParser();
 
             // Act
             Action act = () => sut.Parse(invalidDataTypeSpecification);
@@ -41,8 +41,8 @@ namespace Dash.Tests.Engine.Parsers
 
             // Assert
             result.IsNullable.Should().BeFalse();
-            result.Length.Should().BeNull();
-            result.DataTypeRegularExpression.Should().BeNull();
+            result.MaxLength.Should().BeNull();
+            result.RegularExpression.Should().BeNull();
             result.RangeLowerBound.Should().BeNull();
             result.RangeUpperBound.Should().BeNull();
         }
@@ -69,7 +69,7 @@ namespace Dash.Tests.Engine.Parsers
             var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            result.Length.Should().Be(expectedLength);
+            result.MaxLength.Should().Be(expectedLength);
         }
 
         [Theory]
@@ -111,7 +111,7 @@ namespace Dash.Tests.Engine.Parsers
             var result = _sut.Parse(dataTypeSpecification);
 
             // Assert
-            result.DataTypeRegularExpression.Should().Be(expectedRegularExpression);
+            result.RegularExpression.Should().Be(expectedRegularExpression);
         }
 
         [Fact]
@@ -122,10 +122,10 @@ namespace Dash.Tests.Engine.Parsers
 
             // Assert
             result.DataType.Name.Should().Be("string");
-            result.Length.Should().Be(200);
+            result.MaxLength.Should().Be(200);
             result.IsNullable.Should().BeTrue();
             result.DefaultValue.Should().Be("unknown");
-            result.DataTypeRegularExpression.Should().Be("[a-zA-Z0-9]");
+            result.RegularExpression.Should().Be("[a-zA-Z0-9]");
             result.RangeLowerBound.Should().BeNull();
             result.RangeUpperBound.Should().BeNull();
         }
