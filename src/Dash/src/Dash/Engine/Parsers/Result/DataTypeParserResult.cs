@@ -3,18 +3,18 @@
 
 namespace Dash.Engine.Parsers.Result
 {
-    public class DataTypeParserResult
+    public class DataTypeParserResult // TODO: rename to something that appropriately covers the concept.
     {
-        public DataTypeParserResult(string dataType)
+        public DataTypeParserResult(IDataType dataType)
         {
             DataType = dataType;
         }
 
-        public string DataType { get; }
+        public IDataType DataType { get; }
 
-        public bool IsNullable { get; set; }
+        public bool IsNullable { get; private set; }
 
-        public string? DefaultValue { get; set; }
+        public string? DefaultValue { get; private set; }
 
         public string? DataTypeRegularExpression { get; set; }
 
@@ -23,5 +23,17 @@ namespace Dash.Engine.Parsers.Result
         public int? RangeLowerBound { get; set; }
 
         public int? RangeUpperBound { get; set; }
+
+        public DataTypeParserResult WithIsNullable(bool value)
+        {
+            IsNullable = value;
+            return this;
+        }
+
+        public DataTypeParserResult WithDefaultValue(string? defaultValue)
+        {
+            DefaultValue = defaultValue;
+            return this;
+        }
     }
 }

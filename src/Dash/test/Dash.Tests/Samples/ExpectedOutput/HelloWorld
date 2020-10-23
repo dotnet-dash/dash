@@ -11,12 +11,10 @@ namespace Hello
 
         public DbSet<Account> Account => Set<Account>();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>().Property(p => p.Id).IsRequired();
+            modelBuilder.Entity<Account>().Property(p => p.Email).IsUnicode(true).IsRequired();
         }
     }
 }

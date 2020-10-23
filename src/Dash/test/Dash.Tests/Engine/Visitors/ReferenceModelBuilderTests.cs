@@ -7,6 +7,7 @@ using Dash.Engine;
 using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using Dash.Engine.Parsers;
+using Dash.Engine.Parsers.Result;
 using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
@@ -151,8 +152,11 @@ namespace Dash.Tests.Engine.Visitors
         {
             // Arrange
             var foo = new EntityModel("Foo");
-            var bar = new EntityModel("Bar");
-            bar.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "Int", true, "123"));
+            var bar = new EntityModel("Bar")
+                .WithAttribute<IntDataType>("Id", "Int", result =>
+                {
+                    result.WithIsNullable(true).WithDefaultValue("123");
+                });
 
             _modelRepository.Add(foo);
             _modelRepository.Add(bar);

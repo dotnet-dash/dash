@@ -126,18 +126,16 @@ namespace Dash.Tests.Engine.Visitors
                 second => second.Should().Be("Attribute 'NumericCode' is required but has no seed data mapping"));
         }
 
-        public EntityModel ArrangeEntityModel()
+        private EntityModel ArrangeEntityModel()
         {
-            var entityModel = new EntityModel("Currency");
-            entityModel.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "int", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyCode", new StringDataType(), "string", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("CurrencyName", new StringDataType(), "string", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("NumericCode", new IntDataType(), "int", false, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("MinorUnit", new IntDataType(), "int", true, null));
-            entityModel.CodeAttributes.Add(new AttributeModel("Description", new StringDataType(), "string", false, "Foo"));
-            entityModel.CodeAttributes.Add(new AttributeModel("Comments", new StringDataType(), "string", true, null));
-
-            return entityModel;
+            return new EntityModel("Currency")
+                .WithAttribute<IntDataType>("Id", "int")
+                .WithAttribute<StringDataType>("CurrencyCode", "string")
+                .WithAttribute<StringDataType>("CurrencyName", "string")
+                .WithAttribute<IntDataType>("NumericCode", "int")
+                .WithAttribute<IntDataType>("MinorUnit", "int", result => result.WithIsNullable(true))
+                .WithAttribute<StringDataType>("Description", "string", result => result.WithDefaultValue("Foo"))
+                .WithAttribute<StringDataType>("Comments", "string", result => result.WithIsNullable(true));
         }
     }
 }

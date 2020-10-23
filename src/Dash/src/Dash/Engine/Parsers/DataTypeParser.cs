@@ -3,6 +3,7 @@
 
 using System.Text;
 using System.Text.RegularExpressions;
+using Dash.Engine.DataTypes;
 using Dash.Engine.Parsers.Result;
 using Dash.Exceptions;
 
@@ -14,7 +15,7 @@ namespace Dash.Engine.Parsers
         {
             if (TryFindMatch("^([a-zA-Z0-9]+)", dataTypeSpecification, out var dashDataType, out var remainingSpecification))
             {
-                var result = new DataTypeParserResult(dashDataType!);
+                var result = new DataTypeParserResult(DataTypeFactory.Create(dashDataType!));
 
                 ParseConstraints(result, remainingSpecification);
 
@@ -44,7 +45,7 @@ namespace Dash.Engine.Parsers
                         return;
 
                     case '?':
-                        result.IsNullable = true;
+                        result.WithIsNullable(true);
                         constraints = constraints.Substring(1);
                         break;
 
@@ -90,7 +91,7 @@ namespace Dash.Engine.Parsers
         {
             if (TryFindMatch(@"^(\(=='(.+)'\))", value, out var parsedValue, out remaining))
             {
-                result.DefaultValue = parsedValue![4..^2];
+                result.WithDefaultValue(parsedValue![4..^2]);
                 return true;
             }
 

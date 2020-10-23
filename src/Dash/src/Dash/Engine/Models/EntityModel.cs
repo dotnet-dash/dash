@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dash.Constants;
+using Dash.Engine.Parsers.Result;
 using Dash.Extensions;
 
 namespace Dash.Engine.Models
@@ -57,5 +59,23 @@ namespace Dash.Engine.Models
 
         public IEnumerable<AttributeModel> WithoutIdAttribute() =>
             CodeAttributes.Where(e => !e.Name.IsSame(DashModelFileConstants.BaseEntityIdAttributeName));
+
+        public EntityModel WithAttribute<T>(string name, string targetDataType)
+            where T : IDataType
+        {
+            return WithAttribute<T>(name, targetDataType, null);
+        }
+
+        public EntityModel WithAttribute<T>(string name, string targetDataType, Action<DataTypeParserResult>? configure)
+            where T : IDataType
+        {
+            var parsedDataTypeResult = new DataTypeParserResult(Activator.CreateInstance<T>());
+
+            configure?.Invoke(parsedDataTypeResult);
+
+            CodeAttributes.Add(new AttributeModel(name, parsedDataTypeResult, targetDataType));
+
+            return this;
+        }
     }
 }

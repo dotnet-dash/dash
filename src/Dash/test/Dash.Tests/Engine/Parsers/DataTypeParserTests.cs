@@ -121,7 +121,7 @@ namespace Dash.Tests.Engine.Parsers
             var result = _sut.Parse("string[200]?(=='unknown'):[a-zA-Z0-9]");
 
             // Assert
-            result.DataType.Should().Be("string");
+            result.DataType.Name.Should().Be("string");
             result.Length.Should().Be(200);
             result.IsNullable.Should().BeTrue();
             result.DefaultValue.Should().Be("unknown");

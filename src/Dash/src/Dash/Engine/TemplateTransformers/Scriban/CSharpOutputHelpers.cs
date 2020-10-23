@@ -19,6 +19,11 @@ namespace Dash.Engine.TemplateTransformers.Scriban
                 return intValue.ToString();
             }
 
+            if (value is bool boolValue)
+            {
+                return boolValue.ToString().ToLower();
+            }
+
             if (value is decimal decimalValue)
             {
                 return $"{decimalValue}m";

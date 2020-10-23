@@ -23,13 +23,17 @@ namespace {{ namespace }}
         public DbSet<{{ e.name }}> {{ e.name }} => Set<{{ e.name }}>();
 {{- end }}
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 {{- for e in entities }}
+    {{- for p in e.code_attributes }}
+            modelBuilder.Entity<{{ e.name }}>().Property(p => p.{{- p.name }})
+        {{- if p.dash_data_type.is_string }}.IsUnicode({{- p.dash_data_type.is_unicode }}){{- end }}
+        {{- if !p.is_nullable }}.IsRequired(){{- end }}
+        {{- if p.length != null }}.HasMaxLength({{- p.length }}){{- end }}
+        {{- if p.default_value }}.HasDefaultValue({{- p.default_value | get_csharp_literal }}){{- end }}
+        {{- if true }};{{- end }}
+    {{- end }}
     {{- if e.seed_data.size > 0 }}
             modelBuilder.Entity<{{ e.name }}>().HasData(new List<{{ e.name }}>
             {

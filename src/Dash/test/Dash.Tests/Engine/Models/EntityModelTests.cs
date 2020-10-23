@@ -14,15 +14,15 @@ namespace Dash.Tests.Engine.Models
         public void InheritAttributes()
         {
             // Arrange
-            var superEntity = new EntityModel("Base");
-            superEntity.CodeAttributes.Add(new AttributeModel("Id", new GuidDataType(), "Guid", false, null));
-            superEntity.CodeAttributes.Add(new AttributeModel("Created", new DateTimeDataType(), "DateTime", false, null));
-            superEntity.CodeAttributes.Add(new AttributeModel("Name", new StringDataType(), "String", false, null));
+            var superEntity = new EntityModel("Base")
+                .WithAttribute<GuidDataType>("Id", "Guid")
+                .WithAttribute<DateTimeDataType>("Created", "DateTime")
+                .WithAttribute<StringDataType>("Name", "String");
 
-            var sut = new EntityModel("Person");
-            sut.CodeAttributes.Add(new AttributeModel("Name", new UnicodeDataType(), "Unicode", false, null));
-            sut.CodeAttributes.Add(new AttributeModel("GivenName", new StringDataType(), "String", false, null));
-            sut.CodeAttributes.Add(new AttributeModel("Id", new IntDataType(), "Int", false, null));
+            var sut = new EntityModel("Person")
+                .WithAttribute<UnicodeDataType>("Name", "Unicode")
+                .WithAttribute<StringDataType>("GivenName", "String")
+                .WithAttribute<IntDataType>("Id", "Int");
 
             // Act
             sut.InheritAttributes(superEntity);
