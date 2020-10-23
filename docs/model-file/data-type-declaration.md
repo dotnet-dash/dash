@@ -1,12 +1,12 @@
 # Data Type Declaration
-Defining the _Data Type_ of an attribute is pretty straight forward, as you have seen.
+As you have seen, defining the _Data Type_ of an attribute is pretty straight forward.
 
 Simply use the following syntax:
 ~~~ JSON
-  "AttributeName": "[data type]([modifiers])"
+  "AttributeName": "[data type]([constraints])"
 ~~~
 
-where `[modifiers]` is _optional_.
+where `[constraints]` is _optional_.
 
 An example:
 ~~~ JSON
@@ -28,7 +28,7 @@ The following Data Types are supported:
 For your convenience, the target data type (.NET and SqlServer) is also included.
 
 ## Constraints
-Dash supports _constraints_ that let you express the limitations of your Attribute.
+Dash supports _constraints_ that lets you express the limitations of your Attribute.
 
 ### Optional/Nullable
 In Dash, all attributes are _required_ or _Non-Nullable_.
