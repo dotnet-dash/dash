@@ -15,19 +15,19 @@ namespace Dash.Engine.Visitors
 {
     public class DefaultSemanticAnalyzer : BaseVisitor
     {
-        private readonly IDataTypeParser _dataTypeParser;
+        private readonly IDataTypeDeclarationParser _dataTypeDeclarationParser;
         private readonly ISymbolRepository _symbolRepository;
         private readonly IReservedSymbolProvider _reservedSymbolProvider;
         private readonly IErrorRepository _errorRepository;
 
         public DefaultSemanticAnalyzer(
-            IDataTypeParser dataTypeParser,
+            IDataTypeDeclarationParser dataTypeDeclarationParser,
             ISymbolRepository symbolRepository,
             IReservedSymbolProvider reservedSymbolProvider,
             IConsole console,
             IErrorRepository errorRepository) : base(console)
         {
-            _dataTypeParser = dataTypeParser;
+            _dataTypeDeclarationParser = dataTypeDeclarationParser;
             _symbolRepository = symbolRepository;
             _reservedSymbolProvider = reservedSymbolProvider;
             _errorRepository = errorRepository;
@@ -77,7 +77,7 @@ namespace Dash.Engine.Visitors
         {
             try
             {
-                _dataTypeParser.Parse(node.AttributeDataType);
+                _dataTypeDeclarationParser.Parse(node.AttributeDataType);
             }
             catch (InvalidDataTypeException exception)
             {

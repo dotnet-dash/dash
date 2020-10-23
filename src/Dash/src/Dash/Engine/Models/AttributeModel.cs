@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Dash.Engine.Parsers.Result;
+
 namespace Dash.Engine.Models
 {
     /// <summary>
@@ -8,23 +10,31 @@ namespace Dash.Engine.Models
     /// </summary>
     public class AttributeModel
     {
-        public AttributeModel(string name, IDataType dashDataType, string dataType, bool isNullable, string? defaultValue)
+        private readonly DataTypeDeclarationParserResult _parsedDashDataTypeDeclaration;
+
+        public AttributeModel(string name, DataTypeDeclarationParserResult declarationParserResult, string targetEnvironmentDataType)
         {
             Name = name;
-            DashDataType = dashDataType;
-            DataType = dataType;
-            IsNullable = isNullable;
-            DefaultValue = defaultValue;
+            _parsedDashDataTypeDeclaration = declarationParserResult;
+            TargetEnvironmentDataType = targetEnvironmentDataType;
         }
 
         public string Name { get; }
 
-        public IDataType DashDataType { get; }
+        public IDataType DataType => _parsedDashDataTypeDeclaration.DataType;
 
-        public string DataType { get; }
+        public string? DefaultValue => _parsedDashDataTypeDeclaration.DefaultValue;
 
-        public string? DefaultValue { get; }
+        public string? RegularExpression => _parsedDashDataTypeDeclaration.RegularExpression;
 
-        public bool IsNullable { get; }
+        public bool IsNullable => _parsedDashDataTypeDeclaration.IsNullable;
+
+        public int? MaxLength => _parsedDashDataTypeDeclaration.MaxLength;
+
+        public int? RangeLowerBound => _parsedDashDataTypeDeclaration.RangeLowerBound;
+
+        public int? RangeUpperBound => _parsedDashDataTypeDeclaration.RangeUpperBound;
+
+        public string TargetEnvironmentDataType { get; }
     }
 }

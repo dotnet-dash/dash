@@ -13,7 +13,7 @@ namespace {{ namespace }}
         {{- if a.data_type_regular_expression }}
         [RegularExpression({{ a.data_type_regular_expression }})]
         {{- end }}
-        public {{ a.data_type }}{{- if a.is_nullable }}?{{- end }} {{ a.name }} { get; set; }{{ a | get_property_default_value_assignment }}
+        public {{ a.target_environment_data_type }}{{- if a.is_nullable }}?{{- end }} {{ a.name }} { get; set; }{{ a | get_property_default_value_assignment }}
     {{- end }}
 
     {{- for r in e.single_references }}

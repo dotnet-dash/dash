@@ -13,7 +13,7 @@ namespace Dash.Application
         public static void Add(IServiceCollection services)
         {
             services.AddSingleton<ISourceCodeParser, DefaultSourceCodeParser>();
-            services.AddSingleton<IDataTypeParser, DataTypeParser>();
+            services.AddSingleton<IDataTypeDeclarationParser, DataTypeDeclarationParser>();
             services.AddSingleton<IEntityReferenceValueParser, EntityReferenceValueParser>();
             services.AddSingleton<IReservedSymbolProvider, DefaultReservedSymbolProvider>();
         }

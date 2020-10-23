@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-using System;
 using Dash.Extensions;
 
 namespace Dash.Engine.DataTypes
@@ -29,7 +28,7 @@ namespace Dash.Engine.DataTypes
                 }
             }
 
-            throw new InvalidOperationException($"Unknown Dash data type '{dashDataType}'");
+            return new UnknownDataType(dashDataType);
         }
     }
 }

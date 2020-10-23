@@ -19,6 +19,11 @@ namespace Dash.Engine.TemplateTransformers.Scriban
                 return intValue.ToString();
             }
 
+            if (value is bool boolValue)
+            {
+                return boolValue.ToString().ToLower();
+            }
+
             if (value is decimal decimalValue)
             {
                 return $"{decimalValue}m";
@@ -41,9 +46,9 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             }
             else if (value is AttributeModel attribute)
             {
-                if (attribute.DashDataType.IsNumeric ||
-                    attribute.DashDataType.IsDateTime ||
-                    attribute.DashDataType.IsBoolean)
+                if (attribute.DataType.IsNumeric ||
+                    attribute.DataType.IsDateTime ||
+                    attribute.DataType.IsBoolean)
                 {
                     return string.Empty;
                 }
