@@ -25,7 +25,7 @@ namespace Dash.Tests.Engine.Visitors
         {
             _modelRepository = new DefaultModelRepository();
             _sut = new DefaultModelBuilder(
-                new DataTypeParser(),
+                new DataTypeDeclarationParser(),
                 new List<ILanguageProvider>
                 {
                     new CSharpLanguageProvider(),
@@ -92,19 +92,19 @@ namespace Dash.Tests.Engine.Visitors
                         a =>
                         {
                             a.Name.Should().Be("Surname");
-                            a.DataType.Should().Be("string");
+                            a.TargetEnvironmentDataType.Should().Be("string");
                             a.IsNullable.Should().BeFalse();
                         },
                         b =>
                         {
                             b.Name.Should().Be("Username");
-                            b.DataType.Should().Be("string");
+                            b.TargetEnvironmentDataType.Should().Be("string");
                             b.IsNullable.Should().BeFalse();
                         },
                         c =>
                         {
                             c.Name.Should().Be("Nickname");
-                            c.DataType.Should().Be("string");
+                            c.TargetEnvironmentDataType.Should().Be("string");
                             c.IsNullable.Should().BeTrue();
                         });
 
@@ -112,19 +112,19 @@ namespace Dash.Tests.Engine.Visitors
                         a =>
                         {
                             a.Name.Should().Be("Surname");
-                            a.DataType.Should().Be("nvarchar");
+                            a.TargetEnvironmentDataType.Should().Be("nvarchar");
                             a.IsNullable.Should().BeFalse();
                         },
                         b =>
                         {
                             b.Name.Should().Be("Username");
-                            b.DataType.Should().Be("varchar");
+                            b.TargetEnvironmentDataType.Should().Be("varchar");
                             b.IsNullable.Should().BeFalse();
                         },
                         c =>
                         {
                             c.Name.Should().Be("Nickname");
-                            c.DataType.Should().Be("nvarchar");
+                            c.TargetEnvironmentDataType.Should().Be("nvarchar");
                             c.IsNullable.Should().BeTrue();
                         });
                 });

@@ -3,6 +3,7 @@
 
 using Dash.Engine;
 using Dash.Engine.Models;
+using Dash.Engine.Parsers.Result;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -11,23 +12,28 @@ namespace Dash.Tests.Engine.Models
 {
     public class AttributeModelTests
     {
-        [Theory]
-        [InlineData("Id", "Int", false, "11")]
-        [InlineData("Nickname", "String", true, null)]
-        public void Ctor_Parameters_Should(string name, string dataType, bool isNullable, string? defaultValue)
+        [Fact]
+        public void Ctor_Parameters_ShouldAssignProperties()
         {
             // Arrange
             var mockDataType = Substitute.For<IDataType>();
 
+            var dataTypeParserResult = new DataTypeDeclarationParserResult(mockDataType)
+                .WithIsNullable(true)
+                .WithRegularExpression("RegularFoo")
+                .WithMaximumLength(88)
+                .WithDefaultValue("DefaultFoo");
+
             // Act
-            var sut = new AttributeModel(name, mockDataType, dataType, isNullable, defaultValue);
+            var sut = new AttributeModel("Foo", dataTypeParserResult, "FooBar");
 
             // Assert
-            sut.Name.Should().Be(name);
-            sut.DashDataType.Should().Be(mockDataType);
-            sut.DataType.Should().Be(dataType);
-            sut.IsNullable.Should().Be(isNullable);
-            sut.DefaultValue.Should().Be(defaultValue);
+            sut.Name.Should().Be("Foo");
+            sut.DataType.Should().Be(mockDataType);
+            sut.DefaultValue.Should().Be("DefaultFoo");
+            sut.IsNullable.Should().BeTrue();
+            sut.MaxLength.Should().Be(88);
+            sut.TargetEnvironmentDataType.Should().Be("FooBar");
         }
     }
 }

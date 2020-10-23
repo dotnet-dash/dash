@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dash.Common;
-using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
 using Dash.Extensions;
 using Dash.Nodes;
@@ -14,18 +13,18 @@ namespace Dash.Engine.Visitors
 {
     public class DefaultModelBuilder : BaseVisitor
     {
-        private readonly IDataTypeParser _dataTypeParser;
+        private readonly IDataTypeDeclarationParser _dataTypeDeclarationParser;
         private readonly IModelRepository _modelRepository;
         private readonly ILanguageProvider _codeLanguageProvider;
         private readonly ILanguageProvider _databaseLanguageProvider;
 
         public DefaultModelBuilder(
-            IDataTypeParser dataTypeParser,
+            IDataTypeDeclarationParser dataTypeDeclarationParser,
             IEnumerable<ILanguageProvider> languageProviders,
             IModelRepository modelRepository,
             IConsole console) : base(console)
         {
-            _dataTypeParser = dataTypeParser;
+            _dataTypeDeclarationParser = dataTypeDeclarationParser;
             _modelRepository = modelRepository;
             _codeLanguageProvider = languageProviders.Single(e => e.Name.IsSame("cs"));
             _databaseLanguageProvider = languageProviders.Single(e => e.Name.IsSame("SqlServer"));
@@ -40,17 +39,15 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(AttributeDeclarationNode node)
         {
-            var result = _dataTypeParser.Parse(node.AttributeDataType);
+            var result = _dataTypeDeclarationParser.Parse(node.AttributeDataType);
 
             if (_modelRepository.TryGet(node.Parent.Name, out var entityModel))
             {
-                var dataType = DataTypeFactory.Create(result.DataType);
+                var codeDataType = _codeLanguageProvider.Translate(result.DataType);
+                var databaseDataType = _databaseLanguageProvider.Translate(result.DataType);
 
-                var codeDataType = _codeLanguageProvider.Translate(dataType);
-                var databaseDataType = _databaseLanguageProvider.Translate(dataType);
-
-                entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, dataType, codeDataType, result.IsNullable, result.DefaultValue));
-                entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, dataType, databaseDataType, result.IsNullable, result.DefaultValue));
+                entityModel.CodeAttributes.Add(new AttributeModel(node.AttributeName, result, codeDataType));
+                entityModel.DataAttributes.Add(new AttributeModel(node.AttributeName, result, databaseDataType));
             }
 
             return base.Visit(node);

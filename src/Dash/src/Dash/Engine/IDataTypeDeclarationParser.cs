@@ -5,8 +5,8 @@ using Dash.Engine.Parsers.Result;
 
 namespace Dash.Engine
 {
-    public interface IDataTypeParser
+    public interface IDataTypeDeclarationParser
     {
-        DataTypeParserResult Parse(string dataTypeSpecification);
+        DataTypeDeclarationParserResult Parse(string dataTypeDeclaration);
     }
 }

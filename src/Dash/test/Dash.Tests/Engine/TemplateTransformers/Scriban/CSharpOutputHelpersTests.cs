@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using Dash.Engine.DataTypes;
 using Dash.Engine.Models;
+using Dash.Engine.Parsers.Result;
 using Dash.Engine.TemplateTransformers.Scriban;
 using FluentAssertions;
 using Xunit;
@@ -27,6 +28,8 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
             new List<object?[]>
             {
                 new object?[] { null, "null" },
+                new object?[] { true, "true" },
+                new object?[] { false, "false" },
                 new object?[] { 1234, "1234" },
                 new object?[] { 12.34m, "12.34m"},
                 new object?[] { "", "\"\"" },
@@ -55,7 +58,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithIntDataType_ShouldReturnEmptyString(bool isNullable)
         {
             // Arrange
-            var attribute = new AttributeModel("foo", new IntDataType(), "int", isNullable, null);
+            var attribute = new AttributeModel("foo", new DataTypeDeclarationParserResult(new IntDataType()).WithIsNullable(isNullable), "int");
 
             // Act
             var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
@@ -70,7 +73,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithStringDataType_ShouldReturnResult(bool isNullable, string expectedOutput)
         {
             // Arrange
-            var attribute = new AttributeModel("foo", new StringDataType(), "string", isNullable, null);
+            var attribute = new AttributeModel("foo", new DataTypeDeclarationParserResult(new StringDataType()).WithIsNullable(isNullable), "string");
 
             // Act
             var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
@@ -85,7 +88,10 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         public void GetPropertyDefaultValueAssignment_AttributeWithBooleanDataType_ShouldReturnEmptyString(bool isNullable)
         {
             // Arrange
-            var attribute = new AttributeModel("foo", new BoolDataType(), "bool", isNullable, null);
+            var dataTypeParserResult = new DataTypeDeclarationParserResult(new BoolDataType())
+                .WithIsNullable(isNullable);
+
+            var attribute = new AttributeModel("foo", dataTypeParserResult, "bool");
 
             // Act
             var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);

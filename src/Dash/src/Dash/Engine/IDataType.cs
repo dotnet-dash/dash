@@ -15,5 +15,9 @@ namespace Dash.Engine
         public bool IsDateTime { get; }
 
         bool IsBoolean { get; }
+
+        bool IsUnicode { get; }
+
+        bool IsString { get; }
     }
 }

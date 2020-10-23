@@ -8,7 +8,9 @@ nav:
     - Home: index.md
     - Model File:
         - Introduction: model-file/introduction.md
+        - Configuration Section: model-file/configuration-section.md
         - Entities In-Depth: model-file/entities-in-depth.md
+        - Data Type Declaration: model-file/data-type-declaration.md
         - Seeding data: model-file/seeding-data.md
     - Templates:
         - Built-in Templates: template/built-in-templates.md
