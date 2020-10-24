@@ -47,9 +47,19 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             else if (value is AttributeModel attribute)
             {
                 if (attribute.DataType.IsNumeric ||
-                    attribute.DataType.IsDateTime ||
-                    attribute.DataType.IsBoolean)
+                    attribute.DataType.IsDateTime)
                 {
+                    return string.Empty;
+                }
+
+                if (attribute.DataType.IsBoolean)
+                {
+                    if (attribute.DefaultValue != null)
+                    {
+                        var booleanValue = GetCSharpLiteral(bool.Parse(attribute.DefaultValue));
+                        return $"= {booleanValue};";
+                    }
+
                     return string.Empty;
                 }
 

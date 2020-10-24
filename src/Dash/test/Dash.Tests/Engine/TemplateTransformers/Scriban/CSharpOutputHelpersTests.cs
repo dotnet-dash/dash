@@ -15,13 +15,13 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
     {
         [Theory]
         [MemberData(nameof(Data), 2)]
-        public void GetCSharpLiteral_Null_ShouldReturnValueNull(object value, string expectedOutput)
+        public void GetCSharpLiteral_Value_ShouldReturnExpectedResult(object value, string expectedResult)
         {
             // Act
             var result = CSharpOutputHelpers.GetCSharpLiteral(value);
 
             // Assert
-            result.Should().Be(expectedOutput);
+            result.Should().Be(expectedResult);
         }
 
         public static IEnumerable<object?[]> Data =>
@@ -98,6 +98,24 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
             // Assert
             result.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public void GetPropertyDefaultValueAssignment_BooleanAttributeWithDefaultValue_ShouldReturnDefaultValue(string defaultValue)
+        {
+            // Arrange
+            var dataTypeParserResult = new DataTypeDeclarationParserResult(new BoolDataType())
+                .WithDefaultValue(defaultValue);
+
+            var attribute = new AttributeModel("foo", dataTypeParserResult, "bool");
+
+            // Act
+            var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
+
+            // Assert
+            result.Should().Be($"= {defaultValue};");
         }
     }
 }
