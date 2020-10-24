@@ -31,7 +31,6 @@ namespace {{ namespace }}
         {{- if p.data_type.is_string }}.IsUnicode({{- p.data_type.is_unicode }}){{- end }}
         {{- if !p.is_nullable }}.IsRequired(){{- end }}
         {{- if p.max_length != null }}.HasMaxLength({{- p.max_length }}){{- end }}
-        {{- if p.default_value }}.HasDefaultValue({{- p.default_value | get_csharp_literal }}){{- end }}
         {{- if true }};{{- end }}
     {{- end }}
     {{- if e.seed_data.size > 0 }}
