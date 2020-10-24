@@ -31,11 +31,11 @@ namespace Dash.Nodes
 
         public IEnumerable<AbstractDeclarationNode> AbstractDeclarationNodes => _astNodes.OfType<AbstractDeclarationNode>();
 
-        public IList<HasReferenceDeclarationNode> Has { get; } = new List<HasReferenceDeclarationNode>();
+        public IEnumerable<HasReferenceDeclarationNode> Has => _astNodes.OfType<HasReferenceDeclarationNode>();
 
-        public IList<HasManyReferenceDeclarationNode> HasMany { get; } = new List<HasManyReferenceDeclarationNode>();
+        public IEnumerable<HasManyReferenceDeclarationNode> HasMany => _astNodes.OfType<HasManyReferenceDeclarationNode>();
 
-        public IList<HasAndBelongsToManyDeclarationNode> HasAndBelongsToMany { get; } = new List<HasAndBelongsToManyDeclarationNode>();
+        public IEnumerable<HasAndBelongsToManyDeclarationNode> HasAndBelongsToMany => _astNodes.OfType<HasAndBelongsToManyDeclarationNode>();
 
         public IList<AstNode> ChildNodes { get; } = new List<AstNode>();
 
@@ -69,29 +69,30 @@ namespace Dash.Nodes
         public EntityDeclarationNode AddAbstractDeclarationNode(bool value)
         {
             _astNodes.Add(new AbstractDeclarationNode(this, value));
-
             return this;
         }
 
         public EntityDeclarationNode AddHasDeclaration(string name, string referencedEntity)
         {
-            var has = new HasReferenceDeclarationNode(this, name, referencedEntity);
-            Has.Add(has);
+            _astNodes.Add(new HasReferenceDeclarationNode(this, name, referencedEntity));
+            return this;
+        }
 
+        public EntityDeclarationNode AddHasManyDeclaration(string name, string referencedEntity)
+        {
+            _astNodes.Add(new HasManyReferenceDeclarationNode(this, name, referencedEntity));
+            return this;
+        }
+
+        public EntityDeclarationNode AddHasAndBelongsToManyDeclarationNode(string name, string referencedEntity)
+        {
+            _astNodes.Add(new HasAndBelongsToManyDeclarationNode(this, name, referencedEntity));
             return this;
         }
 
         public void AddCsvSeedDeclarationNode(Uri uri, bool firstLineIsHeader, string? delimiter, IDictionary<string, string> mapHeaders)
         {
             ChildNodes.Add(new CsvSeedDeclarationNode(this, uri, firstLineIsHeader, delimiter, mapHeaders));
-        }
-
-        public EntityDeclarationNode AddHasAndBelongsToManyDeclarationNode(string name, string referencedEntity)
-        {
-            var hasAndBelongsToManyDeclarationNode = new HasAndBelongsToManyDeclarationNode(this, name, referencedEntity);
-            HasAndBelongsToMany.Add(hasAndBelongsToManyDeclarationNode);
-
-            return this;
         }
     }
 }

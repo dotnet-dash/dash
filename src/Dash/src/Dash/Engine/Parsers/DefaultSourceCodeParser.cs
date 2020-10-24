@@ -10,7 +10,6 @@ using Dash.Exceptions;
 using Dash.Extensions;
 using Dash.Nodes;
 
-#pragma warning disable S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)
 namespace Dash.Engine.Parsers
 {
     public class DefaultSourceCodeParser : ISourceCodeParser
@@ -88,19 +87,13 @@ namespace Dash.Engine.Parsers
             foreach (var property in objectProperties)
             {
                 ProcessRelationshipProperty(property, "@@Has", (name, referencedEntity) =>
-                    {
-                        entityDeclarationNode.Has.Add(new HasReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
-                    });
+                    entityDeclarationNode.AddHasDeclaration(name, referencedEntity));
 
                 ProcessRelationshipProperty(property, "@@Has Many", (name, referencedEntity) =>
-                    {
-                        entityDeclarationNode.HasMany.Add(new HasManyReferenceDeclarationNode(entityDeclarationNode, name, referencedEntity));
-                    });
+                    entityDeclarationNode.AddHasManyDeclaration(name, referencedEntity));
 
                 ProcessRelationshipProperty(property, "@@Has And Belongs To Many", (name, referencedEntity) =>
-                    {
-                        entityDeclarationNode.HasAndBelongsToMany.Add(new HasAndBelongsToManyDeclarationNode(entityDeclarationNode, name, referencedEntity));
-                    });
+                    entityDeclarationNode.AddHasAndBelongsToManyDeclarationNode(name, referencedEntity));
             }
         }
 
@@ -201,4 +194,3 @@ namespace Dash.Engine.Parsers
         }
     }
 }
-#pragma warning restore S1200 // Classes should not be coupled to too many other classes (Single Responsibility Principle)

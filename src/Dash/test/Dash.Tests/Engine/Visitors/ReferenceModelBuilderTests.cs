@@ -11,33 +11,31 @@ using Dash.Engine.Parsers.Result;
 using Dash.Engine.Repositories;
 using Dash.Engine.Visitors;
 using Dash.Nodes;
+using FluentArrange;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
+using Arrange = FluentArrange.NSubstitute.Arrange;
 
 namespace Dash.Tests.Engine.Visitors
 {
     public class ReferenceModelBuilderTests
     {
-        private readonly IModelRepository _modelRepository;
-        private readonly ReferenceModelBuilder _sut;
-
-        public ReferenceModelBuilderTests()
-        {
-            _modelRepository = new DefaultModelRepository();
-            _sut = new ReferenceModelBuilder(_modelRepository, new EntityReferenceValueParser(), Substitute.For<IConsole>());
-        }
-
         [Theory]
         [InlineData("Language", false)]
         [InlineData("Language?", true)]
         public async Task Visit_HasReferenceDeclarationNode_ShouldHaveUpdatedEntities(string referencedEntity, bool expectedIsNullable)
         {
             // Arrange
-            _modelRepository.Add(new EntityModel("Account"));
+            var _context = Arrange.For<ReferenceModelBuilder>()
+                .WithDependency<IEntityReferenceValueParser>(new EntityReferenceValueParser())
+                .WithDependency<IModelRepository>(new DefaultModelRepository(), repository =>
+                {
+                    repository.Add(new EntityModel("Account"));
+                });
 
             var account = new EntityDeclarationNode(new ModelNode(), "Account");
-            await _sut.Visit(account);
+            await _context.Sut.Visit(account);
 
             var node = new HasReferenceDeclarationNode(
                 account,
@@ -45,10 +43,10 @@ namespace Dash.Tests.Engine.Visitors
                 referencedEntity);
 
             // Act
-            await _sut.Visit(node);
+            await _context.Sut.Visit(node);
 
             // Assert
-            _modelRepository.EntityModels.Should().SatisfyRespectively(
+            _context.Dependency<IModelRepository>().EntityModels.Should().SatisfyRespectively(
                 first =>
                 {
                     first.SingleReferences.Should().SatisfyRespectively(
@@ -65,22 +63,28 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_HasManyReferenceDeclarationNode_ShouldHaveUpdatedEntities()
         {
             // Arrange
-            _modelRepository.CreateEntityModel("Order", "OrderLine");
+            var _context = Arrange.For<ReferenceModelBuilder>()
+                .WithDependency<IEntityReferenceValueParser>(new EntityReferenceValueParser())
+                .WithDependency<IModelRepository>(new DefaultModelRepository(), repository =>
+                {
+                    repository.CreateEntityModel("Order", "OrderLine");
+                });
 
+            // TODO: the following should happen inside Arrange.For (FluentArrange needs to be modified)
             var modelNode = new ModelNode();
             var accountNode = modelNode.AddEntityDeclarationNode("Order");
             var orderLineNode = modelNode.AddEntityDeclarationNode("OrderLine");
 
-            await _sut.Visit(accountNode);
-            await _sut.Visit(orderLineNode);
+            await _context.Sut.Visit(accountNode);
+            await _context.Sut.Visit(orderLineNode);
 
             var node = new HasManyReferenceDeclarationNode(accountNode, "OrderLines", "OrderLine");
 
             // Act
-            await _sut.Visit(node);
+            await _context.Sut.Visit(node);
 
             // Assert
-            _modelRepository.EntityModels.Should().SatisfyRespectively(
+            _context.Dependency<IModelRepository>().EntityModels.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Order");
@@ -107,22 +111,27 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_HasAndBelongsToManyDeclarationNode_ShouldHaveUpdatedEntities()
         {
             // Arrange
-            _modelRepository.CreateEntityModel("Order", "Product");
+            var _context = Arrange.For<ReferenceModelBuilder>()
+                .WithDependency<IEntityReferenceValueParser>(new EntityReferenceValueParser())
+                .WithDependency<IModelRepository>(new DefaultModelRepository(), repository =>
+                {
+                    repository.CreateEntityModel("Order", "Product");
+                });
 
             var modelNode = new ModelNode();
             var orderNode = modelNode.AddEntityDeclarationNode("Order");
             var productNode = modelNode.AddEntityDeclarationNode("Product");
 
-            await _sut.Visit(orderNode);
-            await _sut.Visit(productNode);
+            await _context.Sut.Visit(orderNode);
+            await _context.Sut.Visit(productNode);
 
             var node = new HasAndBelongsToManyDeclarationNode(orderNode, "Product", "Product");
 
             // Act
-            await _sut.Visit(node);
+            await _context.Sut.Visit(node);
 
             // Assert
-            _modelRepository.EntityModels.Should().SatisfyRespectively(
+            _context.Dependency<IModelRepository>().EntityModels.Should().SatisfyRespectively(
                 first =>
                 {
                     first.Name.Should().Be("Order");
@@ -151,32 +160,39 @@ namespace Dash.Tests.Engine.Visitors
         public async Task Visit_InheritanceDeclarationNode_ShouldHaveCalledMethodInheritAttributes()
         {
             // Arrange
-            var foo = new EntityModel("Foo");
-            var bar = new EntityModel("Bar")
-                .WithAttribute<IntDataType>("Id", "Int", result =>
+            var _context = Arrange.For<ReferenceModelBuilder>()
+                .WithDependency<IEntityReferenceValueParser>(new EntityReferenceValueParser())
+                .WithDependency<IModelRepository>(new DefaultModelRepository(), repository =>
                 {
-                    result.WithIsNullable(true).WithDefaultValue("123");
+                    var foo = new EntityModel("Foo");
+                    var bar = new EntityModel("Bar")
+                        .WithAttribute<IntDataType>("Id", "Int", result =>
+                        {
+                            result.WithIsNullable(true).WithDefaultValue("123");
+                        });
+
+                    repository.Add(foo);
+                    repository.Add(bar);
                 });
 
-            _modelRepository.Add(foo);
-            _modelRepository.Add(bar);
-
-            InheritanceDeclarationNode node = new ModelNode()
+            var node = new ModelNode()
                 .AddEntityDeclarationNode("Foo")
                 .AddInheritanceDeclaration("Bar");
 
             // Act
-            await _sut.Visit(node);
+            await _context.Sut.Visit(node);
 
             // Assert
-            foo.CodeAttributes.Should().SatisfyRespectively(
-                first =>
-                {
-                    first.Name.Should().Be("Id");
-                    first.TargetEnvironmentDataType.Should().Be("Int");
-                    first.IsNullable.Should().BeTrue();
-                    first.DefaultValue.Should().Be("123");
-                });
+            _context.Dependency<IModelRepository>()
+                .Get("Foo")
+                .CodeAttributes.Should().SatisfyRespectively(
+                    first =>
+                    {
+                        first.Name.Should().Be("Id");
+                        first.TargetEnvironmentDataType.Should().Be("Int");
+                        first.IsNullable.Should().BeTrue();
+                        first.DefaultValue.Should().Be("123");
+                    });
         }
     }
 }
