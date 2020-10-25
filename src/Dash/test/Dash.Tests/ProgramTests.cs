@@ -95,7 +95,7 @@ namespace Dash.Tests
         }
 
         [Fact]
-        public async Task HelloWorld()
+        public async Task IntegrationTest_HelloWorld()
         {
             // Arrange
             ArrangeFile("HelloWorld.json");
@@ -116,6 +116,31 @@ namespace Dash.Tests
             var generatedCode = _mockFileSystem.File.ReadAllText("c:/project/efcontext.generated.cs");
 
             generatedCode.Should().HaveSameTree(expectedOutput);
+        }
+
+        [Fact]
+        public async Task IntegrationTest_Blog()
+        {
+            // Arrange
+            ArrangeFile("IntegrationTests/Blog.json");
+            var expectedEfContextOutput = GetExpectedFileOutput("Blog_EfContext");
+            var expectedEfPocoOutput = GetExpectedFileOutput("Blog_EfPoco");
+
+            var options = new DashOptions
+            {
+                InputFile = "c:/project/sut.json",
+            };
+
+            _project.Namespace.Returns("Foo");
+
+            var sut = ArrangeSut(options);
+
+            // Act
+            await sut.Run(options);
+
+            // Assert
+            _mockFileSystem.File.ReadAllText("c:/project/efcontext.generated.cs").Should().HaveSameTree(expectedEfContextOutput);
+            _mockFileSystem.File.ReadAllText("c:/project/efpoco.generated.cs").Should().HaveSameTree(expectedEfPocoOutput);
         }
 
         private Program ArrangeSut(DashOptions options)

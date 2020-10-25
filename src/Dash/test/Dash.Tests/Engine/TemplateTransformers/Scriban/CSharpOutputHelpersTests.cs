@@ -39,7 +39,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
         [Theory]
         [InlineData(true, "")]
-        [InlineData(false, "= null!;")]
+        [InlineData(false, " = null!;")]
         public void GetPropertyDefaultValueAssignment_ReferencedEntity_ShouldReturnEmptyString(bool isNullable, string expectedOutput)
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
         [Theory]
         [InlineData(true, "")]
-        [InlineData(false, "= null!;")]
+        [InlineData(false, " = null!;")]
         public void GetPropertyDefaultValueAssignment_AttributeWithStringDataType_ShouldReturnResult(bool isNullable, string expectedOutput)
         {
             // Arrange
@@ -101,21 +101,19 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         }
 
         [Theory]
-        [InlineData("true")]
-        [InlineData("false")]
-        public void GetPropertyDefaultValueAssignment_BooleanAttributeWithDefaultValue_ShouldReturnDefaultValue(string defaultValue)
+        [InlineData("account", true, "accounts")]
+        [InlineData("account", false, "account")]
+        [InlineData("property", true, "properties")]
+        [InlineData("property", false, "property")]
+        [InlineData(123, true, "123")]
+        [InlineData(123, false, "123")]
+        public void FormatName_Pluralize_ShouldPluralize(object input, bool pluralize, string expectedResult)
         {
-            // Arrange
-            var dataTypeParserResult = new DataTypeDeclarationParserResult(new BoolDataType())
-                .WithDefaultValue(defaultValue);
-
-            var attribute = new AttributeModel("foo", dataTypeParserResult, "bool");
-
             // Act
-            var result = CSharpOutputHelpers.GetPropertyDefaultValueAssignment(attribute);
+            var result = CSharpOutputHelpers.FormatName(input, pluralize);
 
             // Assert
-            result.Should().Be($"= {defaultValue};");
+            result.Should().Be(expectedResult);
         }
     }
 }

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -33,8 +32,8 @@ namespace Dash.Tests.Engine.Generator
                 })
                 .WithDependency<ITemplateTransformer>(d =>
                 {
-                    d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed");
-                    d.Transform("bar template", Arg.Any<IEnumerable<EntityModel>>()).Returns("bar template transformed");
+                    d.Transform(Arg.Is<TemplateOptions>(o => o.TemplateText == "foo template")).Returns("foo template transformed");
+                    d.Transform(Arg.Is<TemplateOptions>(o => o.TemplateText == "bar template")).Returns("bar template transformed");
                 })
                 .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()))
                 .WithDependency<IFileSystem>(new MockFileSystem());
@@ -60,7 +59,7 @@ namespace Dash.Tests.Engine.Generator
             // Arrange
             var context = Arrange.For<DefaultGenerator>()
                 .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo/")).Returns("foo template"))
-                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed"))
+                .WithDependency<ITemplateTransformer>(d => d.Transform(Arg.Is<TemplateOptions>(o => o.TemplateText == "foo template")).Returns("foo template transformed"))
                 .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
                 .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 
@@ -84,7 +83,7 @@ namespace Dash.Tests.Engine.Generator
             // Arrange
             var context = Arrange.For<DefaultGenerator>()
                 .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo/")).Returns("foo template"))
-                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Any<IEnumerable<EntityModel>>()).Returns("foo template transformed"))
+                .WithDependency<ITemplateTransformer>(d => d.Transform(Arg.Is<TemplateOptions>(o => o.TemplateText == "foo template")).Returns("foo template transformed"))
                 .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
                 .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 
@@ -113,7 +112,7 @@ namespace Dash.Tests.Engine.Generator
             var context = Arrange.For<DefaultGenerator>()
                 .WithDependency<IUriResourceRepository>(d => d.GetContents(new Uri("dash://foo")).Returns("foo template"))
                 .WithDependency<IModelRepository>(d => d.EntityModels.Returns(new[] {new EntityModel("Foo")}))
-                .WithDependency<ITemplateTransformer>(d => d.Transform("foo template", Arg.Is<IEnumerable<EntityModel>>(e => e.Single().Name == "Foo")).Returns("foo template transformed"))
+                .WithDependency<ITemplateTransformer>(d => d.Transform(Arg.Is<TemplateOptions>(o => o.TemplateText == "foo template" && o.Entities.Any(e => e.Name == "Foo"))).Returns("foo template transformed"))
                 .WithDependency<IFileSystem>(new MockFileSystem(), d => d.Directory.SetCurrentDirectory("c:/output/"))
                 .WithDependency<IOptions<DashOptions>>(new OptionsWrapper<DashOptions>(new DashOptions()));
 

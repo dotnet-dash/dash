@@ -57,7 +57,8 @@ namespace Dash.Engine.Generator
 
                 async Task Generate(string outputFilename, IEnumerable<EntityModel> listOfEntities)
                 {
-                    var output = await _templateTransformer.Transform(template, listOfEntities);
+                    var options = new TemplateOptions(template, listOfEntities, model.ConfigurationNode.Pluralize);
+                    var output = await _templateTransformer.Transform(options);
                     output = AddHeader(model.ConfigurationNode.Header!, output);
                     SaveFile(directory, outputFilename.AppendFilenameSuffix(model.ConfigurationNode.AutogenSuffix), output);
                 }

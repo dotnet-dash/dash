@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Huy Hoang. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Globalization;
 using Dash.Engine.Models;
 
 namespace Dash.Engine.TemplateTransformers.Scriban
 {
     public static class CSharpOutputHelpers
     {
+        private static readonly Inflector.Inflector Inflector = new Inflector.Inflector(new CultureInfo("en-US"));
         public static string GetCSharpLiteral(object value)
         {
             if (value == null)
@@ -35,7 +37,7 @@ namespace Dash.Engine.TemplateTransformers.Scriban
 
         public static string GetPropertyDefaultValueAssignment(object value)
         {
-            const string code = "= null!;";
+            const string code = " = null!;";
 
             if (value is ReferencedEntityModel referencedEntity)
             {
@@ -70,6 +72,16 @@ namespace Dash.Engine.TemplateTransformers.Scriban
             }
 
             return string.Empty;
+        }
+
+        public static string? FormatName(object value, bool pluralize)
+        {
+            if (pluralize && value is string s)
+            {
+                return Inflector.Pluralize(s);
+            }
+
+            return value?.ToString();
         }
     }
 }

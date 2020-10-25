@@ -22,7 +22,7 @@ namespace {{ namespace }}
     {{- end }}
 
     {{- for r in e.collection_references }}
-        public ICollection<{{ r.entity_model }}> {{ r.reference_name }} { get; set; } = null!;
+        public ICollection<{{ r.entity_model }}> {{ r.reference_name | format_name `false` }} { get; set; } = null!;
     {{- end }}
     }
 {{- end }}

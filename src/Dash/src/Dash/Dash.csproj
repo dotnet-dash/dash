@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.5.1-alpha</Version>
+    <Version>0.6.0-alpha</Version>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-dash</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
@@ -12,7 +12,7 @@
     <Authors>Huy Hoang</Authors>
     <CodeAnalysisRuleSet>..\.sonarlint\dotnet-dash_dashcsharp.ruleset</CodeAnalysisRuleSet>
     <Description>Dash is a command-line tool for fast model-driven code generation.</Description>
-    <PackageReleaseNotes>Fixed EF core warning: "The 'bool' property 'X' on entity type 'Y' is configured with a database-generated default. This default will always be used for inserts when the property has the value 'false', since this is the CLR default for the 'bool' type. Consider using the nullable 'bool?' type instead so that the default will only be used for inserts when the property value is 'null'."</PackageReleaseNotes>
+    <PackageReleaseNotes>Implemented feature to pluralize the names of generated class properties (where applicable)</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/dotnet-dash</PackageProjectUrl>
     <PackageIcon>packageicon.png</PackageIcon>
     <Copyright>Huy Hoang</Copyright>
@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.8" />
+    <PackageReference Include="Inflector.NetStandard" Version="1.2.2" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.2.6" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.7.0" />
@@ -65,6 +66,7 @@
 
   <ItemGroup>
     <Folder Include="PreprocessingSteps\Default\" />
+    <Folder Include="Templates\ef\" />
   </ItemGroup>
 
 </Project>

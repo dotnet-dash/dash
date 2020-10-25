@@ -32,8 +32,7 @@ namespace Dash.Engine.Visitors
 
         public override Task Visit(EntityDeclarationNode node)
         {
-            var model = new EntityModel(node.Name);
-            _modelRepository.Add(model);
+            _modelRepository.Add(new EntityModel(node.Name));
             return base.Visit(node);
         }
 
