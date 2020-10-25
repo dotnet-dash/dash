@@ -101,13 +101,16 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
         }
 
         [Theory]
-        [InlineData("account", "accounts")]
-        [InlineData("property", "properties")]
-        [InlineData(123, "123")]
-        public void FormatName_Pluralize_ShouldPluralize(object input, string expectedResult)
+        [InlineData("account", true, "accounts")]
+        [InlineData("account", false, "account")]
+        [InlineData("property", true, "properties")]
+        [InlineData("property", false, "property")]
+        [InlineData(123, true, "123")]
+        [InlineData(123, false, "123")]
+        public void FormatName_Pluralize_ShouldPluralize(object input, bool pluralize, string expectedResult)
         {
             // Act
-            var result = CSharpOutputHelpers.FormatName(input, true);
+            var result = CSharpOutputHelpers.FormatName(input, pluralize);
 
             // Assert
             result.Should().Be(expectedResult);
