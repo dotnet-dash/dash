@@ -20,7 +20,7 @@ namespace {{ namespace }}
         }
 
 {{- for e in entities }}
-        public DbSet<{{ e.name }}> {{ e.name }} => Set<{{ e.name }}>();
+        public DbSet<{{ e.name }}> {{ e.name | format_name pluralize }} => Set<{{ e.name }}>();
 {{- end }}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -9,7 +9,7 @@ namespace Hello
         {
         }
 
-        public DbSet<Account> Account => Set<Account>();
+        public DbSet<Account> Accounts => Set<Account>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

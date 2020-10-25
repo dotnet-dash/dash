@@ -1,0 +1,52 @@
+﻿{
+    "Configuration": {
+        "Templates": [
+            {
+                "Template": "dash://efpoco"
+            },
+            {
+                "Template": "dash://efcontext"
+            }
+        ]
+    },
+
+    "Model": {
+        "Account": {
+            "Username": "String[20]",
+            "Email": "String[30]"
+        },
+
+        "Blog": {
+            "Name": "Unicode[100]",
+            "SiteUri": "Unicode[500]",
+            "@@Has And Belongs To Many": {
+                "Owner": "Account"
+            },
+            "@@Has Many": {
+                "Address": "Post"
+            }
+        },
+
+        "Post": {
+            "Created": "DateTime",
+            "Updated": "DateTime?",
+            "Title": "Unicode[100]",
+            "Body": "Unicode",
+            "@@Has": {
+                "Poster": "Account"
+            },
+            "@@Has Many": {
+                "Comment": "Comment"
+            }
+        },
+
+        "Comment": {
+            "Created": "DateTime",
+            "Updated": "DateTime?",
+            "Body": "Unicode",
+            "@@Has": {
+                "Poster": "Account"
+            }
+        }
+    }
+}

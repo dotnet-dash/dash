@@ -23,6 +23,7 @@
     <None Remove="Samples\HasNullable.json" />
     <None Remove="Samples\HelloWorld.json" />
     <None Remove="Samples\Inheritance.json" />
+    <None Remove="Samples\IntegrationTests\Blog.json" />
     <None Remove="Samples\OverrideBaseId.json" />
     <None Remove="Samples\Seed.json" />
     <None Remove="Samples\Smoketest1.json" />
@@ -36,6 +37,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\HasArrayValue.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\IntegrationTests\Blog.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Samples\Seed.json">
@@ -105,6 +109,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Samples\ExpectedOutput\Blog_EfContext">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\ExpectedOutput\Blog_EfPoco">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\ExpectedOutput\HelloWorld">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

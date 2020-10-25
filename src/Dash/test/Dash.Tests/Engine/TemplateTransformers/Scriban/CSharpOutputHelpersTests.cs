@@ -39,7 +39,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
         [Theory]
         [InlineData(true, "")]
-        [InlineData(false, "= null!;")]
+        [InlineData(false, " = null!;")]
         public void GetPropertyDefaultValueAssignment_ReferencedEntity_ShouldReturnEmptyString(bool isNullable, string expectedOutput)
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
         [Theory]
         [InlineData(true, "")]
-        [InlineData(false, "= null!;")]
+        [InlineData(false, " = null!;")]
         public void GetPropertyDefaultValueAssignment_AttributeWithStringDataType_ShouldReturnResult(bool isNullable, string expectedOutput)
         {
             // Arrange
@@ -98,6 +98,19 @@ namespace Dash.Tests.Engine.TemplateTransformers.Scriban
 
             // Assert
             result.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("account", "accounts")]
+        [InlineData("property", "properties")]
+        [InlineData(123, "123")]
+        public void FormatName_Pluralize_ShouldPluralize(object input, string expectedResult)
+        {
+            // Act
+            var result = CSharpOutputHelpers.FormatName(input, true);
+
+            // Assert
+            result.Should().Be(expectedResult);
         }
     }
 }
