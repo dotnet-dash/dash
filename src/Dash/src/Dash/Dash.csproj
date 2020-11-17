@@ -49,12 +49,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.7.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Scriban" Version="2.1.4" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20427.1" />
     <PackageReference Include="System.CommandLine.DragonFruit" Version="0.3.0-alpha.20427.1" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.2.19" />
+    <PackageReference Include="System.IO.Abstractions" Version="12.2.24" />
   </ItemGroup>
 
   <ItemGroup>
