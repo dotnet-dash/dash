@@ -80,7 +80,7 @@ namespace Dash.Engine.Parsers
             return result;
         }
 
-        private void TraverseRelationshipProperties(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator objectProperties)
+        private static void TraverseRelationshipProperties(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator objectProperties)
         {
             objectProperties.Reset();
 
@@ -97,7 +97,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<string, string> func)
+        private static void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<string, string> func)
         {
             if (objectProperty.Name.IsSame(relationship))
             {
@@ -118,7 +118,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void TryTraverseSeed(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator entityObjectProperties)
+        private static void TryTraverseSeed(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator entityObjectProperties)
         {
             foreach (var item in entityObjectProperties.Where(e => e.Name.IsSame("@@Seed")))
             {
