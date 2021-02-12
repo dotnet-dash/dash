@@ -62,7 +62,7 @@ namespace Dash.Engine.Parsers
             return deserialized;
         }
 
-        private ModelNode ParseModel(JsonDocument document)
+        private static ModelNode ParseModel(JsonDocument document)
         {
             var result = new ModelNode();
 
@@ -154,7 +154,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void TraverseModelEntities(ModelNode modelNode, JsonProperty entityObject)
+        private static void TraverseModelEntities(ModelNode modelNode, JsonProperty entityObject)
         {
             if (entityObject.Value.ValueKind == JsonValueKind.Object && !entityObject.Name.StartsWith("@@"))
             {
@@ -167,7 +167,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void TraverseAttributes(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator attributes)
+        private static void TraverseAttributes(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator attributes)
         {
             attributes.Reset();
             foreach (var attribute in attributes)
