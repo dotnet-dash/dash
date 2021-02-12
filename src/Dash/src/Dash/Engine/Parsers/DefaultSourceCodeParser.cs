@@ -51,7 +51,7 @@ namespace Dash.Engine.Parsers
 
             var deserialized = JsonSerializer.Deserialize<ConfigurationNode>(configurationSourceCode);
 
-            foreach (var item in deserialized.Templates)
+            foreach (var item in deserialized!.Templates)
             {
                 if (item.Output == null)
                 {
@@ -105,14 +105,14 @@ namespace Dash.Engine.Parsers
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateObject())
                     {
-                        func(hasProperty.Name, hasProperty.Value.GetString());
+                        func(hasProperty.Name, hasProperty.Value.GetString()!);
                     }
                 }
                 else if (objectProperty.Value.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateArray())
                     {
-                        func(hasProperty.GetString(), hasProperty.GetString());
+                        func(hasProperty.GetString()!, hasProperty.GetString()!);
                     }
                 }
             }
@@ -129,7 +129,7 @@ namespace Dash.Engine.Parsers
                         throw new ParserException("The 'FromCsv' value must be an Object");
                     }
 
-                    var uri = new Uri(csvElement.GetProperty("Uri").GetString());
+                    var uri = new Uri(csvElement.GetProperty("Uri").GetString()!);
 
                     var firstLineIsHeader = false;
                     if (csvElement.TryGetProperty("FirstLineIsHeader", out var value))
@@ -146,7 +146,7 @@ namespace Dash.Engine.Parsers
                         delimiter = delimiterJsonElement.GetString();
                     }
 
-                    entityDeclarationNode.AddCsvSeedDeclarationNode(uri, firstLineIsHeader, delimiter, mapHeaders);
+                    entityDeclarationNode.AddCsvSeedDeclarationNode(uri, firstLineIsHeader, delimiter, mapHeaders!);
                     continue;
                 }
 
@@ -176,14 +176,14 @@ namespace Dash.Engine.Parsers
                 {
                     if (attribute.Value.ValueKind == JsonValueKind.String)
                     {
-                        entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString());
+                        entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString()!);
                     }
                 }
                 else
                 {
                     if (attribute.Name.IsSame("@@Inherits"))
                     {
-                        entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString());
+                        entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString()!);
                     }
                     else if (attribute.Name.IsSame("@@Abstract"))
                     {

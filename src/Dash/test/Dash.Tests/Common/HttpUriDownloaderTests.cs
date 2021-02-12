@@ -85,7 +85,7 @@ namespace Dash.Tests.Common
             // Assert
             result.Success.Should().BeTrue();
             result.FileName.Should().Be("bar.csv");
-            result.Content.SequenceEqual(await stringContent.ReadAsByteArrayAsync()).Should().BeTrue();
+            result.Content.Should().NotBeNull().And.Subject.SequenceEqual(await stringContent.ReadAsByteArrayAsync()).Should().BeTrue();
         }
     }
 }

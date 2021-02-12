@@ -41,10 +41,10 @@ namespace Dash.Engine.Repositories
                 throw new EntityModelNotFoundException($"Entity '{entityName}' was not found in the repository");
             }
 
-            return entity;
+            return entity!;
         }
 
-        public bool TryGet(string entityName, out EntityModel entityModel)
+        public bool TryGet(string entityName, out EntityModel? entityModel)
         {
             entityModel = _entityModels.SingleOrDefault(e => e.Name.IsSame(entityName));
             return entityModel != null;

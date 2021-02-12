@@ -16,6 +16,6 @@ namespace Dash.Engine
 
         EntityModel Get(string entityName);
 
-        bool TryGet(string entityName, out EntityModel entityModel);
+        bool TryGet(string entityName, out EntityModel? entityModel);
     }
 }
