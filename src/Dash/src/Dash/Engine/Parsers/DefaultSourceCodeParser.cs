@@ -51,7 +51,7 @@ namespace Dash.Engine.Parsers
 
             var deserialized = JsonSerializer.Deserialize<ConfigurationNode>(configurationSourceCode);
 
-            foreach (var item in deserialized.Templates)
+            foreach (var item in deserialized!.Templates)
             {
                 if (item.Output == null)
                 {
@@ -62,7 +62,7 @@ namespace Dash.Engine.Parsers
             return deserialized;
         }
 
-        private ModelNode ParseModel(JsonDocument document)
+        private static ModelNode ParseModel(JsonDocument document)
         {
             var result = new ModelNode();
 
@@ -80,7 +80,7 @@ namespace Dash.Engine.Parsers
             return result;
         }
 
-        private void TraverseRelationshipProperties(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator objectProperties)
+        private static void TraverseRelationshipProperties(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator objectProperties)
         {
             objectProperties.Reset();
 
@@ -97,7 +97,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<string, string> func)
+        private static void ProcessRelationshipProperty(JsonProperty objectProperty, string relationship, Action<string, string> func)
         {
             if (objectProperty.Name.IsSame(relationship))
             {
@@ -105,20 +105,20 @@ namespace Dash.Engine.Parsers
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateObject())
                     {
-                        func(hasProperty.Name, hasProperty.Value.GetString());
+                        func(hasProperty.Name, hasProperty.Value.GetString()!);
                     }
                 }
                 else if (objectProperty.Value.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var hasProperty in objectProperty.Value.EnumerateArray())
                     {
-                        func(hasProperty.GetString(), hasProperty.GetString());
+                        func(hasProperty.GetString()!, hasProperty.GetString()!);
                     }
                 }
             }
         }
 
-        private void TryTraverseSeed(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator entityObjectProperties)
+        private static void TryTraverseSeed(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator entityObjectProperties)
         {
             foreach (var item in entityObjectProperties.Where(e => e.Name.IsSame("@@Seed")))
             {
@@ -129,7 +129,7 @@ namespace Dash.Engine.Parsers
                         throw new ParserException("The 'FromCsv' value must be an Object");
                     }
 
-                    var uri = new Uri(csvElement.GetProperty("Uri").GetString());
+                    var uri = new Uri(csvElement.GetProperty("Uri").GetString()!);
 
                     var firstLineIsHeader = false;
                     if (csvElement.TryGetProperty("FirstLineIsHeader", out var value))
@@ -146,7 +146,7 @@ namespace Dash.Engine.Parsers
                         delimiter = delimiterJsonElement.GetString();
                     }
 
-                    entityDeclarationNode.AddCsvSeedDeclarationNode(uri, firstLineIsHeader, delimiter, mapHeaders);
+                    entityDeclarationNode.AddCsvSeedDeclarationNode(uri, firstLineIsHeader, delimiter, mapHeaders!);
                     continue;
                 }
 
@@ -154,7 +154,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void TraverseModelEntities(ModelNode modelNode, JsonProperty entityObject)
+        private static void TraverseModelEntities(ModelNode modelNode, JsonProperty entityObject)
         {
             if (entityObject.Value.ValueKind == JsonValueKind.Object && !entityObject.Name.StartsWith("@@"))
             {
@@ -167,7 +167,7 @@ namespace Dash.Engine.Parsers
             }
         }
 
-        private void TraverseAttributes(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator attributes)
+        private static void TraverseAttributes(EntityDeclarationNode entityDeclarationNode, JsonElement.ObjectEnumerator attributes)
         {
             attributes.Reset();
             foreach (var attribute in attributes)
@@ -176,14 +176,14 @@ namespace Dash.Engine.Parsers
                 {
                     if (attribute.Value.ValueKind == JsonValueKind.String)
                     {
-                        entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString());
+                        entityDeclarationNode.AddAttributeDeclaration(attribute.Name, attribute.Value.GetString()!);
                     }
                 }
                 else
                 {
                     if (attribute.Name.IsSame("@@Inherits"))
                     {
-                        entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString());
+                        entityDeclarationNode.AddInheritanceDeclaration(attribute.Value.GetString()!);
                     }
                     else if (attribute.Name.IsSame("@@Abstract"))
                     {
